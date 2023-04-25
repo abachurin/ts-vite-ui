@@ -9,7 +9,12 @@ const reScale = () => {
         Number(rootFontSize.substring(0, rootFontSize.length - 2))) / 16;
 };
 
-export default function useFontScale(delay = GLOBAL.windowResizeDelay) {
+/**
+ * Returns a font scaling factor that re-renders on window resize.
+ * @param delay - The number of milliseconds to wait after a window resize event before
+ * re-rendering the font scaling factor. Defaults to the GLOBAL.windowResizeDelay.
+ */
+const useFontScale = (delay = GLOBAL.windowResizeDelay) => {
     const [scale, setScale] = useState(reScale());
 
     useEffect(() => {
@@ -29,3 +34,5 @@ export default function useFontScale(delay = GLOBAL.windowResizeDelay) {
 
     return scale;
 }
+
+export default useFontScale;

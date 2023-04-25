@@ -15,8 +15,8 @@ export interface ModalWindowProps extends ChildrenProps{
 }
 
 export interface ModalWindowRef {
-    open: () => Function,
-    close: () => Function,
+    open: () => () => void,
+    close: () => () => void,
 }
 
 /**
@@ -160,18 +160,18 @@ const ModalWindow = forwardRef(
         const renderChild = useCallback(
             (child: ReactNode) => {
                 if (React.isValidElement(child) 
-                && child.props.hasOwnProperty('alsoCloseModal') 
+                && Object.prototype.hasOwnProperty.call(child.props, "alsoCloseModal")
                 && child.props.alsoCloseModal) {
                     return cloneElement(child as ReactElement, {
                         onClick: () => {
-                            if (child.props.hasOwnProperty('onClick')) {
+                            if (Object.prototype.hasOwnProperty.call(child.props, "onClick")) {
                                 child.props.onClick()
                             }
                             console.log('ok')
                             closeModal()
                         }
                     })
-                };
+                }
                 return child;
             }, []
         )

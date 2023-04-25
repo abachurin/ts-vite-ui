@@ -1,6 +1,10 @@
 import { useState } from "react";
 
-export default function useToggle(initValue: boolean): [boolean, (value: boolean | undefined) => void] {
+/**
+ * Returns a tuple containing a boolean value and a function to toggle it.
+ * @param initValue - The initial value of the boolean.
+ */
+const useToggle = (initValue: boolean) =>{
     const [value, setValue] = useState<boolean>(initValue);
 
     function toggleValue(value: boolean | undefined) {
@@ -9,5 +13,7 @@ export default function useToggle(initValue: boolean): [boolean, (value: boolean
         );
     }
 
-    return [value, toggleValue];
+    return [value, toggleValue] as const;
 }
+
+export default useToggle;

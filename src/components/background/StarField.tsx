@@ -1,3 +1,4 @@
+
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import useDimensions from "../../hooks/useDimensions";
@@ -9,7 +10,7 @@ import { GLOBAL } from "../../utils";
  * Renders a star field with a number of stars on the screen, which depends on window size.
  */
 const StarField = () => {
-    const {ref, width, height} = useDimensions();
+    const [ref, width, height] = useDimensions();
     const user = useUser();
     const inverseSpeed = user.animationInverseSpeed;
 
