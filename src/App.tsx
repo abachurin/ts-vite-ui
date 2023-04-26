@@ -8,6 +8,7 @@ import Footer from "./components/Footer/Footer";
 import { GLOBAL } from "./utils";
 
 function App() {
+
     const container = css`
         position: relative;
         display: grid;
