@@ -1,4 +1,4 @@
-import { css } from "@emotion/react";
+import { SerializedStyles, css } from "@emotion/react";
 import React, { useRef, cloneElement, ReactNode, ReactElement, useMemo, useCallback } from "react";
 import Button from "./Button";
 import Icon from "./Icon";
@@ -26,7 +26,7 @@ const ToggleNav = ({ align, textColor, logoColor, backgroundColor, children }: N
     const ref = useRef<HTMLDivElement>(null);
     const [visibility, setVisibility] = useToggle(false);
 
-    const emotion = useMemo(() => css`
+    const emotion = useMemo((): SerializedStyles => css`
         display: flex;
         justify-content: ${align};
         align-items: center;
@@ -35,9 +35,7 @@ const ToggleNav = ({ align, textColor, logoColor, backgroundColor, children }: N
     );
 
     const fullColor = rgba_rgb(backgroundColor);
-    console.log(backgroundColor, fullColor);
-
-    const hiddenNavStyle = useMemo(() => css`
+    const hiddenNavStyle = useMemo((): SerializedStyles => css`
         position: fixed;
         top: 6rem;
         background-color: ${fullColor};
@@ -45,6 +43,7 @@ const ToggleNav = ({ align, textColor, logoColor, backgroundColor, children }: N
         padding: ${GLOBAL.padding};
         display: flex;
         flex-direction: column;
+        gap: calc(${GLOBAL.padding} * 0.5);
         box-shadow: 0 0 0.5em 0.2em rgba(255, 255, 255, 0.2);
         transform: scale(${visibility ? 1 : 0});
         opacity: ${visibility ? 1 : 0};
@@ -53,7 +52,7 @@ const ToggleNav = ({ align, textColor, logoColor, backgroundColor, children }: N
     `, [visibility, fullColor, align]
     );
 
-    const renderChild = useCallback((child: ReactNode) => {
+    const renderChild = useCallback((child: ReactNode): ReactNode => {
         return cloneElement(child as ReactElement, {
             align: align
         });

@@ -17,7 +17,7 @@ const Pane = (props: PaneProps) => {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        min-width: 340px;
+        min-width: ${GLOBAL.minPaneWidth}px;
         min-height: 30em;
         background-color: ${GLOBAL.backgrounds.blue};
         padding: ${GLOBAL.padding};

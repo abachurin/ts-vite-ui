@@ -1,6 +1,6 @@
-import { css } from "@emotion/react";
-import { useMemo } from "react";
-import { useUser } from "../../contexts/UserContext";
+import { SerializedStyles, css } from "@emotion/react";
+import { useMemo, useContext } from "react";
+import { UserContext } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../../utils";
 import { ChildrenProps, Alignment } from "../../types";
 import clickSound from "../../assets/sounds/mixkit-arrow-whoosh-1491.wav";
@@ -23,8 +23,14 @@ export interface ButtonProps extends ChildrenProps {
  * @param children - The child components to render within the button.
  * @param closingModal - Set "true" if the button is inside a modal and should close it when clicked.
  */
-const Button = ({ align="left", legend="", level=0, onClick, children }: ButtonProps) => {
-    const user = useUser();
+const Button = ({
+    align = "left",
+    legend = "",
+    level = 0,
+    onClick,
+    children,
+}: ButtonProps) => {
+    const user = useContext(UserContext);
 
     const flashLink = (el: HTMLButtonElement) => {
         el.animate(
@@ -45,13 +51,13 @@ const Button = ({ align="left", legend="", level=0, onClick, children }: ButtonP
     };
 
     const container = css`
-            display: flex;
-            justify-content: ${align};
-            align-items: center;
+        display: flex;
+        justify-content: ${align};
+        align-items: center;
     `;
 
     const emotion = useMemo(
-        () =>
+        (): SerializedStyles =>
             css`
                 position: relative;
                 text-decoration: none;
@@ -69,9 +75,8 @@ const Button = ({ align="left", legend="", level=0, onClick, children }: ButtonP
                 &:disabled {
                     opacity: 0.75;
                 }
-                ${
-                    !window.matchMedia("(hover: none)").matches && legend
-                        ? `
+                ${!window.matchMedia("(hover: none)").matches && legend
+                    ? `
                             &::before {
                                 position: absolute;
                                 width: 10em;
@@ -105,8 +110,7 @@ const Button = ({ align="left", legend="", level=0, onClick, children }: ButtonP
                                     `
                             }
                         `
-                        : ""
-                }
+                    : ""}
             `,
         [legend, align]
     );

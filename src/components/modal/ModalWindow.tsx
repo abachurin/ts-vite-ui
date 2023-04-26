@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { css, keyframes } from "@emotion/react";
 import ReactDOM from "react-dom";
 import React, { useState, forwardRef, useImperativeHandle, useCallback, ReactNode, cloneElement, ReactElement } from "react";
@@ -27,18 +26,20 @@ export interface ModalWindowRef {
  * @param color - The text color of the modal content. Defaults to "black".
  * @param width - The width of the modal content. Defaults to "300px".
  * @param height - The height of the modal content. Defaults to "200px".
- * @param children - The child elements to be displayed inside the modal content.
+ * @param children - The child elements to be displayed inside the modal content. 
+ * There are ModalHeader, ModalBody and ModalFooter components.
+ * All are optional, but the content is recommended to wrap in ModalBody as it controls overflow.
  * 
  * @returns A portal to render the modal outside of the main React tree, including a container with a background overlay and a modal content area.
  */
 const ModalWindow = forwardRef(
     (
         {
-            ContainerBackgroundColor="rgba(255, 255, 255, 0.1)",
-            ModalBackgroundColor=GLOBAL.backgrounds.pearl,
+            ContainerBackgroundColor=GLOBAL.backgrounds.blur,
+            ModalBackgroundColor=GLOBAL.colors.white,
             color="black",
-            width="300px",
-            height="200px",
+            width="auto",
+            height="auto",
             children,
         }: ModalWindowProps,
         ref
@@ -64,14 +65,16 @@ const ModalWindow = forwardRef(
             bottom: 0;
         `;
         const baseModal = css`
+            display: flex;
+            flex-direction: column;
             position: relative;
-            padding: ${GLOBAL.padding};
             border-radius: ${GLOBAL.borderRadius};
             box-shadow: ${GLOBAL.boxShadow};
             background: ${ModalBackgroundColor};
             color: ${color};
             width: ${width};
             height: ${height};
+            max-height: 78%;
             z-index: 100;
         `;
 

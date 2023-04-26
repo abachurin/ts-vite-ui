@@ -1,5 +1,6 @@
-import {RgbaColor, RgbColor} from "./types";
+import { RgbaColor } from "./types";
 
+// GLOBAL parameters
 export const GLOBAL = {
     colors: {
         white: "rgba(235, 235, 235, 1)" as RgbaColor,
@@ -7,8 +8,9 @@ export const GLOBAL = {
         neon: "rgba(255, 130, 255, 1)" as RgbaColor,
     },
     backgrounds: {
-        black: "rgba(0, 0, 0, 1)" as RgbaColor,
-        pearl: "rgba(226, 223, 210, 1)" as RgbaColor,
+        blur: "rgba(255, 255, 255, 0.1)" as RgbaColor,
+        pearl: "rgb(226, 223, 210)",
+        black: "rgb(0, 0, 0)",
         blue: "rgba(64, 128, 255, 0.1)" as RgbaColor,
         pink: "rgba(255, 130, 255, 0.3)" as RgbaColor,
     },
@@ -16,6 +18,7 @@ export const GLOBAL = {
         small: 200,
         big: 300,
     },
+    depthOfStarField: 5,
     borderRadius: "0.3em",
     padding: "0.5em",
     boxShadow: "0 0 0.5em 0.1em rgba(255, 255, 255, 0.2)",
@@ -23,6 +26,8 @@ export const GLOBAL = {
     windowResizeDelay: 200,
     logoScale: 1.4,
     navBreakpoint: 600,
+    maxContainerWidth: 1400,
+    minPaneWidth: 340,
     svg: {
         menu: "M3 6a1 1 0 0 1 1-1h16a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1zm0 6a1 1 0 0 1 1-1h16a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1zm1 5a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2H4z",
         robot: "M5 16c0 3.87 3.13 7 7 7s7-3.13 7-7v-4H5v4zM16.12 4.37l2.1-2.1-.82-.83-2.3 2.31C14.16 3.28 13.12 3 12 3s-2.16.28-3.09.75L6.6 1.44l-.82.83 2.1 2.1C6.14 5.64 5 7.68 5 10v1h14v-1c0-2.32-1.14-4.36-2.88-5.63zM9 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z",
@@ -37,24 +42,37 @@ export const GLOBAL = {
         closeWindow:
             "M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z",
     },
-    level: {
+    userLevel: {
         guest: 0,
         user: 1,
         admin: 2,
     },
 };
 
+/**
+ * Generate a random number between start and end (inclusive).
+ * @param end - The maximum number to generate.
+ * @param start - The minimum number to generate (defaults to 0).
+ */
 export function randomNum(end: number, start = 0): number {
     return Math.random() * (end - start) + start;
 }
 
+/**
+ * Scrolls smoothly to the first element matching the given CSS selector.
+ * @param selector - The CSS selector of the element to scroll to.
+ */
 export function smoothScroll(selector: string): void {
     document.querySelector(selector)?.scrollIntoView({
         behavior: "smooth",
     });
 }
 
-export function rgba_rgb(color: RgbaColor): RgbColor {
+/**
+ * Convert an RGBA color to the same RGB color, but not transparent.
+ * @param color - An RGBA color in the format "rgba(r, g, b, a)".
+ */
+export function rgba_rgb(color: RgbaColor): string {
     const numbers = color
         .slice(5, color.length - 1)
         .split(",")

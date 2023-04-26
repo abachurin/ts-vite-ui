@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import UserProvider from "./contexts/UserContext";
+import UserProvider from "./contexts/UserProvider/UserProvider";
 import StarField from "./components/background/StarField";
 import Header from "./components/Header/Header";
 import PaneAgent from "./components/main/PaneAgent";
@@ -8,7 +8,6 @@ import Footer from "./components/Footer/Footer";
 import { GLOBAL } from "./utils";
 
 function App() {
-
     const container = css`
         position: relative;
         display: grid;
@@ -21,7 +20,7 @@ function App() {
         gap: ${GLOBAL.padding};
         margin: 0 auto;
         padding: calc(2 * ${GLOBAL.padding});
-        max-width: 1400px;
+        max-width: ${GLOBAL.maxContainerWidth}px;
     `;
 
     const main = css`

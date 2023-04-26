@@ -19,7 +19,8 @@ const CloseButton = ({ onClick }: CloseButtonProps) => {
         top: 0;
         background-color: inherit;
         color: inherit;
-        z-index: 200;
+        border-radius: ${GLOBAL.borderRadius};
+        z-index: 300;
     `;
 
     return (

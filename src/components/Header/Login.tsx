@@ -1,15 +1,18 @@
 import { css } from "@emotion/react";
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useContext } from "react";
 import { GLOBAL } from "../../utils";
-import { useUser, useUpdateUser } from "../../contexts/UserContext";
-import Modal from "../modal/Modal"
+import {
+    UserContext,
+    UserUpdateContext,
+} from "../../contexts/UserProvider/UserContext";
+import Modal from "../modal/Modal";
 import Button from "../base/Button";
 import { Alignment } from "../../types";
 
 type LoginProps = {
     color?: string;
     align?: Alignment;
-}
+};
 
 /**
  * Renders a login section with a button that displays the user's name and
@@ -19,13 +22,13 @@ type LoginProps = {
  * @param align - The alignment of the button.
  */
 const Login = ({ color, align }: LoginProps) => {
-    const user = useUser()
-    const updateUser = useUpdateUser();
+    const user = useContext(UserContext);
+    const updateUser = useContext(UserUpdateContext);
 
     const openLogin = useCallback((): void => {
         updateUser({
             name: "Loki",
-            level: GLOBAL.level.user,
+            level: GLOBAL.userLevel.user,
             animationInverseSpeed: 2,
             animate: true,
         });
@@ -39,26 +42,23 @@ const Login = ({ color, align }: LoginProps) => {
     `;
 
     const buttonChildren = useMemo(
-        (): JSX.Element => (
-            <div css={emotion}>
-                {user.name}
-            </div>
-        ), [emotion, user]
-    )
+        (): JSX.Element => <div css={emotion}>{user.name}</div>,
+        [emotion, user]
+    );
 
     return (
         <Modal
-        button={{
-            children: buttonChildren,
-            align: align
-        }}
+            button={{
+                children: buttonChildren,
+                align: align,
+            }}
         >
-        Login section
-        <Button onClick={openLogin} alsoCloseModal={true}>
-            Submit
-        </Button>
+            Login section
+            <Button onClick={openLogin} alsoCloseModal={true}>
+                Submit
+            </Button>
         </Modal>
     );
-}
+};
 
 export default Login;
