@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react";
 import { GLOBAL } from "../utils";
 
+/**
+ * Calculates the scaling factor for the SVG Icons, depending on the current root font size.
+ */
 const reScale = (): number => {
-    const rootFontSize = getComputedStyle(
-        document.documentElement
-    ).fontSize;
-    return (GLOBAL.logoScale * 
-        Number(rootFontSize.substring(0, rootFontSize.length - 2))) / 16;
+    const rootFontSize = getComputedStyle(document.documentElement).fontSize;
+    return (
+        (GLOBAL.logoScale *
+            Number(rootFontSize.substring(0, rootFontSize.length - 2))) /
+        16
+    );
 };
 
 /**
@@ -19,12 +23,12 @@ const useFontScale = (delay = GLOBAL.windowResizeDelay): number => {
 
     useEffect(() => {
         let timer: NodeJS.Timeout;
-        function handleSize() {
+        const handleSize = (): void => {
             clearTimeout(timer);
             timer = setTimeout(() => {
                 setScale(reScale);
             }, delay);
-        }
+        };
 
         window.addEventListener("resize", handleSize);
         return () => {
@@ -33,6 +37,6 @@ const useFontScale = (delay = GLOBAL.windowResizeDelay): number => {
     }, [delay]);
 
     return scale;
-}
+};
 
 export default useFontScale;
