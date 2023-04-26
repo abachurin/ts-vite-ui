@@ -13,7 +13,7 @@ const AnimationSwitch = () => {
     const updateUser = useUpdateUser();
     const icon = user.animate ? GLOBAL.svg.yesMotion : GLOBAL.svg.noMotion;
 
-    const toggleMotion = (move: boolean) => {
+    const toggleMotion = (move: boolean): void => {
         const animations = document.querySelectorAll<StyledHTMLElement>("[data-animated=true]");
         animations.forEach((item) => {
             item.style.animationPlayState = move ? "running" : "paused";
@@ -22,7 +22,7 @@ const AnimationSwitch = () => {
 
     toggleMotion(user.animate);
 
-    const toggleAnimation = () => {
+    const toggleAnimation = (): void => {
         const newAnimate = !user.animate;
         updateUser({ animate: newAnimate } );
         toggleMotion(newAnimate);

@@ -25,7 +25,7 @@ const  useEventListener = (
     element = window,
     fireOnLoad = true,
     stopPropagation = false
-) => {
+): void => {
 
     const callbackRef = useRef(callback);
 

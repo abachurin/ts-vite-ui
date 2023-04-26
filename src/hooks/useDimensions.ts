@@ -5,7 +5,8 @@ import { GLOBAL } from "../utils";
 * Returns a tuple with a React ref, width, and height based on the size of the referenced HTML element.
 * @param delay Optional delay before updating dimensions in milliseconds (default: value of GLOBAL.windowResizeDelay)
 */
-const useDimensions = (delay = GLOBAL.windowResizeDelay) =>{
+const useDimensions = (delay = GLOBAL.windowResizeDelay): 
+[React.RefObject<HTMLDivElement>, number, number] => {
     const ref = useRef<HTMLDivElement>(null);
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
@@ -28,7 +29,7 @@ const useDimensions = (delay = GLOBAL.windowResizeDelay) =>{
         };
     }, [delay]);
 
-    return [ref, width, height] as const;
+    return [ref, width, height];
 }
 
 export default useDimensions;

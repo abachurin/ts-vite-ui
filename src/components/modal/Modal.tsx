@@ -16,7 +16,7 @@ interface ModalProps extends ChildrenProps {
 const Modal = ({button={children: "Click me"}, modal, children}: ModalProps) => {
     const ref = useRef<ModalWindowRef>(null);
 
-    const openModal = useCallback(() => {
+    const openModal = useCallback((): void => {
         ref.current?.open();
       }, []);
 

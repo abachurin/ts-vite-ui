@@ -158,7 +158,7 @@ const ModalWindow = forwardRef(
 // Clone the child element and attach a click listener that closes the modal,
 // if the child is a React Component and has 'alsoCloseModal' prop set to true.
         const renderChild = useCallback(
-            (child: ReactNode) => {
+            (child: ReactNode): ReactNode => {
                 if (React.isValidElement(child) 
                 && Object.prototype.hasOwnProperty.call(child.props, "alsoCloseModal")
                 && child.props.alsoCloseModal) {

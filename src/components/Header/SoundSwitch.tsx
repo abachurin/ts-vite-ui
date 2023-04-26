@@ -13,7 +13,7 @@ const SoundSwitch = () => {
     const isSound = user.sound;
     const icon = isSound ? GLOBAL.svg.yesSound : GLOBAL.svg.noSound;
 
-    const toggleSound = () => {
+    const toggleSound = (): void => {
         updateUser({ sound: !isSound });
     };
 

@@ -23,7 +23,7 @@ const Logo = ({ color }: LogoProps) => {
         transform: translateX(-0.2em);
     `;
 
-    const onClick = useCallback(() => smoothScroll("#agent-pane"), []);
+    const onClick = useCallback((): void => smoothScroll("#agent-pane"), []);
 
     return (
         <Button onClick={onClick}>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { GLOBAL } from "../utils";
 
-const reScale = () => {
+const reScale = (): number => {
     const rootFontSize = getComputedStyle(
         document.documentElement
     ).fontSize;
@@ -14,7 +14,7 @@ const reScale = () => {
  * @param delay - The number of milliseconds to wait after a window resize event before
  * re-rendering the font scaling factor. Defaults to the GLOBAL.windowResizeDelay.
  */
-const useFontScale = (delay = GLOBAL.windowResizeDelay) => {
+const useFontScale = (delay = GLOBAL.windowResizeDelay): number => {
     const [scale, setScale] = useState(reScale());
 
     useEffect(() => {

@@ -48,7 +48,7 @@ export function randomNum(end: number, start = 0): number {
     return Math.random() * (end - start) + start;
 }
 
-export function smoothScroll(selector: string) {
+export function smoothScroll(selector: string): void {
     document.querySelector(selector)?.scrollIntoView({
         behavior: "smooth",
     });

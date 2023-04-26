@@ -22,7 +22,7 @@ const Login = ({ color, align }: LoginProps) => {
     const user = useUser()
     const updateUser = useUpdateUser();
 
-    const openLogin = useCallback(() => {
+    const openLogin = useCallback((): void => {
         updateUser({
             name: "Loki",
             level: GLOBAL.level.user,
@@ -39,7 +39,7 @@ const Login = ({ color, align }: LoginProps) => {
     `;
 
     const buttonChildren = useMemo(
-        () => (
+        (): JSX.Element => (
             <div css={emotion}>
                 {user.name}
             </div>

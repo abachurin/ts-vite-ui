@@ -23,7 +23,7 @@ type HeaderProps = {
 const Header = ({ backgroundColor, textColor, logoColor }: HeaderProps) => {
     const [smallNav, setSmallNav] = useState<boolean>(true);
 
-    useEventListener("resize", () => {
+    useEventListener("resize", (): void => {
         const width = window.innerWidth;
         if (width < GLOBAL.navBreakpoint) {
             setSmallNav(true);
