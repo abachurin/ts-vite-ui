@@ -1,6 +1,14 @@
-import { css } from "@emotion/react";
-import { GLOBAL } from "../../utils";
+import { css, SerializedStyles } from "@emotion/react";
 import { ChildrenProps } from "../../types";
+import { GLOBAL } from "../../utils";
+
+// Emotion styles
+const makeEmotion = (textColor: string): SerializedStyles => css`
+    display: flex;
+    align-items: center;
+    gap: ${GLOBAL.padding};
+    color: ${textColor};
+`;
 
 interface NavProps extends ChildrenProps {
     textColor?: string;
@@ -13,14 +21,9 @@ interface NavProps extends ChildrenProps {
  * @param textColor - The color of the text in the navigation bar.
  * @param children - The child components to render within the navigation bar.
  */
-const Nav = ({ textColor, children }: NavProps) => {
-    const emotion = css`
-        display: flex;
-        align-items: center;
-        gap: ${GLOBAL.padding};
-        color: ${textColor};
-    `;
+const Nav = ({ textColor = "inherit", children }: NavProps) => {
+    const emotion = makeEmotion(textColor);
 
     return <div css={emotion}>{children}</div>;
-}
+};
 export default Nav;

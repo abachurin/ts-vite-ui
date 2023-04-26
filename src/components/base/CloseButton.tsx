@@ -1,28 +1,27 @@
 import { css } from "@emotion/react";
+import { GLOBAL } from "../../utils";
 import Button from "./Button";
 import Icon from "./Icon";
-import { GLOBAL } from "../../utils";
 
-interface CloseButtonProps {
-    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
-}
+// Emotion styles
+const emotion = css`
+    position: absolute;
+    right: 0;
+    top: 0;
+    background-color: inherit;
+    color: inherit;
+    border-radius: ${GLOBAL.borderRadius};
+    z-index: 300;
+`;
 
 /**
  * Renders a Close button component with an onClick event handler.
- *
  * @param onClick - The function to be called when the button is clicked.
  */
+type CloseButtonProps = {
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+};
 const CloseButton = ({ onClick }: CloseButtonProps) => {
-    const emotion = css`
-        position: absolute;
-        right: 0;
-        top: 0;
-        background-color: inherit;
-        color: inherit;
-        border-radius: ${GLOBAL.borderRadius};
-        z-index: 300;
-    `;
-
     return (
         <div css={emotion}>
             <Button onClick={onClick}>

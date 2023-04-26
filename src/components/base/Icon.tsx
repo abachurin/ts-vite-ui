@@ -1,12 +1,13 @@
-import { css } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
 import useFontScale from "../../hooks/useFontScale";
 
-interface IconProps {
-    baseScale?: number;
-    offset?: number;
-    color?: string;
-    svg: string;
-}
+// Emotion styles
+const makeEmotion = (scale: number, baseScale: number): SerializedStyles => css`
+    display: grid;
+    place-items: center;
+    font-size: ${baseScale}em;
+    transform: scale(${scale / baseScale});
+`;
 
 /**
  * Renders an SVG icon with optional color, size, and offset.
@@ -16,16 +17,15 @@ interface IconProps {
  * @param color The color of the icon.
  * @param svg The SVG path data for the icon.
  */
-const Icon = ({ baseScale=1.5, offset=0, color="inherit", svg }: IconProps) => {
+type IconProps = {
+    baseScale?: number;
+    color?: string;
+    svg: string;
+};
+const Icon = ({ baseScale = 1.5, color = "inherit", svg }: IconProps) => {
     const scale = useFontScale();
 
-    const emotion = css`
-        display: grid;
-        place-items: center;
-        font-size: ${baseScale}em;
-        transform: scale(${scale / (baseScale)})
-            translateY(${offset});
-    `;
+    const emotion = makeEmotion(scale, baseScale);
 
     return (
         <div css={emotion}>
@@ -39,6 +39,6 @@ const Icon = ({ baseScale=1.5, offset=0, color="inherit", svg }: IconProps) => {
             </svg>
         </div>
     );
-}
+};
 
 export default Icon;
