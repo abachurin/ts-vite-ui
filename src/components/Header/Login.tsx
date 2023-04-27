@@ -1,27 +1,32 @@
-import { css } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useCallback, useContext } from "react";
-import { GLOBAL } from "../../utils";
 import {
     UserContext,
     UserUpdateContext,
 } from "../../contexts/UserProvider/UserContext";
+import { Alignment } from "../../types";
+import { GLOBAL } from "../../utils";
 import Modal from "../modal/Modal";
 import Button from "../base/Button";
-import { Alignment } from "../../types";
 
-type LoginProps = {
-    color?: string;
-    align?: Alignment;
-};
+// Emotion styles
+const makeEmotion = (color: string): SerializedStyles => css`
+    font-size: ${GLOBAL.logoScale}rem;
+    color: ${color};
+    text-align: center;
+`;
 
 /**
  * Renders a login section with a button that displays the user's name and
  * opens a modal when clicked.
- *
  * @param color - The color of the user's name.
  * @param align - The alignment of the button.
  */
-const Login = ({ color, align }: LoginProps) => {
+type LoginProps = {
+    color?: string;
+    align?: Alignment;
+};
+const Login = ({ color = GLOBAL.colors.neon, align = "left" }: LoginProps) => {
     const user = useContext(UserContext);
     const updateUser = useContext(UserUpdateContext);
 
@@ -34,16 +39,9 @@ const Login = ({ color, align }: LoginProps) => {
         });
     }, [updateUser]);
 
-    const emotion = css`
-        font-size: ${GLOBAL.logoScale}rem;
-        color: ${color};
-        // margin-right: 0.2em;
-        text-align: center;
-    `;
-
     const buttonChildren = useMemo(
-        (): JSX.Element => <div css={emotion}>{user.name}</div>,
-        [emotion, user]
+        (): JSX.Element => <div css={makeEmotion(color)}>{user.name}</div>,
+        [color, user]
     );
 
     return (

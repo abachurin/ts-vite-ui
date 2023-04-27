@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { GLOBAL } from "../../utils";
 import {
     UserContext,
     UserUpdateContext,
 } from "../../contexts/UserProvider/UserContext";
+import { GLOBAL } from "../../utils";
 import Button from "../base/Button";
 import Icon from "../base/Icon";
 

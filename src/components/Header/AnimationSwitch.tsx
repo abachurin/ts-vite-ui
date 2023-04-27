@@ -1,12 +1,22 @@
 import { useContext } from "react";
-import { GLOBAL } from "../../utils";
 import {
     UserContext,
     UserUpdateContext,
 } from "../../contexts/UserProvider/UserContext";
+import { StyledHTMLElement } from "../../types";
+import { GLOBAL } from "../../utils";
 import Button from "../base/Button";
 import Icon from "../base/Icon";
-import { StyledHTMLElement } from "../../types";
+
+// Helper functions
+const toggleMotion = (move: boolean): void => {
+    const animations = document.querySelectorAll<StyledHTMLElement>(
+        "[data-animated=true]"
+    );
+    animations.forEach((item) => {
+        item.style.animationPlayState = move ? "running" : "paused";
+    });
+};
 
 /**
  * Renders a button that toggles the animation setting of the User,
@@ -16,15 +26,6 @@ const AnimationSwitch = () => {
     const user = useContext(UserContext);
     const updateUser = useContext(UserUpdateContext);
     const icon = user.animate ? GLOBAL.svg.yesMotion : GLOBAL.svg.noMotion;
-
-    const toggleMotion = (move: boolean): void => {
-        const animations = document.querySelectorAll<StyledHTMLElement>(
-            "[data-animated=true]"
-        );
-        animations.forEach((item) => {
-            item.style.animationPlayState = move ? "running" : "paused";
-        });
-    };
 
     toggleMotion(user.animate);
 
