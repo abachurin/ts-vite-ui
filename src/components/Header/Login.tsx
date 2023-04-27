@@ -7,7 +7,7 @@ import {
 import { Alignment } from "../../types";
 import { GLOBAL } from "../../utils";
 import Modal from "../modal/Modal";
-import Button from "../base/Button";
+import Button from "../base/Button/Button";
 
 // Emotion styles
 const makeEmotion = (color: string): SerializedStyles => css`

@@ -1,34 +1,30 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useContext } from "react";
-import clickSound from "../../assets/sounds/mixkit-arrow-whoosh-1491.wav";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
-import { ChildrenProps, Alignment } from "../../types";
-import { GLOBAL } from "../../utils";
+import { UserContext } from "../../../contexts/UserProvider/UserContext";
+import { ChildrenProps, Alignment, ButtonVariants } from "../../../types";
+import { GLOBAL } from "../../../utils";
+import { whooshRotateEmotion, whooshRotateClick } from "./whooshRotate";
+import { clickPressEmotion, clickPressClick } from "./clickPress";
 
 // Emotion styles
+const buttonStyles = {
+    whooshRotate: {
+        style: whooshRotateEmotion,
+        click: whooshRotateClick,
+    },
+    clickPress: {
+        style: clickPressEmotion,
+        click: clickPressClick,
+    },
+};
+
 const makeContainer = (align: Alignment): SerializedStyles => css`
     display: flex;
     justify-content: ${align};
     align-items: center;
 `;
 
-const makeEmotion = (align: Alignment, legend: string): SerializedStyles => css`
-    position: relative;
-    text-decoration: none;
-    padding: ${GLOBAL.padding};
-    background-color: inherit;
-    color: inherit;
-    font-size: inherit;
-    border: 0;
-    border-radius: ${GLOBAL.borderRadius};
-    &:hover:enabled {
-        cursor: pointer;
-        box-shadow: 0 0 0.2em var(--white), 0 0 1em var(--white),
-            0 0 2em var(--white), 0 0 4em var(--white);
-    }
-    &:disabled {
-        opacity: 0.75;
-    }
+const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
     ${!window.matchMedia("(hover: none)").matches && legend
         ? `
             &::before {
@@ -67,36 +63,23 @@ const makeEmotion = (align: Alignment, legend: string): SerializedStyles => css`
         : ""}
 `;
 
-// Helper functions
-const flashLink = (el: HTMLButtonElement, volume: number) => {
-    el.animate(
-        {
-            transform: [
-                "rotateY(0deg)",
-                "rotateY(90deg)",
-                "rotateY(90deg)",
-                "rotateY(0deg)",
-            ],
-            offset: [0, 0.37, 0.63, 1],
-        },
-        1000
-    );
-    const audio = new Audio(clickSound);
-    audio.volume = volume;
-    audio.play();
-};
-
 /**
  * Returns a Button component with specified properties.
  *
+ * @param type - The type of button, should be a member of ButtonVariants,
+ * there should be .ts file describing style and default onClick behavior in Button folder,
+ * it should be imported above buttonStyles object amended respectively.
  * @param align - The alignment of the button.
  * @param legend - The text to display when hovering over the button if it is disabled.
  * @param level - The minimum user level required to click the button.
  * @param onClick - The function to call when the button is clicked.
  * @param children - The child components to render within the button.
- * @param closingModal - Set "true" if the button is inside a modal and should close it when clicked.
+ * @param aldoCloseModal - Set "true" if the button is inside a modal and should close it
+ * when clicked. Note, that this prop is actually used by the parent ModalWindow component,
+ * but has to be declared here
  */
-export interface ButtonGroupProps extends ChildrenProps {
+export interface ButtonProps extends ChildrenProps {
+    type?: ButtonVariants;
     align?: Alignment;
     legend?: string;
     level?: number;
@@ -104,17 +87,25 @@ export interface ButtonGroupProps extends ChildrenProps {
     alsoCloseModal?: boolean;
 }
 const Button = ({
+    type = "whooshRotate",
     align = "left",
     legend = "",
     level = 0,
     onClick,
     children,
-}: ButtonGroupProps) => {
+}: ButtonProps) => {
     const user = useContext(UserContext);
     const volume = user.sound ? user.soundLevel : 0;
 
     const container = useMemo(() => makeContainer(align), [align]);
-    const emotion = useMemo(() => makeEmotion(align, legend), [align, legend]);
+    const emotion = useMemo(
+        () => css`
+            ${buttonStyles[type].style(align, legend)},
+            ${makeLegend(align, legend)}
+        `,
+        [type, align, legend]
+    );
+    const flash = useMemo(() => buttonStyles[type].click, [type]);
 
     return (
         <div css={container}>
@@ -122,7 +113,7 @@ const Button = ({
                 css={emotion}
                 data-legend={legend}
                 onClick={(e) => {
-                    flashLink(e.currentTarget as HTMLButtonElement, volume);
+                    flash(e.currentTarget as HTMLButtonElement, volume);
                     onClick && onClick(e);
                 }}
                 disabled={user.level < level}

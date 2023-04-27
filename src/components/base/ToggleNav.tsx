@@ -10,7 +10,7 @@ import React, {
 import useToggle from "../../hooks/useToggle";
 import { RgbaColor, ChildrenProps, Alignment } from "../../types";
 import { GLOBAL, rgba_rgb } from "../../utils";
-import Button from "./Button";
+import Button from "./Button/Button";
 import Icon from "./Icon";
 
 // Emotion styles

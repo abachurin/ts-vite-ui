@@ -6,6 +6,7 @@ export type Pixels = `${number}px`;
 // HTML-related types
 export type EventKey = keyof HTMLElementEventMap | keyof WindowEventMap;
 export type EventCallback = (e: Event) => void;
+export type OnClickFunction = (el: HTMLButtonElement, volume: number) => void;
 export type StyledHTMLElement = HTMLElement & {
     style: CSSStyleDeclaration;
 };
@@ -41,3 +42,6 @@ export interface ChildrenProps {
 export interface AlignProps {
     align?: Alignment;
 }
+
+// Button types
+export type ButtonVariants = "whooshRotate" | "clickPress";

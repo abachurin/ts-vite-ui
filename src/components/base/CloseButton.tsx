@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { GLOBAL } from "../../utils";
-import Button from "./Button";
+import Button from "./Button/Button";
 import Icon from "./Icon";
 
 // Emotion styles

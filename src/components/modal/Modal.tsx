@@ -1,6 +1,6 @@
 import { useRef, useCallback } from "react";
 import { ChildrenProps } from "../../types";
-import Button, { ButtonProps } from "../base/Button";
+import Button, { ButtonProps } from "../base/Button/Button";
 import ModalWindow, {
     ModalWindowRef,
     ModalWindowProps,

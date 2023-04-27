@@ -1,10 +1,9 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useContext } from "react";
-import whooshSound from "../../assets/sounds/mixkit-arrow-whoosh-1491.wav";
 import clickSound from "../../assets/sounds/mixkit-arrow-whoosh-1491.wav";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
-import { ChildrenProps, Alignment } from "../../types";
-import { GLOBAL } from "../../utils";
+import { UserContext } from "../../../contexts/UserProvider/UserContext";
+import { ChildrenProps, Alignment } from "../../../types";
+import { GLOBAL } from "../../../utils";
 
 // Emotion styles
 const makeContainer = (align: Alignment): SerializedStyles => css`
@@ -97,7 +96,7 @@ const flashLink = (el: HTMLButtonElement, volume: number) => {
  * @param children - The child components to render within the button.
  * @param closingModal - Set "true" if the button is inside a modal and should close it when clicked.
  */
-export interface ButtonProps extends ChildrenProps {
+export interface ButtonGroupProps extends ChildrenProps {
     align?: Alignment;
     legend?: string;
     level?: number;
@@ -110,7 +109,7 @@ const Button = ({
     level = 0,
     onClick,
     children,
-}: ButtonProps) => {
+}: ButtonGroupProps) => {
     const user = useContext(UserContext);
     const volume = user.sound ? user.soundLevel : 0;
 

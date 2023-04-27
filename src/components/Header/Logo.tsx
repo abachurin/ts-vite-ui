@@ -1,7 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useCallback } from "react";
 import { GLOBAL, smoothScroll } from "../../utils";
-import Button from "../base/Button";
+import Button from "../base/Button/Button";
 import Icon from "../base/Icon";
 
 // Emotion styles
