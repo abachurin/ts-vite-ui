@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import useEventListener from "../../hooks/useEventListener";
 import { RgbaColor } from "../../types";
 import { GLOBAL } from "../../utils";
