@@ -7,8 +7,8 @@ const emotion = css`
     position: sticky;
     width: 100%;
     margin-inline: 0 !important;
-    padding-inline: ${GLOBAL.padding};
-    padding-block: calc(${GLOBAL.padding} * 1.4);
+    font-size: 1.2rem;
+    padding: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius} ${GLOBAL.borderRadius} 0 0;
     border-bottom: 1px solid white;
 `;

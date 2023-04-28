@@ -19,8 +19,8 @@ export const GLOBAL = {
         big: 300,
     },
     depthOfStarField: 5,
-    borderRadius: "0.3em",
-    padding: "0.5em",
+    borderRadius: "0.3rem",
+    padding: "0.5rem",
     boxShadow: "0 0 0.5em 0.1em rgba(255, 255, 255, 0.2)",
     starSpeed: 5,
     windowResizeDelay: 200,
@@ -76,7 +76,7 @@ export function rgba_rgb(color: RgbaColor): string {
     const numbers = color
         .slice(5, color.length - 1)
         .split(",")
-        .map((p) => Number(p));
+        .map((p) => +p);
     const opacity = numbers[3];
     return `rgb(${numbers[0] * opacity}, ${numbers[1] * opacity}, ${
         numbers[2] * opacity

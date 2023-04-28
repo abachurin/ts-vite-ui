@@ -5,6 +5,9 @@ import Icon from "./Icon";
 
 // Emotion styles
 const emotion = css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     right: 0;
     top: 0;
@@ -16,16 +19,12 @@ const emotion = css`
 
 /**
  * Renders a Close button component with an onClick event handler.
- * @param onClick - The function to be called when the button is clicked.
  */
-type CloseButtonProps = {
-    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
-};
-const CloseButton = ({ onClick }: CloseButtonProps) => {
+const CloseButton = () => {
     return (
         <div css={emotion}>
-            <Button onClick={onClick}>
-                <Icon svg={GLOBAL.svg.closeWindow} baseScale={1} />
+            <Button toggleModal={false}>
+                <Icon svg={GLOBAL.svg.closeWindow} baseScale={1.4} />
             </Button>
         </div>
     );

@@ -1,15 +1,10 @@
 import { css, keyframes, SerializedStyles } from "@emotion/react";
 import ReactDOM from "react-dom";
-import React, {
-    useState,
-    useMemo,
-    forwardRef,
-    useImperativeHandle,
-    useCallback,
-    ReactNode,
-    cloneElement,
-    ReactElement,
-} from "react";
+import { useContext, useMemo } from "react";
+import {
+    ModalContext,
+    ModalUpdateContext,
+} from "../../contexts/ModalProvider/ModalContext";
 import { ChildrenProps } from "../../types";
 import { GLOBAL } from "../../utils";
 import CloseButton from "../base/CloseButton";
@@ -119,111 +114,66 @@ export interface ModalWindowRef {
     open: () => () => void;
     close: () => () => void;
 }
-const ModalWindow = forwardRef(
-    (
-        {
-            ContainerBackgroundColor = GLOBAL.backgrounds.blur,
-            ModalBackgroundColor = GLOBAL.colors.white,
-            color = "black",
-            width = "auto",
-            height = "auto",
-            children,
-        }: ModalWindowProps,
-        ref
-    ) => {
-        const baseContainer = useMemo(
-            () => makeBaseContainer(ContainerBackgroundColor),
-            [ContainerBackgroundColor]
-        );
-        const baseModal = useMemo(
-            () => makeBaseModal(ModalBackgroundColor, color, width, height),
-            [ModalBackgroundColor, color, width, height]
-        );
+const ModalWindow = ({
+    ContainerBackgroundColor = GLOBAL.backgrounds.blur,
+    ModalBackgroundColor = GLOBAL.colors.white,
+    color = "black",
+    width = "auto",
+    height = "auto",
+    children,
+}: ModalWindowProps) => {
+    const isOpen = useContext(ModalContext);
+    const updateIsOpen = useContext(ModalUpdateContext);
 
-        const [show, setShow] = useState<boolean | "none">("none");
-        const closeModal = () => {
-            setShow(false);
-        };
-        const openModal = () => {
-            setShow(true);
-        };
+    const baseContainer = useMemo(
+        () => makeBaseContainer(ContainerBackgroundColor),
+        [ContainerBackgroundColor]
+    );
+    const baseModal = useMemo(
+        () => makeBaseModal(ModalBackgroundColor, color, width, height),
+        [ModalBackgroundColor, color, width, height]
+    );
+    if (isOpen === "none") return null;
+    const containerStyle = isOpen
+        ? css`
+              ${baseContainer};
+              transform: scaleY(0.01) scaleX(0);
+              animation: ${unFold} 1s cubic-bezier(0.165, 0.84, 0.44, 1)
+                  forwards;
+          `
+        : css`
+              ${baseContainer};
+              transform: scale(1);
+              animation: ${fold} 0.5s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)
+                  forwards;
+          `;
 
-        useImperativeHandle(ref, () => ({
-            open: () => openModal(),
-            close: () => closeModal(),
-        }));
+    const modalStyle = isOpen
+        ? css`
+              ${baseModal};
+              transform: scale(0);
+              animation: ${zoom} 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)
+                  forwards;
+          `
+        : css`
+              ${baseModal};
+              animation: ${unZoom} 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
+                  forwards;
+          `;
 
-        let containerStyle;
-        let modalStyle;
-
-        // Clone the child element and attach a click listener that closes the modal,
-        // if the child is a React Component and has 'alsoCloseModal' prop set to true.
-        const renderChild = useCallback((child: ReactNode): ReactNode => {
-            if (
-                React.isValidElement(child) &&
-                Object.prototype.hasOwnProperty.call(
-                    child.props,
-                    "alsoCloseModal"
-                ) &&
-                child.props.alsoCloseModal
-            ) {
-                return cloneElement(child as ReactElement, {
-                    onClick: () => {
-                        if (
-                            Object.prototype.hasOwnProperty.call(
-                                child.props,
-                                "onClick"
-                            )
-                        ) {
-                            child.props.onClick();
-                        }
-                        closeModal();
-                    },
-                });
-            }
-            return child;
-        }, []);
-
-        if (show) {
-            containerStyle = css`
-                ${baseContainer};
-                transform: scaleY(0.01) scaleX(0);
-                animation: ${unFold} 1s cubic-bezier(0.165, 0.84, 0.44, 1)
-                    forwards;
-            `;
-            modalStyle = css`
-                ${baseModal};
-                transform: scale(0);
-                animation: ${zoom} 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)
-                    forwards;
-            `;
-        } else {
-            containerStyle = css`
-                ${baseContainer};
-                transform: scale(1);
-                animation: ${fold} 0.5s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)
-                    forwards;
-            `;
-            modalStyle = css`
-                ${baseModal};
-                animation: ${unZoom} 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-                    forwards;
-            `;
-        }
-
-        if (show === "none") return null;
-
-        return ReactDOM.createPortal(
-            <div css={containerStyle}>
-                <div onClick={closeModal} css={backgroundStyle}></div>
-                <div css={modalStyle}>
-                    {<CloseButton onClick={closeModal} />}
-                    {React.Children.map(children, renderChild)}
-                </div>
-            </div>,
-            document.getElementById("modal") as HTMLElement
-        );
-    }
-);
+    return ReactDOM.createPortal(
+        <div css={containerStyle}>
+            <div
+                onClick={() => updateIsOpen(false)}
+                css={backgroundStyle}
+            ></div>
+            <div css={modalStyle}>
+                {<CloseButton />}
+                {children}
+            </div>
+        </div>,
+        document.getElementById("modal") as HTMLElement
+    );
+};
 
 export default ModalWindow;

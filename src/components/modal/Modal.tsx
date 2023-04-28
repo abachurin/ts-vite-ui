@@ -1,13 +1,10 @@
-import { useRef, useCallback } from "react";
+import ModalProvider from "../../contexts/ModalProvider/ModalProvider";
 import { ChildrenProps } from "../../types";
 import Button, { ButtonProps } from "../base/Button/Button";
-import ModalWindow, {
-    ModalWindowRef,
-    ModalWindowProps,
-} from "../modal/ModalWindow";
+import ModalWindow, { ModalWindowProps } from "../modal/ModalWindow";
 
 /**
- * Renders a modal component with a button that opens the modal when clicked.
+ * Renders a modal component with a Button that opens the modal when clicked.
  * @param props - The props include Button props and children, as well as ModalWindow props.
  */
 interface ModalProps extends ChildrenProps {
@@ -15,23 +12,15 @@ interface ModalProps extends ChildrenProps {
     modal?: ModalWindowProps;
 }
 const Modal = ({
-    button = { children: "Click me" },
+    button = { children: "Open Modal" },
     modal,
     children,
 }: ModalProps) => {
-    const ref = useRef<ModalWindowRef>(null);
-
-    const openModal = useCallback((): void => {
-        ref.current?.open();
-    }, []);
-
     return (
-        <div>
-            <Button {...button} onClick={openModal} />
-            <ModalWindow {...modal} ref={ref}>
-                {children}
-            </ModalWindow>
-        </div>
+        <ModalProvider>
+            <Button {...button} toggleModal={true} />
+            <ModalWindow {...modal}>{children}</ModalWindow>
+        </ModalProvider>
     );
 };
 

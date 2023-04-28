@@ -5,8 +5,7 @@ import useFontScale from "../../hooks/useFontScale";
 const makeEmotion = (scale: number, baseScale: number): SerializedStyles => css`
     display: grid;
     place-items: center;
-    font-size: ${baseScale}em;
-    transform: scale(${scale / baseScale});
+    transform: scale(${(scale * baseScale) / 1.5});
 `;
 
 /**
@@ -22,7 +21,7 @@ type IconProps = {
     color?: string;
     svg: string;
 };
-const Icon = ({ baseScale = 1.5, color = "inherit", svg }: IconProps) => {
+const Icon = ({ baseScale = 1, color = "inherit", svg }: IconProps) => {
     const scale = useFontScale();
 
     const emotion = makeEmotion(scale, baseScale);

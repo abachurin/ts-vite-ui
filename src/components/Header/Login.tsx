@@ -52,7 +52,7 @@ const Login = ({ color = GLOBAL.colors.neon, align = "left" }: LoginProps) => {
             }}
         >
             Login section
-            <Button onClick={openLogin} alsoCloseModal={true}>
+            <Button onClick={openLogin} toggleModal={false}>
                 Submit
             </Button>
         </Modal>

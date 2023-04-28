@@ -9,13 +9,13 @@ import { ChildrenProps, UserPartial } from "../../types";
 const UserProvider = ({ children }: ChildrenProps) => {
     const [user, setUser] = useState(defaultUser);
 
-    const changeUser = (update: UserPartial) => {
+    const changeState = (update: UserPartial) => {
         setUser({ ...user, ...update });
     };
 
     return (
         <UserContext.Provider value={user}>
-            <UserUpdateContext.Provider value={changeUser}>
+            <UserUpdateContext.Provider value={changeState}>
                 {children}
             </UserUpdateContext.Provider>
         </UserContext.Provider>

@@ -93,7 +93,7 @@ const ToggleNav = ({
     return (
         <div css={emotion}>
             <Button onClick={() => setVisibility(!visibility)} align={align}>
-                <Icon color={logoColor} svg={GLOBAL.svg.menu} baseScale={1} />
+                <Icon color={logoColor} svg={GLOBAL.svg.menu} baseScale={1.5} />
             </Button>
             <div ref={ref} css={hiddenNavStyle}>
                 {React.Children.map(children, renderChild)}

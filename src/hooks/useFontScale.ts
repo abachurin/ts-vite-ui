@@ -8,7 +8,7 @@ const reScale = (): number => {
     const rootFontSize = getComputedStyle(document.documentElement).fontSize;
     return (
         (GLOBAL.logoScale *
-            Number(rootFontSize.substring(0, rootFontSize.length - 2))) /
+            +rootFontSize.substring(0, rootFontSize.length - 2)) /
         16
     );
 };

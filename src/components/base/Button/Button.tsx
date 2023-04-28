@@ -1,10 +1,16 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useContext } from "react";
 import { UserContext } from "../../../contexts/UserProvider/UserContext";
-import { ChildrenProps, Alignment, ButtonVariants } from "../../../types";
+import {
+    ChildrenProps,
+    Alignment,
+    ButtonVariants,
+    ModalState,
+} from "../../../types";
 import { GLOBAL } from "../../../utils";
 import { whooshRotateEmotion, whooshRotateClick } from "./whooshRotate";
 import { clickPressEmotion, clickPressClick } from "./clickPress";
+import { ModalUpdateContext } from "../../../contexts/ModalProvider/ModalContext";
 
 // Emotion styles
 const buttonStyles = {
@@ -72,9 +78,9 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
  * @param align - The alignment of the button.
  * @param legend - The text to display when hovering over the button if it is disabled.
  * @param level - The minimum user level required to click the button.
+ * @param toggleModal - Whether the button should open or close a parent modal window.
  * @param onClick - The function to call when the button is clicked.
  * @param children - The child components to render within the button.
- * @param aldoCloseModal - Set "true" if the button is inside a modal and should close it
  * when clicked. Note, that this prop is actually used by the parent ModalWindow component,
  * but has to be declared here
  */
@@ -83,24 +89,26 @@ export interface ButtonProps extends ChildrenProps {
     align?: Alignment;
     legend?: string;
     level?: number;
+    toggleModal?: ModalState;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    alsoCloseModal?: boolean;
 }
 const Button = ({
     type = "whooshRotate",
     align = "left",
     legend = "",
     level = 0,
+    toggleModal = "none",
     onClick,
     children,
 }: ButtonProps) => {
+    const changeIsOpen = useContext(ModalUpdateContext);
     const user = useContext(UserContext);
     const volume = user.sound ? user.soundLevel : 0;
 
     const container = useMemo(() => makeContainer(align), [align]);
     const emotion = useMemo(
         () => css`
-            ${buttonStyles[type].style(align, legend)},
+            ${buttonStyles[type].style},
             ${makeLegend(align, legend)}
         `,
         [type, align, legend]
@@ -115,6 +123,8 @@ const Button = ({
                 onClick={(e) => {
                     flash(e.currentTarget as HTMLButtonElement, volume);
                     onClick && onClick(e);
+                    console.log(toggleModal);
+                    if (toggleModal !== "none") changeIsOpen(toggleModal);
                 }}
                 disabled={user.level < level}
             >

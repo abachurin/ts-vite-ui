@@ -84,7 +84,11 @@ const Header = ({ backgroundColor, textColor, logoColor }: HeaderProps) => {
                     <SoundSwitch />
                     <AnimationSwitch />
                 </Nav>
-                <ToggleNav align='right' backgroundColor={backgroundColor}>
+                <ToggleNav
+                    align='right'
+                    backgroundColor={backgroundColor}
+                    logoColor={logoColor}
+                >
                     <HelpModal />
                     <ContactsModal />
                     <AdminModal />

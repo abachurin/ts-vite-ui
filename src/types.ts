@@ -2,6 +2,7 @@
 export type RgbaColor = `rgba(${number}, ${number}, ${number}, ${number})`;
 export type Alignment = "left" | "center" | "right";
 export type Pixels = `${number}px`;
+export type ModalState = boolean | "none";
 
 // HTML-related types
 export type EventKey = keyof HTMLElementEventMap | keyof WindowEventMap;
