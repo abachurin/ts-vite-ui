@@ -14,10 +14,8 @@ const emotion = css`
     display: flex;
     flex-direction: column;
     gap: ${GLOBAL.padding};
-    & a {
-        text-decoration: none;
-        color: white;
-    }
+    padding-bottom: calc(${GLOBAL.padding} * 2);
+    color: ${GLOBAL.colors.white};
     & > * {
         flex: 1;
         display: flex;
@@ -59,14 +57,11 @@ const ContactsModal = ({ align }: AlignProps) => {
                             align='center'
                             width={GLOBAL.contactButtonWidth}
                             backgroundColor={GLOBAL.colors.orange}
-                            onClick={xxx}
+                            onClick={() =>
+                                window.open("mailto: bachurin.alex@gmail.com")
+                            }
                         >
-                            <a
-                                href='mailto: bachurin.alex@gmail.com'
-                                target='_blank'
-                            >
-                                Send E-mail
-                            </a>
+                            Send E-mail
                         </Button>
                     </div>
                     <div>
@@ -76,17 +71,15 @@ const ContactsModal = ({ align }: AlignProps) => {
                             rescaleFactor={1}
                         />
                         <Button
+                            type='clickPress'
                             align='center'
                             width={GLOBAL.contactButtonWidth}
                             backgroundColor={GLOBAL.colors.green}
-                            onClick={xxx}
+                            onClick={() =>
+                                window.open("https://wa.me/351961072567")
+                            }
                         >
-                            <a
-                                href='https://api.whatsapp.com/send?phone=351961072567'
-                                target='_blank'
-                            >
-                                Whatsapp
-                            </a>
+                            Whatsapp
                         </Button>
                     </div>
                     <div>
@@ -96,17 +89,15 @@ const ContactsModal = ({ align }: AlignProps) => {
                             rescaleFactor={1}
                         />
                         <Button
+                            type='clickPress'
                             align='center'
                             width={GLOBAL.contactButtonWidth}
                             backgroundColor={GLOBAL.colors.blue}
-                            onClick={xxx}
+                            onClick={() =>
+                                window.open("https://t.me/abachurin1974")
+                            }
                         >
-                            <a
-                                href='https://t.me/abachurin1974'
-                                target='_blank'
-                            >
-                                Telegram
-                            </a>
+                            Telegram
                         </Button>
                     </div>
                 </div>
