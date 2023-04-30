@@ -1,49 +1,93 @@
 import { css } from "@emotion/react";
+import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import Modal from "../modal/Modal";
 import { AlignProps } from "../../types";
 import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";
-import ModalFooter from "../modal/ModalFooter";
+import ButtonGroup from "../base/Button/ButtonGroup";
+import Button from "../base/Button/Button";
+import { GLOBAL } from "../../utils";
+
+// Emotion styles
+
+const markdown = css`
+    padding: ${GLOBAL.padding};
+    text-align: justify;
+    text-justify: inter-word;
+    & img {
+        max-width: 100%;
+        height: auto;
+    }
+    & ul {
+        padding-left: ${GLOBAL.padding};
+    }
+    & h4 {
+        font-size: 1.1rem;
+    }
+    & h5 {
+        font-size: 1rem;
+    }
+`;
+// Fetching markdown files
+const fetchMarkdown = async (section: string) => {
+    const response = await fetch(`src/assets/description/${section}.md`);
+    return await response.text();
+};
+
+const sections = {
+    guide: await fetchMarkdown("guide"),
+    history: await fetchMarkdown("history"),
+    structure: await fetchMarkdown("structure"),
+};
 
 /**
  * Returns a React Modal component containing the Help section.
  */
 const HelpModal = ({ align }: AlignProps) => {
+    const [section, setSection] = useState<"guide" | "history" | "structure">(
+        "guide"
+    );
+
     return (
         <Modal
-            button={{ type: "clickPress", align: align, children: "Help!" }}
+            button={{ align: align, children: "Help!" }}
             modal={{ width: `clamp(320px, 90%, 800px)`, height: "auto" }}
         >
-            <ModalHeader>Help Section</ModalHeader>
+            <ModalHeader>
+                <h3>{section.toUpperCase()}</h3>
+                <ButtonGroup>
+                    <Button
+                        type='clickPress'
+                        backgroundColor='rgb(50, 50, 224)'
+                        color={GLOBAL.colors.white}
+                        onClick={() => setSection("guide")}
+                    >
+                        Guide
+                    </Button>
+                    <Button
+                        type='clickPress'
+                        backgroundColor='rgb(204, 112, 0)'
+                        color={GLOBAL.colors.white}
+                        onClick={() => setSection("history")}
+                    >
+                        History
+                    </Button>
+                    <Button
+                        type='clickPress'
+                        backgroundColor='rgb(4, 96, 64)'
+                        color={GLOBAL.colors.white}
+                        onClick={() => setSection("structure")}
+                    >
+                        Structure
+                    </Button>
+                </ButtonGroup>
+            </ModalHeader>
             <ModalBody>
-                <div
-                    css={css`
-                        font-weight: 300;
-                    `}
-                >
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolor sequi repellendus similique deleniti quos maiores
-                    doloremque dolores, magnam nemo? Non, doloremque? Iste,
-                    voluptatem recusandae omnis libero nihil minima explicabo!
-                    Placeat quisquam architecto molestiae consectetur
-                    repellendus maxime maiores sint reprehenderit modi officiis
-                    corrupti laborum id placeat nihil. Accusantium quibusdam ex
-                    esse facere similique laborum cupiditate assumenda aperiam
-                    impedit laboriosam temporibus sequi, soluta neque non,
-                    molestiae culpa id quo, est et voluptatem eius? Incidunt
-                    iusto rem odio est eligendi nostrum adipisci asperiores
-                    reprehenderit cum, temporibus eaque a ducimus, dolore
-                    beatae! Corporis ut voluptas rerum accusantium obcaecati
-                    doloribus quam facere exercitationem, earum illum amet
-                    perspiciatis pariatur maiores deleniti accusamus eveniet
-                    quasi numquam architecto veritatis iusto tempore? Ullam
-                    dolorum sunt nisi facere impedit recusandae itaque totam
-                    soluta! Animi sequi sit maxime vero fugit facere assumenda
-                    dicta rem nobis totam iure quidem incidunt soluta pariatur,
-                    doloremque ut deserunt eligendi placeat molestias nisi.
-                </div>
+                <ReactMarkdown css={markdown}>
+                    {sections[section]}
+                </ReactMarkdown>
             </ModalBody>
-            <ModalFooter>Help Footer</ModalFooter>
         </Modal>
     );
 };

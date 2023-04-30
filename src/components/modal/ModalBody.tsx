@@ -6,9 +6,9 @@ import { GLOBAL } from "../../utils";
 const emotion = css`
     flex: 1;
     width: 100%;
-    margin-inline: 0 !important;
     padding: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
+    font-weight: 300;
     overflow: scroll;
 `;
 

@@ -47,6 +47,7 @@ const Login = ({ color = GLOBAL.colors.neon, align = "left" }: LoginProps) => {
     return (
         <Modal
             button={{
+                type: "whooshRotate",
                 children: buttonChildren,
                 align: align,
             }}

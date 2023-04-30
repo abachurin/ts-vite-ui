@@ -87,6 +87,9 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
 export interface ButtonProps extends ChildrenProps {
     type?: ButtonVariants;
     align?: Alignment;
+    backgroundColor?: string;
+    color?: string;
+    borderRadius?: string;
     legend?: string;
     level?: number;
     toggleModal?: ModalState;
@@ -95,6 +98,9 @@ export interface ButtonProps extends ChildrenProps {
 const Button = ({
     type = "whooshRotate",
     align = "left",
+    backgroundColor = "inherit",
+    color = "inherit",
+    borderRadius = "",
     legend = "",
     level = 0,
     toggleModal = "none",
@@ -108,11 +114,12 @@ const Button = ({
     const container = useMemo(() => makeContainer(align), [align]);
     const emotion = useMemo(
         () => css`
-            ${buttonStyles[type].style},
+            ${buttonStyles[type].style(backgroundColor, color, borderRadius)},
             ${makeLegend(align, legend)}
         `,
-        [type, align, legend]
+        [type, align, legend, backgroundColor, color, borderRadius]
     );
+
     const flash = useMemo(() => buttonStyles[type].click, [type]);
 
     return (
@@ -123,7 +130,6 @@ const Button = ({
                 onClick={(e) => {
                     flash(e.currentTarget as HTMLButtonElement, volume);
                     onClick && onClick(e);
-                    console.log(toggleModal);
                     if (toggleModal !== "none") changeIsOpen(toggleModal);
                 }}
                 disabled={user.level < level}

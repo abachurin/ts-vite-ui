@@ -1,13 +1,14 @@
 import { css, keyframes, SerializedStyles } from "@emotion/react";
 import ReactDOM from "react-dom";
-import { useContext, useMemo } from "react";
+import { useCallback, useContext, useMemo } from "react";
+import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 import {
     ModalContext,
     ModalUpdateContext,
 } from "../../contexts/ModalProvider/ModalContext";
+import { UserContext } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
-import { GLOBAL } from "../../utils";
-import CloseButton from "../base/CloseButton";
+import { GLOBAL, makeSound } from "../../utils";
 
 // Emotion styles
 const makeBaseContainer = (
@@ -79,6 +80,7 @@ const makeBaseModal = (
     display: flex;
     flex-direction: column;
     position: relative;
+    padding-inline: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
     box-shadow: ${GLOBAL.boxShadow};
     background: ${ModalBackgroundColor};
@@ -116,7 +118,7 @@ export interface ModalWindowRef {
 }
 const ModalWindow = ({
     ContainerBackgroundColor = GLOBAL.backgrounds.blur,
-    ModalBackgroundColor = GLOBAL.colors.white,
+    ModalBackgroundColor = "white",
     color = "black",
     width = "auto",
     height = "auto",
@@ -124,6 +126,8 @@ const ModalWindow = ({
 }: ModalWindowProps) => {
     const isOpen = useContext(ModalContext);
     const updateIsOpen = useContext(ModalUpdateContext);
+    const user = useContext(UserContext);
+    const volume = user.soundLevel;
 
     const baseContainer = useMemo(
         () => makeBaseContainer(ContainerBackgroundColor),
@@ -133,7 +137,7 @@ const ModalWindow = ({
         () => makeBaseModal(ModalBackgroundColor, color, width, height),
         [ModalBackgroundColor, color, width, height]
     );
-    if (isOpen === "none") return null;
+
     const containerStyle = isOpen
         ? css`
               ${baseContainer};
@@ -161,16 +165,17 @@ const ModalWindow = ({
                   forwards;
           `;
 
+    const closeModal = useCallback(() => {
+        makeSound(clickSound, volume);
+        updateIsOpen(false);
+    }, [updateIsOpen, volume]);
+
+    if (isOpen === "none") return null;
+
     return ReactDOM.createPortal(
         <div css={containerStyle}>
-            <div
-                onClick={() => updateIsOpen(false)}
-                css={backgroundStyle}
-            ></div>
-            <div css={modalStyle}>
-                {<CloseButton />}
-                {children}
-            </div>
+            <div onClick={closeModal} css={backgroundStyle}></div>
+            <div css={modalStyle}>{children}</div>
         </div>,
         document.getElementById("modal") as HTMLElement
     );

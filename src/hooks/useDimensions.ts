@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import { GLOBAL } from "../utils";
 
 /**
@@ -12,21 +12,25 @@ const useDimensions = (
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
 
-    useEffect(() => {
-        let timer: NodeJS.Timeout;
+    useLayoutEffect(() => {
         function handleSize() {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                setWidth(ref.current?.clientWidth || 0);
-                setHeight(ref.current?.clientHeight || 0);
-            }, delay);
+            setWidth(ref.current?.clientWidth || 0);
+            setHeight(ref.current?.clientHeight || 0);
         }
 
-        window.addEventListener("load", handleSize);
-        window.addEventListener("resize", handleSize);
+        handleSize();
+
+        let timer: NodeJS.Timeout;
+        function delayedHandleSize() {
+            clearTimeout(timer);
+            timer = setTimeout(handleSize, delay);
+        }
+
+        window.addEventListener("load", delayedHandleSize);
+        window.addEventListener("resize", delayedHandleSize);
         return () => {
-            window.removeEventListener("load", handleSize);
-            window.removeEventListener("resize", handleSize);
+            window.removeEventListener("load", delayedHandleSize);
+            window.removeEventListener("resize", delayedHandleSize);
         };
     }, [delay]);
 

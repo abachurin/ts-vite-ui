@@ -35,23 +35,19 @@ const makeEmotion = (backgroundColor: RgbaColor, textColor: string) => css`
     }
 `;
 
+// Helper functions
+
+const isSmallScreen = (): boolean => window.innerWidth < GLOBAL.navBreakpoint;
+
 type HeaderProps = {
     backgroundColor: RgbaColor;
     textColor: string;
     logoColor: string;
 };
-
 const Header = ({ backgroundColor, textColor, logoColor }: HeaderProps) => {
-    const [smallNav, setSmallNav] = useState<boolean>(true);
+    const [smallNav, setSmallNav] = useState<boolean>(isSmallScreen());
 
-    useEventListener("resize", (): void => {
-        const width = window.innerWidth;
-        if (width < GLOBAL.navBreakpoint) {
-            setSmallNav(true);
-        } else if (width >= GLOBAL.navBreakpoint) {
-            setSmallNav(false);
-        }
-    });
+    useEventListener("resize", () => setSmallNav(isSmallScreen()));
 
     const emotion = makeEmotion(backgroundColor, textColor);
 

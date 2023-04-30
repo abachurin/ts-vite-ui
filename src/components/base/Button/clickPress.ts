@@ -1,23 +1,35 @@
 import { css } from "@emotion/react";
 import clickSound from "../../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 import { OnClickFunction } from "../../../types";
-import { GLOBAL } from "../../../utils";
+import { GLOBAL, makeSound } from "../../../utils";
 
-export const clickPressEmotion = css`
+export const clickPressEmotion = (
+    backgroundColor: string,
+    color: string,
+    borderRadius: string
+) => css`
     position: relative;
     text-decoration: none;
     padding: ${GLOBAL.padding};
-    background-color: inherit;
-    color: inherit;
+    border-radius: ${borderRadius || GLOBAL.borderRadius};
+    background-color: ${backgroundColor};
+    color: ${color};
     font-size: inherit;
     border: 0;
-    border-radius: ${GLOBAL.borderRadius};
-    &:hover:enabled {
+    :hover:enabled {
         cursor: pointer;
-        box-shadow: 0 0 0.2em var(--white), 0 0 1em var(--white),
-            0 0 2em var(--white), 0 0 4em var(--white);
     }
-    &:disabled {
+    :hover:enabled::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: ${borderRadius || GLOBAL.borderRadius};
+        background-color: ${GLOBAL.backgrounds.blur};
+    }
+    :disabled {
         opacity: 0.75;
     }
 `;
@@ -29,16 +41,15 @@ export const clickPressClick: OnClickFunction = (
     el.animate(
         {
             transform: [
-                "rotateY(0deg)",
-                "rotateY(90deg)",
-                "rotateY(90deg)",
-                "rotateY(0deg)",
+                "translateX(0) translateY(0)",
+                "translateX(0.2rem) translateY(-0.2rem)",
+                "translateX(0) translateY(0)",
             ],
-            offset: [0, 0.37, 0.63, 1],
+            opacity: [1, 0.7, 1],
+
+            offset: [0, 0.5, 1],
         },
-        1000
+        300
     );
-    const audio = new Audio(clickSound);
-    audio.volume = volume;
-    audio.play();
+    makeSound(clickSound, volume);
 };

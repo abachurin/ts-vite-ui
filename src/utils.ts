@@ -8,7 +8,7 @@ export const GLOBAL = {
         neon: "rgba(255, 130, 255, 1)" as RgbaColor,
     },
     backgrounds: {
-        blur: "rgba(255, 255, 255, 0.1)" as RgbaColor,
+        blur: "rgba(255, 255, 255, 0.125)" as RgbaColor,
         pearl: "rgb(226, 223, 210)",
         black: "rgb(0, 0, 0)",
         blue: "rgba(64, 128, 255, 0.1)" as RgbaColor,
@@ -68,17 +68,38 @@ export function smoothScroll(selector: string): void {
     });
 }
 
+function destructureRgbaColor(color: RgbaColor): number[] {
+    return color
+        .slice(5, color.length - 1)
+        .split(",")
+        .map((p) => +p);
+}
 /**
  * Convert an RGBA color to the same RGB color, but not transparent.
  * @param color - An RGBA color in the format "rgba(r, g, b, a)".
  */
 export function rgba_rgb(color: RgbaColor): string {
-    const numbers = color
-        .slice(5, color.length - 1)
-        .split(",")
-        .map((p) => +p);
+    const numbers = destructureRgbaColor(color);
     const opacity = numbers[3];
     return `rgb(${numbers[0] * opacity}, ${numbers[1] * opacity}, ${
         numbers[2] * opacity
     })`;
+}
+
+export function complimentaryShadow(color: RgbaColor): RgbaColor {
+    const numbers = destructureRgbaColor(color);
+    return `rgba(${255 - numbers[0]}, ${255 - numbers[1]}, ${
+        255 - numbers[2]
+    }, 0.1)`;
+}
+
+/**
+ * Creates and plays a new Audio object with the specified sound and volume.
+ * @param sound - The URL, file path or already imported sound object.
+ * @param volume - The volume level of the sound, between 0 and 1.
+ */
+export function makeSound(sound: string, volume: number): void {
+    const audio = new Audio(sound);
+    audio.volume = volume;
+    audio.play();
 }

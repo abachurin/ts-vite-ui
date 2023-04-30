@@ -39,6 +39,7 @@ const createStarField = (
  */
 const StarField = () => {
     const [ref, width, height] = useDimensions();
+    console.log(width, height);
     const user = useContext(UserContext);
     const inverseSpeed = user.animationInverseSpeed;
 
@@ -47,10 +48,6 @@ const StarField = () => {
     useEffect(() => {
         setStars(createStarField(width, height, inverseSpeed));
     }, [width, height, inverseSpeed]);
-
-    if (!window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
-        return <div css={emotion} />;
-    }
 
     return (
         <div ref={ref} css={emotion}>

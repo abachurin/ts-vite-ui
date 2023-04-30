@@ -43,12 +43,12 @@ function App() {
                         logoColor={GLOBAL.colors.neon}
                         backgroundColor={GLOBAL.backgrounds.pink}
                         textColor='inherit'
-                    ></Header>
+                    />
                     <div css={main}>
                         <PaneAgent />
                         <PaneGame />
                     </div>
-                    <Footer></Footer>
+                    <Footer />
                 </div>
             </UserProvider>
         </>
