@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 import Modal from "../modal/Modal";
 import { AlignProps } from "../../types";
 import ModalHeader from "../modal/ModalHeader";
@@ -10,6 +11,13 @@ import Button from "../base/Button/Button";
 import { GLOBAL } from "../../utils";
 
 // Emotion styles
+
+const emotion = css`
+    flex: 1;
+    margin-right: calc(${GLOBAL.padding} * 2);
+    display: flex;
+    justify-content: space-between;
+`;
 
 const markdown = css`
     padding: ${GLOBAL.padding};
@@ -55,36 +63,38 @@ const HelpModal = ({ align }: AlignProps) => {
             modal={{ width: `clamp(320px, 90%, 800px)`, height: "auto" }}
         >
             <ModalHeader>
-                <h3>{section.toUpperCase()}</h3>
-                <ButtonGroup>
-                    <Button
-                        type='clickPress'
-                        backgroundColor='rgb(50, 50, 224)'
-                        color={GLOBAL.colors.white}
-                        onClick={() => setSection("guide")}
-                    >
-                        Guide
-                    </Button>
-                    <Button
-                        type='clickPress'
-                        backgroundColor='rgb(204, 112, 0)'
-                        color={GLOBAL.colors.white}
-                        onClick={() => setSection("history")}
-                    >
-                        History
-                    </Button>
-                    <Button
-                        type='clickPress'
-                        backgroundColor='rgb(4, 96, 64)'
-                        color={GLOBAL.colors.white}
-                        onClick={() => setSection("structure")}
-                    >
-                        Structure
-                    </Button>
-                </ButtonGroup>
+                <div css={emotion}>
+                    <h3>{section.toUpperCase()}</h3>
+                    <ButtonGroup>
+                        <Button
+                            type='clickPress'
+                            backgroundColor='rgb(50, 50, 224)'
+                            color={GLOBAL.colors.white}
+                            onClick={() => setSection("guide")}
+                        >
+                            Guide
+                        </Button>
+                        <Button
+                            type='clickPress'
+                            backgroundColor='rgb(204, 112, 0)'
+                            color={GLOBAL.colors.white}
+                            onClick={() => setSection("history")}
+                        >
+                            History
+                        </Button>
+                        <Button
+                            type='clickPress'
+                            backgroundColor='rgb(4, 96, 64)'
+                            color={GLOBAL.colors.white}
+                            onClick={() => setSection("structure")}
+                        >
+                            Structure
+                        </Button>
+                    </ButtonGroup>
+                </div>
             </ModalHeader>
             <ModalBody>
-                <ReactMarkdown css={markdown}>
+                <ReactMarkdown css={markdown} rehypePlugins={[rehypeRaw]}>
                     {sections[section]}
                 </ReactMarkdown>
             </ModalBody>

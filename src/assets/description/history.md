@@ -13,23 +13,15 @@
 
 ##### The Goal
 
-In the course of doing this project I've quickly found out that other people already had achieved much better scores results in the past, when the game was popular.
-
-See this discussion:
-https://stackoverflow.com/questions/22342854/what-is-the-optimal-algorithm-for-the-game-2048
-
-But I used to enjoy the game and I wanted to:
-
--   Code the self-learning Agent myself.
--   Firstly, implement the game mechanics in Python, improving my rather basic Python skills in the process.
--   Find a nice way to visualize it, study the basics of Numpy, Reinforcement Learning and Neural Networks (which I didn't need in the end for this particular project).
--   Find the right strategy with the following **important restrictions**:
-
+-   In the course of doing this project I've quickly found out that other people already had achieved much better scores results in the past, when the game was popular. See this discussion, for example:
+    https://stackoverflow.com/questions/22342854/what-is-the-optimal-algorithm-for-the-game-2048
+-   But I used to enjoy the game and I wanted to:
+    -   Code the self-learning Agent myself.
+    -   Firstly, implement the game mechanics in Python, improving my rather basic Python skills in the process.
+    -   Find a nice way to visualize it, study the basics of Numpy, Reinforcement Learning and Neural Networks (which I didn't need in the end for this particular project).
+-   There were the following **important restrictions**:
     -   I wanted the code to run on my Mac-book, so no models with huge number of parameters.
-    -   I did NOT want to wait for ages. Long training or more than 1 second per move - no go.
-        No way I could train anything and get meaningful statistics otherwise.
-
--   Finally, learn how to post this project on Github in a proper way.
+    -   I did NOT want to wait for ages. Long training or more than 1 second per move - no go. No way I could train anything and get meaningful statistics otherwise.
 
 ##### 2048 Game
 
@@ -46,7 +38,6 @@ You can play the game by choosing _Play Yourself_ option to get an idea.
 ##### Reinforcement Learning with Approximating State Value Function
 
 -   We'd like to program an Agent, supply it with the rules of the game and devise a learning strategy in such a way that it will gradually learn to play better and better from scratch without any further human input.
-
 -   Ideally, the Agent could learn what to do exactly in any given position of the board, i.e. learn the table that supplies the best action given the state of the game. Or, alternatively, some numeric valuation of the state, and then the best action at each step.
 -   But the number of possible states is astronomical, hence the tabular approach is impossible and the Agent's valuation function has to be a true approximating function, not a table.
 
@@ -57,7 +48,6 @@ You can play the game by choosing _Play Yourself_ option to get an idea.
 -   Indeed, a lot of people tried it before, google "2048 reinforcement learning github". Some even claim success ... although I tried and was not able to replicate any of those. Some admit that they were not able to beat random walk, which actually fits my experience.
 -   I spent two weeks trying to achieve this with NNs of different architectures. Convolutions of different sizes, branching layers and adding them back for a final 1-2 dense layers etc. Nothing worked. I even tried to add some man-made features to supply my Agent with human heuristics, like have max tiles in the corners etc., although this is clearly against the spirit of RL, but I was desperate!
 -   It could be because the training process with even a relatively small NN is very slow, and you need to play a lot of episodes to achieve anything in this particular game.
-
 -   Why is that? I have a theory:
     -   Consider Chess or Go. The games are way more complex than 2048, but how many random moves can one make before losing the game to even an amateur human player? Just 3 in Chess - Fool's Mate in 3 moves. I don't play Go but as far as I understand one has to secure corners right at the start of the game, so random moves will get you killed very fast as well.
     -   Now, how many random moves can one make in 2048 without losing the opportunity to still get back on track to beat the records, if one plays correctly afterwards? 100 random steps are survivable in 60% of cases, 50 steps - in 99%.
