@@ -3,18 +3,7 @@ import clickSound from "../../../assets/sounds/mixkit-gate-latch-click-1924.wav"
 import { OnClickFunction } from "../../../types";
 import { GLOBAL, makeSound } from "../../../utils";
 
-export const clickPressEmotion = (
-    backgroundColor: string,
-    color: string,
-    borderRadius: string
-) => css`
-    position: relative;
-    text-decoration: none;
-    padding: ${GLOBAL.padding};
-    border-radius: ${borderRadius || GLOBAL.borderRadius};
-    background-color: ${backgroundColor};
-    color: ${color};
-    font-size: inherit;
+export const clickPressEmotion = (borderRadius: string) => css`
     border: 0;
     :hover:enabled {
         cursor: pointer;

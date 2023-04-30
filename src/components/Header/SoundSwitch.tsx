@@ -5,7 +5,7 @@ import {
 } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../../utils";
 import Button from "../base/Button/Button";
-import Icon from "../base/Icon";
+import Icon from "../base/Icon/Icon";
 
 /**
  * Renders a "mute" button that toggles the sound setting of the User,

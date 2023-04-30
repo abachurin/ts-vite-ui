@@ -2,7 +2,7 @@ import { css, SerializedStyles } from "@emotion/react";
 import { useCallback } from "react";
 import { GLOBAL, smoothScroll } from "../../utils";
 import Button from "../base/Button/Button";
-import Icon from "../base/Icon";
+import Icon from "../base/Icon/Icon";
 
 // Emotion styles
 const makeEmotion = (color: string): SerializedStyles => css`

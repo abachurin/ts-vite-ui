@@ -6,7 +6,7 @@ import {
 import { StyledHTMLElement } from "../../types";
 import { GLOBAL } from "../../utils";
 import Button from "../base/Button/Button";
-import Icon from "../base/Icon";
+import Icon from "../base/Icon/Icon";
 
 // Helper functions
 const toggleMotion = (move: boolean): void => {

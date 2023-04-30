@@ -11,7 +11,7 @@ import useToggle from "../../hooks/useToggle";
 import { RgbaColor, ChildrenProps, Alignment } from "../../types";
 import { GLOBAL, rgba_rgb } from "../../utils";
 import Button from "./Button/Button";
-import Icon from "./Icon";
+import Icon from "./Icon/Icon";
 
 // Emotion styles
 const makeEmotion = (
@@ -93,7 +93,11 @@ const ToggleNav = ({
     return (
         <div css={emotion}>
             <Button onClick={() => setVisibility(!visibility)} align={align}>
-                <Icon color={logoColor} svg={GLOBAL.svg.menu} baseScale={1.5} />
+                <Icon
+                    color={logoColor}
+                    svg={GLOBAL.svg.menu}
+                    rescaleFactor={1.5}
+                />
             </Button>
             <div ref={ref} css={hiddenNavStyle}>
                 {React.Children.map(children, renderChild)}

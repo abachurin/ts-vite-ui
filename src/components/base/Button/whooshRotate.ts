@@ -3,17 +3,7 @@ import clickSound from "../../../assets/sounds/mixkit-arrow-whoosh-1491.wav";
 import { OnClickFunction } from "../../../types";
 import { GLOBAL, makeSound } from "../../../utils";
 
-export const whooshRotateEmotion = (
-    backgroundColor: string,
-    color: string,
-    borderRadius: string
-) => css`
-    position: relative;
-    text-decoration: none;
-    padding: ${GLOBAL.padding};
-    background-color: ${backgroundColor};
-    color: ${color};
-    font-size: inherit;
+export const whooshRotateEmotion = (borderRadius: string) => css`
     border: 0;
     border-radius: ${borderRadius || GLOBAL.borderRadius};
     &:hover:enabled {

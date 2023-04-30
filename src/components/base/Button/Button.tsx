@@ -30,6 +30,24 @@ const makeContainer = (align: Alignment): SerializedStyles => css`
     align-items: center;
 `;
 
+const makeEmotion = (
+    width: string,
+    height: string,
+    borderRadius: string,
+    backgroundColor: string,
+    color: string
+): SerializedStyles => css`
+    position: relative;
+    text-decoration: none;
+    padding: ${GLOBAL.padding};
+    border-radius: ${borderRadius || GLOBAL.borderRadius};
+    background-color: ${backgroundColor};
+    color: ${color};
+    font-size: inherit;
+    width: ${width};
+    height: ${height};
+`;
+
 const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
     ${!window.matchMedia("(hover: none)").matches && legend
         ? `
@@ -76,6 +94,8 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
  * there should be .ts file describing style and default onClick behavior in Button folder,
  * it should be imported above buttonStyles object amended respectively.
  * @param align - The alignment of the button.
+ * @param width - The width of the button.
+ * @param height - The height of the button.
  * @param legend - The text to display when hovering over the button if it is disabled.
  * @param level - The minimum user level required to click the button.
  * @param toggleModal - Whether the button should open or close a parent modal window.
@@ -87,6 +107,8 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
 export interface ButtonProps extends ChildrenProps {
     type?: ButtonVariants;
     align?: Alignment;
+    width?: string;
+    height?: string;
     backgroundColor?: string;
     color?: string;
     borderRadius?: string;
@@ -98,6 +120,8 @@ export interface ButtonProps extends ChildrenProps {
 const Button = ({
     type = "whooshRotate",
     align = "left",
+    width = "auto",
+    height = "auto",
     backgroundColor = "inherit",
     color = "inherit",
     borderRadius = "",
@@ -114,10 +138,20 @@ const Button = ({
     const container = useMemo(() => makeContainer(align), [align]);
     const emotion = useMemo(
         () => css`
-            ${buttonStyles[type].style(backgroundColor, color, borderRadius)},
+            ${makeEmotion(width, height, borderRadius, backgroundColor, color)}
+            ${buttonStyles[type].style(borderRadius)},
             ${makeLegend(align, legend)}
         `,
-        [type, align, legend, backgroundColor, color, borderRadius]
+        [
+            type,
+            align,
+            width,
+            height,
+            legend,
+            backgroundColor,
+            color,
+            borderRadius,
+        ]
     );
 
     const flash = useMemo(() => buttonStyles[type].click, [type]);
