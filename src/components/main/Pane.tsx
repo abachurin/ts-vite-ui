@@ -1,16 +1,25 @@
-import { css } from "@emotion/react";
-import { ChildrenProps } from "../../types";
-import { GLOBAL } from "../../utils";
+import { css, SerializedStyles } from "@emotion/react";
+import { useContext, useMemo } from "react";
+import {
+    UserContext,
+    UserUpdateContext,
+} from "../../contexts/UserProvider/UserContext";
+import { ChildrenProps, RGBA } from "../../types";
+import { GLOBAL, setTransparency } from "../../utils";
 
 // Emotion styles
-const emotion = css`
+const makeEmotion = (
+    backgroundColor: RGBA,
+    color: string
+): SerializedStyles => css`
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     min-width: ${GLOBAL.minPaneWidth}px;
     min-height: 30em;
-    background-color: ${GLOBAL.backgrounds.blue};
+    background-color: ${backgroundColor};
+    color: ${color};
     padding: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
 `;
@@ -23,6 +32,16 @@ interface PaneProps extends ChildrenProps {
     id?: string;
 }
 const Pane = ({ id, children }: PaneProps) => {
+    const user = useContext(UserContext);
+    const palette = user.palette;
+    const backgroundColor = setTransparency(palette.pane, palette.paneOpacity);
+    const color = palette.background;
+
+    const emotion = useMemo(
+        () => makeEmotion(backgroundColor, color),
+        [backgroundColor, color]
+    );
+
     return (
         <div id={id} css={emotion}>
             {children}

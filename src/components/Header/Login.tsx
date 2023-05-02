@@ -26,20 +26,20 @@ type LoginProps = {
     color?: string;
     align?: Alignment;
 };
-const Login = ({ color = GLOBAL.colors.neon, align = "left" }: LoginProps) => {
+const Login = ({ color = "inherit", align = "left" }: LoginProps) => {
     const user = useContext(UserContext);
     const updateUser = useContext(UserUpdateContext);
 
     const openLogin = useCallback((): void => {
         updateUser({
             name: "Loki",
-            level: GLOBAL.userLevel.user,
-            animationInverseSpeed: 2,
+            level: GLOBAL.userLevel.admin,
+            animationSpeed: 10,
             animate: true,
         });
     }, [updateUser]);
 
-    const buttonChildren = useMemo(
+    const buttonText = useMemo(
         (): JSX.Element => <div css={makeEmotion(color)}>{user.name}</div>,
         [color, user]
     );
@@ -48,7 +48,7 @@ const Login = ({ color = GLOBAL.colors.neon, align = "left" }: LoginProps) => {
         <Modal
             button={{
                 type: "whooshRotate",
-                children: buttonChildren,
+                children: buttonText,
                 align: align,
             }}
         >

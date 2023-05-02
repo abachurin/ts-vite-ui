@@ -10,9 +10,10 @@ const emotion = css`
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: ${GLOBAL.padding};
+    padding-inline: calc(${GLOBAL.padding} * 2);
+    padding-block: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius} ${GLOBAL.borderRadius} 0 0;
-    border-bottom: 1px solid ${GLOBAL.colors.white};
+    border-bottom: 1px solid white;
 `;
 
 /**

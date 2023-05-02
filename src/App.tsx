@@ -16,7 +16,6 @@ const container = css`
     left: 0;
     height: 100%;
     overflow: hidden;
-    color: ${GLOBAL.colors.white};
     gap: ${GLOBAL.padding};
     margin: 0 auto;
     padding: calc(2 * ${GLOBAL.padding});
@@ -31,7 +30,7 @@ const main = css`
 `;
 
 /**
- * Render the App component (what else?).
+ * Render the App component.
  */
 function App() {
     return (
@@ -39,11 +38,7 @@ function App() {
             <UserProvider>
                 <StarField />
                 <div css={container}>
-                    <Header
-                        logoColor={GLOBAL.colors.neon}
-                        backgroundColor={GLOBAL.backgrounds.pink}
-                        textColor='inherit'
-                    />
+                    <Header />
                     <div css={main}>
                         <PaneAgent />
                         <PaneGame />

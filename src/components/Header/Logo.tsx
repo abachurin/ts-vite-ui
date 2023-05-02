@@ -1,11 +1,12 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useCallback } from "react";
+import { RGB } from "../../types";
 import { GLOBAL, smoothScroll } from "../../utils";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 
 // Emotion styles
-const makeEmotion = (color: string): SerializedStyles => css`
+const makeEmotion = (color: RGB): SerializedStyles => css`
     display: flex;
     align-items: center;
     gap: 0.1em;
@@ -19,7 +20,7 @@ const makeEmotion = (color: string): SerializedStyles => css`
  * @param color - The color of the logo.
  */
 type LogoProps = {
-    color: string;
+    color: RGB;
 };
 const Logo = ({ color }: LogoProps) => {
     const emotion = makeEmotion(color);

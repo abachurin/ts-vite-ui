@@ -1,8 +1,9 @@
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useState, useMemo, useContext } from "react";
+import { UserContext } from "../../contexts/UserProvider/UserContext";
 import useEventListener from "../../hooks/useEventListener";
-import { RgbaColor } from "../../types";
-import { GLOBAL } from "../../utils";
+import { RGBA, RGB } from "../../types";
+import { GLOBAL, setTransparency } from "../../utils";
 import Nav from "../base/Nav";
 import ToggleNav from "../base/ToggleNav";
 import Logo from "./Logo";
@@ -15,7 +16,7 @@ import SettingsModal from "./SettingsModal";
 import Login from "./Login";
 
 // Emotion styles
-const makeEmotion = (backgroundColor: RgbaColor, textColor: string) => css`
+const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
     position: sticky;
     padding: ${GLOBAL.padding};
     display: flex;
@@ -25,7 +26,7 @@ const makeEmotion = (backgroundColor: RgbaColor, textColor: string) => css`
     gap: ${GLOBAL.padding};
     box-shadow: ${GLOBAL.boxShadow};
     background-color: ${backgroundColor};
-    color: ${textColor};
+    color: ${color};
     border-radius: ${GLOBAL.borderRadius};
     & > * {
         flex: 1;
@@ -39,22 +40,27 @@ const makeEmotion = (backgroundColor: RgbaColor, textColor: string) => css`
 
 const isSmallScreen = (): boolean => window.innerWidth < GLOBAL.navBreakpoint;
 
-type HeaderProps = {
-    backgroundColor: RgbaColor;
-    textColor: string;
-    logoColor: string;
-};
-const Header = ({ backgroundColor, textColor, logoColor }: HeaderProps) => {
+const Header = () => {
+    const user = useContext(UserContext);
+    const palette = user.palette;
+    const backgroundColor = setTransparency(
+        palette.header,
+        palette.headerOpacity
+    );
+
     const [smallNav, setSmallNav] = useState<boolean>(isSmallScreen());
 
     useEventListener("resize", () => setSmallNav(isSmallScreen()));
 
-    const emotion = makeEmotion(backgroundColor, textColor);
+    const emotion = useMemo(
+        () => makeEmotion(backgroundColor, palette.background),
+        [backgroundColor, palette]
+    );
 
     const NavX = (
         <>
             <div css={emotion}>
-                <Logo color={logoColor} />
+                <Logo color={palette.logo} />
                 <Nav>
                     <HelpModal />
                     <ContactsModal />
@@ -63,7 +69,7 @@ const Header = ({ backgroundColor, textColor, logoColor }: HeaderProps) => {
                     <SoundSwitch />
                     <AnimationSwitch />
                 </Nav>
-                <Login color={logoColor} align='right' />
+                <Login color={palette.logo} align='right' />
             </div>
         </>
     );
@@ -75,7 +81,7 @@ const Header = ({ backgroundColor, textColor, logoColor }: HeaderProps) => {
     const NavY = (
         <>
             <div css={emotion}>
-                <Logo color={logoColor} />
+                <Logo color={palette.logo} />
                 <Nav>
                     <SoundSwitch />
                     <AnimationSwitch />
@@ -83,13 +89,13 @@ const Header = ({ backgroundColor, textColor, logoColor }: HeaderProps) => {
                 <ToggleNav
                     align='right'
                     backgroundColor={backgroundColor}
-                    logoColor={logoColor}
+                    logoColor={palette.logo}
                 >
                     <HelpModal />
                     <ContactsModal />
                     <AdminModal />
                     <SettingsModal />
-                    <Login color={logoColor} />
+                    <Login color={palette.logo} />
                 </ToggleNav>
             </div>
         </>

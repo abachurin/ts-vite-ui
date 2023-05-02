@@ -4,7 +4,7 @@ import Button, { ButtonProps } from "../base/Button/Button";
 import ModalWindow, { ModalWindowProps } from "../modal/ModalWindow";
 
 /**
- * Renders a modal component with a Button that opens the modal when clicked.
+ * Renders a modal component with a Button that opens the modal.
  * @param props - The props include Button props and children, as well as ModalWindow props.
  */
 interface ModalProps extends ChildrenProps {

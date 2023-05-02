@@ -6,7 +6,8 @@ import { GLOBAL } from "../../utils";
 const emotion = css`
     flex: 1;
     width: 100%;
-    padding: ${GLOBAL.padding};
+    padding-inline: calc(${GLOBAL.padding} * 2);
+    padding-block: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
     font-weight: 300;
     overflow: scroll;

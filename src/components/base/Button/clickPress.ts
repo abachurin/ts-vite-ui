@@ -16,7 +16,7 @@ export const clickPressEmotion = (borderRadius: string) => css`
         width: 100%;
         height: 100%;
         border-radius: ${borderRadius || GLOBAL.borderRadius};
-        background-color: ${GLOBAL.backgrounds.blur};
+        background-color: rgba(255, 255, 255, 0.1);
     }
     :disabled {
         opacity: 0.75;

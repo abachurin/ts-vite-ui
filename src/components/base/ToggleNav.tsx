@@ -8,8 +8,8 @@ import React, {
     useCallback,
 } from "react";
 import useToggle from "../../hooks/useToggle";
-import { RgbaColor, ChildrenProps, Alignment } from "../../types";
-import { GLOBAL, rgba_rgb } from "../../utils";
+import { RGB, RGBA, ChildrenProps, Alignment } from "../../types";
+import { GLOBAL, removeTransparency } from "../../utils";
 import Button from "./Button/Button";
 import Icon from "./Icon/Icon";
 
@@ -25,13 +25,13 @@ const makeEmotion = (
 `;
 
 const makeHidden = (
-    backgroundColor: RgbaColor,
+    backgroundColor: RGB | RGBA,
     align: Alignment,
     visibility: boolean
 ): SerializedStyles => css`
     position: fixed;
     top: 6rem;
-    background-color: ${rgba_rgb(backgroundColor)};
+    background-color: ${removeTransparency(backgroundColor)};
     border-radius: ${GLOBAL.borderRadius};
     padding: ${GLOBAL.padding};
     display: flex;
@@ -59,13 +59,13 @@ interface ToggleNavProps extends ChildrenProps {
     align?: Alignment;
     textColor?: string;
     logoColor?: string;
-    backgroundColor: RgbaColor;
+    backgroundColor: RGB | RGBA;
 }
 const ToggleNav = ({
     align = "left",
     textColor = "inherit",
     logoColor = "inherit",
-    backgroundColor,
+    backgroundColor = "rgba(255, 255, 255, 1)",
     children,
 }: ToggleNavProps) => {
     const ref = useRef<HTMLDivElement>(null);

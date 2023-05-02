@@ -1,23 +1,39 @@
 import { css } from "@emotion/react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../../contexts/UserProvider/UserContext";
 
 // Emotion styles
 
-interface CheckboxProps {
-    width?: string;
-    controlSize?: number;
+interface xProps {
     controlColor?: string;
-    color1?: string;
-    color2?: string;
-    color3?: string;
-    textColor?: string;
-    checked?: boolean;
-    label: string;
-    onChange: (checked: boolean) => void;
+    value?: number;
+    onChange: (value: number) => void;
 }
-const Slider = () => {
-    return <div>Slider</div>;
+interface SliderProps {
+    start: number;
+    end: number;
+    initialValue?: number;
+    width?: string;
+    label?: string;
+    backgroundColor?: string;
+    color?: string;
+    controlColor?: string;
+    onChange: (value: number) => void;
+}
+const Slider = ({
+    start,
+    end,
+    initialValue = undefined,
+    width = "auto",
+    label = "",
+    backgroundColor = "inherit",
+    color = "inherit",
+    controlColor = "rgb(50, 50, 224)",
+    onChange,
+}: SliderProps) => {
+    const [value, setValue] = useState(initialValue ?? start);
+
+    return <div>slider here</div>;
 };
 
 export default Slider;

@@ -1,21 +1,8 @@
-import { RgbaColor } from "./types";
+import { RGB, RGBA } from "./types";
+import { User } from "./contexts/UserProvider/UserContext";
 
 // GLOBAL parameters
 export const GLOBAL = {
-    colors: {
-        white: "rgba(235, 235, 235, 1)" as RgbaColor,
-        neon: "rgba(255, 130, 255, 1)" as RgbaColor,
-        blue: "rgb(50, 50, 224)",
-        orange: "rgb(204, 112, 0)",
-        green: "rgb(4, 96, 64)" as RgbaColor,
-    },
-    backgrounds: {
-        blur: "rgba(255, 255, 255, 0.125)" as RgbaColor,
-        pearl: "rgb(226, 223, 210)",
-        black: "rgb(0, 0, 0)",
-        blue: "rgba(64, 128, 255, 0.1)" as RgbaColor,
-        pink: "rgba(255, 130, 255, 0.3)" as RgbaColor,
-    },
     numOfStars: {
         small: 200,
         big: 300,
@@ -72,29 +59,52 @@ export function smoothScroll(selector: string): void {
     });
 }
 
-function destructureRgbaColor(color: RgbaColor): number[] {
-    return color
-        .slice(5, color.length - 1)
-        .split(",")
-        .map((p) => +p);
-}
 /**
- * Convert an RGBA color to the same RGB color, but not transparent.
+ * Splits RGBA color object into an array of 4 numbers.
+ * @param color - The RGBA color object to destructure.
+ */
+const destructureColor = (color: RGB | RGBA): number[] => {
+    const startOfNumbers = (color as string).indexOf("(") + 1;
+    return color
+        .slice(startOfNumbers, color.length - 1)
+        .split(",")
+        .map((v) => +v);
+};
+
+/**
+ * Convert an RGBA color to the same hue RGB color, but not transparent.
  * @param color - An RGBA color in the format "rgba(r, g, b, a)".
  */
-export function rgba_rgb(color: RgbaColor): string {
-    const numbers = destructureRgbaColor(color);
-    const opacity = numbers[3];
+export function removeTransparency(color: RGB | RGBA): RGB {
+    const numbers = destructureColor(color);
+    const opacity = numbers[3] ?? 1;
     return `rgb(${numbers[0] * opacity}, ${numbers[1] * opacity}, ${
         numbers[2] * opacity
     })`;
 }
 
-export function complimentaryShadow(color: RgbaColor): RgbaColor {
-    const numbers = destructureRgbaColor(color);
-    return `rgba(${255 - numbers[0]}, ${255 - numbers[1]}, ${
-        255 - numbers[2]
-    }, 0.1)`;
+/**
+ * Returns an RGBA color string with the given opacity.
+ * @param color - The RGBA color to adjust transparency for.
+ * @param opacity - The opacity value, between 0 and 1.
+ */
+export function setTransparency(color: RGB | RGBA, opacity: number): RGBA {
+    const numbers = destructureColor(color);
+    return `rgba(${numbers[0]}, ${numbers[1]}, ${numbers[2]}, ${
+        opacity > 1 ? 1 : opacity < 0 ? 0 : opacity
+    })`;
+}
+
+/**
+ * Returns an RGBA color string with the given opacity.
+ * @param color - The RGBA color to adjust transparency for.
+ * @param opacity - The opacity value, between 0 and 1.
+ */
+export function changeBrightness(color: RGB, ratio: number): RGB {
+    const numbers = destructureColor(color).map((v) =>
+        Math.min(v * ratio, 255)
+    );
+    return `rgb(${numbers[0]}, ${numbers[1]}, ${numbers[2]})`;
 }
 
 /**
@@ -102,8 +112,12 @@ export function complimentaryShadow(color: RgbaColor): RgbaColor {
  * @param sound - The URL, file path or already imported sound object.
  * @param volume - The volume level of the sound, between 0 and 1.
  */
-export function makeSound(sound: string, volume: number): void {
+export function makeSound(sound: string, volumeSource: number | User): void {
     const audio = new Audio(sound);
-    audio.volume = volume;
+    if (typeof volumeSource === "number") {
+        audio.volume = volumeSource;
+    } else {
+        audio.volume = volumeSource.sound ? volumeSource.soundLevel : 0;
+    }
     audio.play();
 }

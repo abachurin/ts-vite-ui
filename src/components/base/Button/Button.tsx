@@ -54,8 +54,8 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
             &::before {
                 position: absolute;
                 width: 10em;
-                background-color: ${GLOBAL.backgrounds.pearl};
-                color: rgba(0, 0, 0, 1);
+                background-color: white;
+                color: black;
                 font-size: 0.7em;
                 padding: ${GLOBAL.padding};
                 content: attr(data-legend);
@@ -134,13 +134,14 @@ const Button = ({
     const changeIsOpen = useContext(ModalUpdateContext);
     const user = useContext(UserContext);
     const volume = user.sound ? user.soundLevel : 0;
+    const showLegend = user.legends;
 
     const container = useMemo(() => makeContainer(align), [align]);
     const emotion = useMemo(
         () => css`
             ${makeEmotion(width, height, borderRadius, backgroundColor, color)}
             ${buttonStyles[type].style(borderRadius)},
-            ${makeLegend(align, legend)}
+            ${showLegend ? makeLegend(align, legend) : ""}
         `,
         [
             type,
@@ -151,6 +152,7 @@ const Button = ({
             backgroundColor,
             color,
             borderRadius,
+            showLegend,
         ]
     );
 
@@ -162,9 +164,9 @@ const Button = ({
                 css={emotion}
                 data-legend={legend}
                 onClick={(e) => {
+                    if (toggleModal !== "none") changeIsOpen(toggleModal);
                     flash(e.currentTarget as HTMLButtonElement, volume);
                     onClick && onClick(e);
-                    if (toggleModal !== "none") changeIsOpen(toggleModal);
                 }}
                 disabled={user.level < level}
             >

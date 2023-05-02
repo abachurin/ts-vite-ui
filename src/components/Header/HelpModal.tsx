@@ -1,5 +1,6 @@
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { UserContext } from "../../contexts/UserProvider/UserContext";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import Modal from "../modal/Modal";
@@ -51,8 +52,11 @@ const sections = {
 
 /**
  * Returns a React Modal component containing the Help section.
+ * @param align - The alignment parameter of the button, which opens the modal.
  */
 const HelpModal = ({ align }: AlignProps) => {
+    const user = useContext(UserContext);
+    const palette = user.palette;
     const [section, setSection] = useState<"guide" | "history" | "structure">(
         "guide"
     );
@@ -60,32 +64,37 @@ const HelpModal = ({ align }: AlignProps) => {
     return (
         <Modal
             button={{ align: align, children: "Help!" }}
-            modal={{ width: `clamp(320px, 90%, 800px)`, height: "auto" }}
+            modal={{
+                width: `clamp(320px, 90%, 800px)`,
+                height: "auto",
+                backgroundColor: palette.background,
+                color: palette.text,
+            }}
         >
             <ModalHeader>
                 <div css={emotion}>
-                    <h3>{section.toUpperCase()}</h3>
+                    <h1>{section.toUpperCase()}</h1>
                     <ButtonGroup>
                         <Button
                             type='clickPress'
-                            backgroundColor='rgb(50, 50, 224)'
-                            color={GLOBAL.colors.white}
+                            backgroundColor={palette.one}
+                            color={palette.background}
                             onClick={() => setSection("guide")}
                         >
                             Guide
                         </Button>
                         <Button
                             type='clickPress'
-                            backgroundColor='rgb(204, 112, 0)'
-                            color={GLOBAL.colors.white}
+                            backgroundColor={palette.two}
+                            color={palette.background}
                             onClick={() => setSection("history")}
                         >
                             History
                         </Button>
                         <Button
                             type='clickPress'
-                            backgroundColor='rgb(4, 96, 64)'
-                            color={GLOBAL.colors.white}
+                            backgroundColor={palette.three}
+                            color={palette.background}
                             onClick={() => setSection("structure")}
                         >
                             Structure

@@ -11,7 +11,7 @@ const emotion = () => css`
     padding: 3em;
     height: 100%;
     width: 100%;
-    background-color: ${GLOBAL.backgrounds.black};
+    background-color: black;
     overflow: hidden;
     z-index: -1;
 `;
@@ -40,7 +40,7 @@ const createStarField = (
 const StarField = () => {
     const [ref, width, height] = useDimensions();
     const user = useContext(UserContext);
-    const inverseSpeed = user.animationInverseSpeed;
+    const inverseSpeed = 11 - user.animationSpeed;
 
     const [stars, setStars] = useState<JSX.Element[]>([]);
 

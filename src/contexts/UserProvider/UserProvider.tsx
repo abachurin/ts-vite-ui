@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { UserContext, UserUpdateContext, defaultUser } from "./UserContext";
-import { ChildrenProps, UserPartial } from "../../types";
+import {
+    User,
+    UserContext,
+    UserUpdateContext,
+    defaultUser,
+} from "./UserContext";
+import { ChildrenProps } from "../../types";
 
 /**
  * Creates a UserProvider Context Provider.
@@ -9,7 +14,7 @@ import { ChildrenProps, UserPartial } from "../../types";
 const UserProvider = ({ children }: ChildrenProps) => {
     const [user, setUser] = useState(defaultUser);
 
-    const changeState = (update: UserPartial) => {
+    const changeState = (update: Partial<User>) => {
         setUser({ ...user, ...update });
     };
 

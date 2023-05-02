@@ -11,9 +11,7 @@ import { ChildrenProps } from "../../types";
 import { GLOBAL, makeSound } from "../../utils";
 
 // Emotion styles
-const makeBaseContainer = (
-    ContainerBackgroundColor: string
-): SerializedStyles => css`
+const baseContainer = css`
     position: fixed;
     display: flex;
     justify-content: center;
@@ -23,9 +21,10 @@ const makeBaseContainer = (
     right: 0;
     bottom: 0;
     transform: scale(0);
-    background: ${ContainerBackgroundColor};
+    background: rgba(255, 255, 255, 0.1);
     z-index: 100;
 `;
+
 const backgroundStyle = css`
     position: fixed;
     left: 0;
@@ -33,6 +32,7 @@ const backgroundStyle = css`
     right: 0;
     bottom: 0;
 `;
+
 const unFold = keyframes`
     0% {
         transform: scaleY(0.005) scaleX(0);
@@ -71,6 +71,7 @@ const unZoom = keyframes`
         transform:scale(0);
     }
 `;
+
 const makeBaseModal = (
     ModalBackgroundColor: string,
     color: string,
@@ -80,7 +81,6 @@ const makeBaseModal = (
     display: flex;
     flex-direction: column;
     position: relative;
-    padding-inline: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
     box-shadow: ${GLOBAL.boxShadow};
     background: ${ModalBackgroundColor};
@@ -94,7 +94,6 @@ const makeBaseModal = (
 /**
  * A customizable modal window component that can be opened from a parent component,
  * and closed from inside or by clicking on the background
- * @param ContainerBackgroundColor - The background color of the modal container.
  * @param ModalBackgroundColor - The background color of the modal content.
  * @param color - The text color of the modal content.
  * @param width - The width of the modal content.
@@ -106,8 +105,7 @@ const makeBaseModal = (
  * including a container with a background overlay and a modal content area.
  */
 export interface ModalWindowProps extends ChildrenProps {
-    ContainerBackgroundColor?: string;
-    ModalBackgroundColor?: string;
+    backgroundColor?: string;
     color?: string;
     width?: string;
     height?: string;
@@ -117,8 +115,7 @@ export interface ModalWindowRef {
     close: () => () => void;
 }
 const ModalWindow = ({
-    ContainerBackgroundColor = GLOBAL.backgrounds.blur,
-    ModalBackgroundColor = "white",
+    backgroundColor = "white",
     color = "black",
     width = "auto",
     height = "auto",
@@ -127,15 +124,10 @@ const ModalWindow = ({
     const isOpen = useContext(ModalContext);
     const updateIsOpen = useContext(ModalUpdateContext);
     const user = useContext(UserContext);
-    const volume = user.soundLevel;
 
-    const baseContainer = useMemo(
-        () => makeBaseContainer(ContainerBackgroundColor),
-        [ContainerBackgroundColor]
-    );
     const baseModal = useMemo(
-        () => makeBaseModal(ModalBackgroundColor, color, width, height),
-        [ModalBackgroundColor, color, width, height]
+        () => makeBaseModal(backgroundColor, color, width, height),
+        [backgroundColor, color, width, height]
     );
 
     const containerStyle = isOpen
@@ -166,9 +158,9 @@ const ModalWindow = ({
           `;
 
     const closeModal = useCallback(() => {
-        makeSound(clickSound, volume);
+        makeSound(clickSound, user);
         updateIsOpen(false);
-    }, [updateIsOpen, volume]);
+    }, [updateIsOpen, user]);
 
     if (isOpen === "none") return null;
 

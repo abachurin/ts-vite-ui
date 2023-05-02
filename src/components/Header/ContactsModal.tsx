@@ -1,5 +1,6 @@
-import React from "react";
 import { css } from "@emotion/react";
+import { useContext } from "react";
+import { UserContext } from "../../contexts/UserProvider/UserContext";
 import { AlignProps } from "../../types";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
@@ -15,7 +16,6 @@ const emotion = css`
     flex-direction: column;
     gap: ${GLOBAL.padding};
     padding-bottom: calc(${GLOBAL.padding} * 2);
-    color: ${GLOBAL.colors.white};
     & > * {
         flex: 1;
         display: flex;
@@ -29,20 +29,30 @@ const emotion = css`
     }
 `;
 
-const xxx = (e: React.MouseEvent) => {
-    console.log(e.target);
-};
-
 /**
  * Returns a React Modal component containing the Contacts section.
+ * @param align - The alignment parameter of the button, which opens the modal.
  */
 const ContactsModal = ({ align }: AlignProps) => {
+    const user = useContext(UserContext);
+    const palette = user.palette;
+
+    const headerStyle = css`
+        color: ${palette.text};
+    `;
+
     return (
         <Modal
             button={{ align: align, children: "Contacts" }}
-            modal={{ width: "20em" }}
+            modal={{
+                width: "24em",
+                backgroundColor: palette.background,
+                color: palette.text,
+            }}
         >
-            <ModalHeader>Contact the Author via:</ModalHeader>
+            <ModalHeader>
+                <h1 css={headerStyle}>Contact the Author via:</h1>
+            </ModalHeader>
             <ModalBody>
                 <div css={emotion}>
                     <div>
@@ -50,18 +60,19 @@ const ContactsModal = ({ align }: AlignProps) => {
                             svg={GLOBAL.svg.email}
                             initialSize={24}
                             rescaleFactor={2}
-                            color={GLOBAL.colors.orange}
+                            color={palette.one}
                         />
                         <Button
                             type='clickPress'
                             align='center'
                             width={GLOBAL.contactButtonWidth}
-                            backgroundColor={GLOBAL.colors.orange}
+                            backgroundColor={palette.one}
+                            color={palette.background}
                             onClick={() =>
                                 window.open("mailto: bachurin.alex@gmail.com")
                             }
                         >
-                            Send E-mail
+                            E-mail
                         </Button>
                     </div>
                     <div>
@@ -74,7 +85,8 @@ const ContactsModal = ({ align }: AlignProps) => {
                             type='clickPress'
                             align='center'
                             width={GLOBAL.contactButtonWidth}
-                            backgroundColor={GLOBAL.colors.green}
+                            backgroundColor={palette.two}
+                            color={palette.background}
                             onClick={() =>
                                 window.open("https://wa.me/351961072567")
                             }
@@ -92,7 +104,8 @@ const ContactsModal = ({ align }: AlignProps) => {
                             type='clickPress'
                             align='center'
                             width={GLOBAL.contactButtonWidth}
-                            backgroundColor={GLOBAL.colors.blue}
+                            backgroundColor={palette.three}
+                            color={palette.background}
                             onClick={() =>
                                 window.open("https://t.me/abachurin1974")
                             }
