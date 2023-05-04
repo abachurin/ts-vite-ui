@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { useMemo, useContext } from "react";
 import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { palettes } from "../../contexts/UserProvider/palette";
 import { RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
 
@@ -19,7 +20,7 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
 
 const Footer = () => {
     const user = useContext(UserContext);
-    const palette = user.palette;
+    const palette = palettes[user.paletteName];
 
     const emotion = useMemo(
         () =>

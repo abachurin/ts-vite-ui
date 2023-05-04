@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useContext, useState, useEffect } from "react";
 import {
     User,
@@ -6,6 +6,7 @@ import {
     UserUpdateContext,
     defaultUser,
 } from "../../contexts/UserProvider/UserContext";
+import { palettes } from "../../contexts/UserProvider/palette";
 import { GLOBAL, changeBrightness } from "../../utils";
 import { AlignProps } from "../../types";
 import Modal from "../modal/Modal";
@@ -14,14 +15,27 @@ import ModalBody from "../modal/ModalBody";
 import ModalFooter from "../modal/ModalFooter";
 import Button from "../base/Button/Button";
 import Checkbox from "../base/Checkbox";
-import Slider from "../base/Slider";
+import RangeInput from "../base/RangeInput";
+import Select from "../base/Select";
 
 // Emotion styles
-const emotion = (): SerializedStyles => css`
+const emotion = css`
     display: flex;
     flex-direction: column;
     gap: ${GLOBAL.padding};
     padding-block: ${GLOBAL.padding};
+`;
+const topHalf = css`
+    display: flex;
+    gap: ${GLOBAL.padding};
+    & > :first-of-type {
+        flex: 1;
+    }
+`;
+const checkboxBlock = css`
+    display: flex;
+    flex-direction: column;
+    gap: ${GLOBAL.padding};
 `;
 
 // Helper functions
@@ -31,7 +45,7 @@ const defaultValues = {
     animate: defaultUser.animate,
     animationSpeed: defaultUser.animationSpeed,
     legends: defaultUser.legends,
-    palette: defaultUser.palette,
+    paletteName: defaultUser.paletteName,
 };
 type ValuesType = typeof defaultValues;
 const getUserValues = (user: User): ValuesType => {
@@ -41,7 +55,7 @@ const getUserValues = (user: User): ValuesType => {
         animate: user.animate,
         animationSpeed: user.animationSpeed,
         legends: user.legends,
-        palette: user.palette,
+        paletteName: user.paletteName,
     };
 };
 
@@ -51,7 +65,7 @@ const getUserValues = (user: User): ValuesType => {
  */
 const SettingsModal = ({ align }: AlignProps) => {
     const user = useContext(UserContext);
-    const palette = user.palette;
+    const palette = palettes[user.paletteName];
     const updateUser = useContext(UserUpdateContext);
 
     const [currentValues, setCurrentValues] = useState<ValuesType>(
@@ -93,6 +107,7 @@ const SettingsModal = ({ align }: AlignProps) => {
         controlColor: palette.three,
     };
     const sliderParameters = {
+        width: "100%",
         backgroundColor: palette.background,
         color: palette.text,
         controlColor: palette.three,
@@ -115,42 +130,57 @@ const SettingsModal = ({ align }: AlignProps) => {
             </ModalHeader>
             <ModalBody>
                 <form css={emotion}>
-                    <Checkbox
-                        {...checkboxParameters}
-                        label='Animation'
-                        checked={user.animate}
-                        onChange={(checked) =>
-                            updateValues({ animate: checked })
-                        }
-                    />
-                    <Checkbox
-                        {...checkboxParameters}
-                        label='Sound'
-                        checked={user.sound}
-                        onChange={(checked) => updateValues({ sound: checked })}
-                    />
-                    <Checkbox
-                        {...checkboxParameters}
-                        label='Verbose'
-                        checked={user.legends}
-                        onChange={(checked) =>
-                            updateValues({ legends: checked })
-                        }
-                    />
-                    <Slider
+                    <div css={topHalf}>
+                        <div css={checkboxBlock}>
+                            <Checkbox
+                                {...checkboxParameters}
+                                label='Animation'
+                                checked={user.animate}
+                                onChange={(checked) =>
+                                    updateValues({ animate: checked })
+                                }
+                            />
+                            <Checkbox
+                                {...checkboxParameters}
+                                label='Sound'
+                                checked={user.sound}
+                                onChange={(checked) =>
+                                    updateValues({ sound: checked })
+                                }
+                            />
+                            <Checkbox
+                                {...checkboxParameters}
+                                label='Verbose'
+                                checked={user.legends}
+                                onChange={(checked) =>
+                                    updateValues({ legends: checked })
+                                }
+                            />
+                        </div>
+                        <Select
+                            onChange={(value) =>
+                                updateValues({ paletteName: value })
+                            }
+                        />
+                    </div>
+
+                    <br />
+                    <RangeInput
                         {...sliderParameters}
                         start={1}
                         end={10}
+                        step={0.5}
                         initialValue={user.animationSpeed}
                         label='Falcon speed'
                         onChange={(value) =>
                             updateValues({ animationSpeed: value })
                         }
                     />
-                    <Slider
+                    <RangeInput
                         {...sliderParameters}
                         start={0}
                         end={1}
+                        step={0.01}
                         initialValue={user.soundLevel}
                         label='Sound level'
                         onChange={(value) =>

@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { useState, useMemo, useContext } from "react";
 import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { palettes } from "../../contexts/UserProvider/palette";
 import useEventListener from "../../hooks/useEventListener";
 import { RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
@@ -42,7 +43,7 @@ const isSmallScreen = (): boolean => window.innerWidth < GLOBAL.navBreakpoint;
 
 const Header = () => {
     const user = useContext(UserContext);
-    const palette = user.palette;
+    const palette = palettes[user.paletteName];
     const backgroundColor = setTransparency(
         palette.header,
         palette.headerOpacity

@@ -1,6 +1,5 @@
 import { createContext } from "react";
 import { GLOBAL } from "../../utils";
-import { Palette, paletteOne } from "./palette";
 
 export type User = {
     name: string;
@@ -10,7 +9,7 @@ export type User = {
     animate: boolean;
     animationSpeed: number;
     legends: boolean;
-    palette: Palette;
+    paletteName: string;
 };
 
 export const defaultUser: User = {
@@ -21,7 +20,7 @@ export const defaultUser: User = {
     animationSpeed: 6,
     animate: true,
     legends: true,
-    palette: paletteOne,
+    paletteName: "One",
 };
 
 export const UserContext = createContext<User>(defaultUser);

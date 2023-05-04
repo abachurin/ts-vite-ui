@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { useContext } from "react";
 import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { palettes } from "../../contexts/UserProvider/palette";
 import { AlignProps } from "../../types";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
@@ -35,7 +36,7 @@ const emotion = css`
  */
 const ContactsModal = ({ align }: AlignProps) => {
     const user = useContext(UserContext);
-    const palette = user.palette;
+    const palette = palettes[user.paletteName];
 
     const headerStyle = css`
         color: ${palette.text};

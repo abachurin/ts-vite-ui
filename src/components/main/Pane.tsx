@@ -4,6 +4,7 @@ import {
     UserContext,
     UserUpdateContext,
 } from "../../contexts/UserProvider/UserContext";
+import { palettes } from "../../contexts/UserProvider/palette";
 import { ChildrenProps, RGBA } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
 
@@ -33,7 +34,7 @@ interface PaneProps extends ChildrenProps {
 }
 const Pane = ({ id, children }: PaneProps) => {
     const user = useContext(UserContext);
-    const palette = user.palette;
+    const palette = palettes[user.paletteName];
     const backgroundColor = setTransparency(palette.pane, palette.paneOpacity);
     const color = palette.background;
 

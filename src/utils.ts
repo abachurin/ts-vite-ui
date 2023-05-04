@@ -11,6 +11,7 @@ export const GLOBAL = {
     borderRadius: "0.3rem",
     padding: "0.5rem",
     boxShadow: "0 0 0.5em 0.1em rgba(255, 255, 255, 0.2)",
+    darkShadow: "0 0 0.5em 0.1em rgba(0, 0, 0, 0.2)",
     starSpeed: 5,
     windowResizeDelay: 200,
     logoScale: 1.4,

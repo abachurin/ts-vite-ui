@@ -36,6 +36,7 @@ const Login = ({ color = "inherit", align = "left" }: LoginProps) => {
             level: GLOBAL.userLevel.admin,
             animationSpeed: 10,
             animate: true,
+            paletteName: "Two",
         });
     }, [updateUser]);
 

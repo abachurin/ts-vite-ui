@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { useState, useContext } from "react";
 import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { palettes } from "../../contexts/UserProvider/palette";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import Modal from "../modal/Modal";
@@ -56,7 +57,7 @@ const sections = {
  */
 const HelpModal = ({ align }: AlignProps) => {
     const user = useContext(UserContext);
-    const palette = user.palette;
+    const palette = palettes[user.paletteName];
     const [section, setSection] = useState<"guide" | "history" | "structure">(
         "guide"
     );
