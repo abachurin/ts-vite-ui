@@ -3,7 +3,7 @@ import {
     UserContext,
     UserUpdateContext,
 } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL } from "../../utils";
+import { SvgPaths } from "../../utils";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 
@@ -15,7 +15,7 @@ const SoundSwitch = () => {
     const user = useContext(UserContext);
     const updateUser = useContext(UserUpdateContext);
     const isSound = user.sound;
-    const icon = isSound ? GLOBAL.svg.yesSound : GLOBAL.svg.noSound;
+    const icon = isSound ? SvgPaths.yesSound : SvgPaths.noSound;
 
     const toggleSound = (): void => {
         updateUser({ sound: !isSound });

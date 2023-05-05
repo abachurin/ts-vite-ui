@@ -1,4 +1,4 @@
-import { GLOBAL } from "../../utils";
+import { SvgPaths } from "../../utils";
 import Button from "./Button/Button";
 import Icon from "./Icon/Icon";
 
@@ -8,7 +8,7 @@ import Icon from "./Icon/Icon";
 const CloseButton = () => {
     return (
         <Button type='clickPress' align='right' toggleModal={false}>
-            <Icon svg={GLOBAL.svg.closeWindow} rescaleFactor={1.2} />
+            <Icon svg={SvgPaths.closeWindow} rescaleFactor={1.2} />
         </Button>
     );
 };

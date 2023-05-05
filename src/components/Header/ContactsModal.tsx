@@ -9,7 +9,7 @@ import ModalBody from "../modal/ModalBody";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 import { TelegramIcon, WhatsappIcon } from "../base/Icon/SvgIcons";
-import { GLOBAL } from "../../utils";
+import { GLOBAL, SvgPaths } from "../../utils";
 
 // Emotion styles
 const emotion = css`
@@ -58,7 +58,7 @@ const ContactsModal = ({ align }: AlignProps) => {
                 <div css={emotion}>
                     <div>
                         <Icon
-                            svg={GLOBAL.svg.email}
+                            svg={SvgPaths.email}
                             initialSize={24}
                             rescaleFactor={2}
                             color={palette.one}

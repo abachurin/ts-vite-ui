@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
-import { useState, useMemo, useContext } from "react";
+import { useMemo, useContext } from "react";
 import { UserContext } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
-import useEventListener from "../../hooks/useEventListener";
+import useSmallScreen from "../../hooks/useSmallScreen";
 import { RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
 import Nav from "../base/Nav";
@@ -37,11 +37,8 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
     }
 `;
 
-// Helper functions
-
-const isSmallScreen = (): boolean => window.innerWidth < GLOBAL.navBreakpoint;
-
 const Header = () => {
+    const hiddenNavigation = useSmallScreen(GLOBAL.navBreakpoint);
     const user = useContext(UserContext);
     const palette = palettes[user.paletteName];
     const backgroundColor = setTransparency(
@@ -49,37 +46,12 @@ const Header = () => {
         palette.headerOpacity
     );
 
-    const [smallNav, setSmallNav] = useState<boolean>(isSmallScreen());
-
-    useEventListener("resize", () => setSmallNav(isSmallScreen()));
-
     const emotion = useMemo(
         () => makeEmotion(backgroundColor, palette.background),
         [backgroundColor, palette]
     );
 
-    const NavX = (
-        <>
-            <div css={emotion}>
-                <Logo color={palette.logo} />
-                <Nav>
-                    <HelpModal />
-                    <ContactsModal />
-                    <AdminModal />
-                    <SettingsModal />
-                    <SoundSwitch />
-                    <AnimationSwitch />
-                </Nav>
-                <Login color={palette.logo} align='right' />
-            </div>
-        </>
-    );
-
-    if (!smallNav) {
-        return NavX;
-    }
-
-    const NavY = (
+    return hiddenNavigation ? (
         <>
             <div css={emotion}>
                 <Logo color={palette.logo} />
@@ -100,9 +72,22 @@ const Header = () => {
                 </ToggleNav>
             </div>
         </>
+    ) : (
+        <>
+            <div css={emotion}>
+                <Logo color={palette.logo} />
+                <Nav>
+                    <HelpModal />
+                    <ContactsModal />
+                    <AdminModal />
+                    <SettingsModal />
+                    <SoundSwitch />
+                    <AnimationSwitch />
+                </Nav>
+                <Login color={palette.logo} align='right' />
+            </div>
+        </>
     );
-
-    return NavY;
 };
 
 export default Header;

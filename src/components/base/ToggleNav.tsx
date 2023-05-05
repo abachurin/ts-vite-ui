@@ -5,11 +5,11 @@ import React, {
     ReactNode,
     ReactElement,
     useMemo,
+    useState,
     useCallback,
 } from "react";
-import useToggle from "../../hooks/useToggle";
 import { RGB, RGBA, ChildrenProps, Alignment } from "../../types";
-import { GLOBAL, removeTransparency } from "../../utils";
+import { GLOBAL, SvgPaths, removeTransparency } from "../../utils";
 import Button from "./Button/Button";
 import Icon from "./Icon/Icon";
 
@@ -69,7 +69,7 @@ const ToggleNav = ({
     children,
 }: ToggleNavProps) => {
     const ref = useRef<HTMLDivElement>(null);
-    const [visibility, setVisibility] = useToggle(false);
+    const [visibility, setVisibility] = useState(false);
 
     const emotion = useMemo(
         () => makeEmotion(align, textColor),
@@ -95,7 +95,7 @@ const ToggleNav = ({
             <Button onClick={() => setVisibility(!visibility)} align={align}>
                 <Icon
                     color={logoColor}
-                    svg={GLOBAL.svg.menu}
+                    svg={SvgPaths.menu}
                     rescaleFactor={1.5}
                 />
             </Button>

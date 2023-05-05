@@ -1,123 +1,177 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useState, useContext, useEffect } from "react";
-import { uniqueId } from "lodash-es";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
-import { palettes } from "../../contexts/UserProvider/palette";
-import { GLOBAL } from "../../utils";
+import { useMemo, useState, useEffect, useCallback } from "react";
+import { GLOBAL, SvgPaths } from "../../utils";
+import Icon from "./Icon/Icon";
 
 // Emotion styles
 const makeEmotion = (
     width: string,
-    color1: string,
-    color2: string,
-    color3: string,
-    textColor: string
-): SerializedStyles => css`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: ${GLOBAL.padding};
-    width: ${width};
-    background: linear-gradient(135deg, ${color1}, ${color2}, ${color3});
-    font-weight: 500;
-    color: ${textColor};
-    width: ${width};
-    padding: ${GLOBAL.padding};
-    border-radius: ${GLOBAL.borderRadius};
-`;
-
-const makeControl = (
-    controlSize: number,
+    fontSize: number,
+    labelRatio: number,
+    backgroundColor: string,
+    color: string,
+    labelColor1: string,
+    labelColor2: string,
     controlColor: string
 ): SerializedStyles => css`
-    appearance: none;
-    position: relative;
-    width: ${controlSize * 1.5}rem;
-    height: ${controlSize}rem;
-    border-radius: ${controlSize}rem;
-    padding: ${controlSize * 0.1}rem;
-    background-color: rgb(170, 170, 170);
-    vertical-align: middle;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.1, 1.4);
-    ::after {
-        content: "";
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    box-shadow: ${GLOBAL.littleShadow};
+    border-radius: ${GLOBAL.borderRadius};
+    padding: ${GLOBAL.padding};
+    background-color: ${backgroundColor};
+    color: ${color};
+    width: ${width};
+    font-size: ${fontSize * labelRatio}rem;
+    font-weight: 500;
+    &:hover {
+        box-shadow: ${GLOBAL.middleShadow};
+    }
+    & label {
+        text-align: center;
+        background: linear-gradient(135deg, ${labelColor1}, ${labelColor2});
+        background-clip: text;
+        text-fill-color: transparent;
+    }
+    & section {
         position: relative;
-        display: block;
-        left: 0;
-        width: ${controlSize * 0.8}rem;
-        height: 100%;
-        border-radius: ${controlSize * 0.8}rem;
+        width: 100%;
+        font-size: ${fontSize}rem;
+        appearance: none;
+        outline: none;
+        border: 0;
+        border-radius: ${GLOBAL.borderRadius};
+        border: 1px solid ${controlColor};
+    }
+    & aside {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    & main {
+        width: 100%;
+        padding: ${GLOBAL.padding};
+        font-size: ${fontSize}rem;
         background-color: white;
-        transition: left 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-            padding 0.3s ease, margin 0.3s ease;
-        box-sizing: content-box;
-    }
-    :checked {
-        background-color: ${controlColor};
-    }
-    :checked::after {
-        left: ${controlSize * 0.5}rem;
+        appearance: none;
+        outline: none;
+        border: 0;
+        border-radius: ${GLOBAL.borderRadius};
     }
 `;
 
-/**
- * This function returns a checkbox component that can be used to render a checkbox in a UI
- * @param {string} width - The width of the checkbox component with label
- * @param {number} controlSize - The height of the checkbox
- * @param {string} controlColor - The color of the checkbox when "checked"
- * @param {string} color1 - colors for gradient on the component, set the same if no gradient
- * @param {string} color2 - or just don't provide any, and the background will be inherited
- * @param {string} color3
- * @param {string} textColor - The color of the label
- * @param {string} label - The label
- * @param {boolean} value - The initial state of "checked"
- * @param {function} onChange - The function that gets called when the checkbox toggled
- */
 interface SelectProps {
     width?: string;
-    controlSize?: number;
+    fontSize?: number;
+    labelRatio?: number;
+    backgroundColor?: string;
+    labelColor1?: string;
+    labelColor2?: string;
     controlColor?: string;
-    color1?: string;
-    color2?: string;
-    color3?: string;
-    textColor?: string;
+    color?: string;
     label?: string;
-    onChange: (checked: string) => void;
+    optionValues: string[];
+    initialValue?: string;
+    onChange: (value: string) => void;
 }
 const Select = ({
     width = "auto",
-    controlSize = 1.2,
-    controlColor = "rgb(50, 50, 224)",
-    color1 = "inherit",
-    color2 = "inherit",
-    color3 = "inherit",
-    textColor = "inherit",
-    label = "",
+    fontSize = 0.8,
+    labelRatio = 1.25,
+    backgroundColor = "inherit",
+    labelColor1 = "black",
+    labelColor2 = "black",
+    controlColor = "",
+    color = "inherit",
+    label = "Select:",
+    optionValues = [],
+    initialValue = undefined,
     onChange,
 }: SelectProps) => {
-    const user = useContext(UserContext);
-    const paletteName = user.paletteName;
+    const [optionsOpen, setOptionsOpen] = useState(false);
+    const toggleOptions = () => setOptionsOpen(!optionsOpen);
 
-    const [value, setValue] = useState(paletteName);
+    const [value, setValue] = useState(initialValue || optionValues[0]);
     useEffect(() => {
-        setValue(paletteName);
-    }, [paletteName]);
+        setValue(initialValue || optionValues[0]);
+    }, [initialValue, optionValues]);
 
-    const handleOnChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const value = e.target.value;
-        setValue(value);
-        onChange(value);
+    const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
+        const currentValue = e.currentTarget.innerText;
+        if (currentValue !== value) {
+            setValue(currentValue);
+            onChange(currentValue);
+        }
     };
 
-    const emotion = makeEmotion(width, color1, color2, color3, textColor);
-    const control = makeControl(controlSize, controlColor);
+    const emotion = useMemo(
+        () =>
+            makeEmotion(
+                width,
+                fontSize,
+                labelRatio,
+                backgroundColor,
+                color,
+                labelColor1,
+                labelColor2,
+                controlColor
+            ),
+        [
+            width,
+            fontSize,
+            labelRatio,
+            backgroundColor,
+            color,
+            labelColor1,
+            labelColor2,
+            controlColor,
+        ]
+    );
 
-    const id = uniqueId("checkbox");
+    const optionsBox = css`
+        margin-top: 2px;
+        background-color: pink;
+        border-radius: ${GLOBAL.borderRadius} 0 0 ${GLOBAL.borderRadius};
+        border: 1px 0 0 1px solid ${controlColor};
+        width: 100%;
+    `;
 
     return (
         <div css={emotion}>
-            <label htmlFor={id}>{label}</label>
-            <select id={id} value={value} onChange={handleOnChange} />
+            <label>{label}</label>
+            <section onClick={toggleOptions}>
+                <main>{value}</main>
+                <aside>
+                    <Icon
+                        svg={
+                            optionsOpen
+                                ? SvgPaths.rightArrow
+                                : SvgPaths.leftArrow
+                        }
+                        color={controlColor}
+                    />
+                </aside>
+            </section>
+            {optionsOpen && (
+                <div css={optionsBox}>
+                    {optionValues.map((v) => (
+                        <div
+                            css={
+                                v === value
+                                    ? css`
+                                          background-color: yellow;
+                                      `
+                                    : null
+                            }
+                            onClick={handleOption}
+                        >
+                            {v}
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };

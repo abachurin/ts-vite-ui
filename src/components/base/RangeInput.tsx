@@ -4,7 +4,7 @@ import { uniqueId } from "lodash-es";
 import { GLOBAL } from "../../utils";
 
 // Emotion styles
-const makeContainer = (
+const makeEmotion = (
     width: string,
     labelFontSize: number,
     backgroundColor: string,
@@ -12,7 +12,7 @@ const makeContainer = (
 ): SerializedStyles => css`
     display: flex;
     flex-direction: column;
-    box-shadow: ${GLOBAL.darkShadow};
+    box-shadow: ${GLOBAL.littleShadow};
     border-radius: ${GLOBAL.borderRadius};
     padding: ${GLOBAL.padding};
     background-color: ${backgroundColor};
@@ -23,6 +23,9 @@ const makeContainer = (
     & label {
         text-align: center;
         margin-bottom: ${GLOBAL.padding};
+    }
+    &:hover {
+        box-shadow: ${GLOBAL.middleShadow};
     }
 `;
 
@@ -42,7 +45,7 @@ const makeControl = (
     controlSize: number
 ): SerializedStyles => css`
     width: ${controlSize}rem;
-    height: ${controlSize}rem;
+    aspect-ratio: 1;
     border: 2px solid ${controlColor};
     border-radius: 50%;
     position: absolute;
@@ -52,9 +55,10 @@ const makeControl = (
     justify-content: center;
     align-items: center;
     background-color: white;
-    box-shadow: ${GLOBAL.darkShadow};
+    box-shadow: ${GLOBAL.littleShadow};
     font-size: ${labelFontSize * 0.8}rem;
     z-index: 100;
+    transition: left 0.15s ease;
 `;
 const makeLine = (
     width: string,
@@ -66,8 +70,9 @@ const makeLine = (
     top: 50%;
     transform: translateY(-50%);
     height: 2px;
-    box-shadow: ${GLOBAL.darkShadow};
+    box-shadow: ${GLOBAL.littleShadow};
     margin-bottom: ${GLOBAL.padding};
+    transition: width 0.15s ease;
 `;
 
 const makeInputLine = (
@@ -75,8 +80,9 @@ const makeInputLine = (
     controlSize: number
 ): SerializedStyles => css`
     position: absolute;
-    left: calc(${controlSize}rem * 0.33);
     width: calc(${width} - ${controlSize}rem * 0.7);
+    height: ${controlSize}rem;
+    left: calc(${controlSize}rem * 0.33);
     top: 50%;
     transform: translateY(-50%);
     margin-bottom: ${GLOBAL.padding};
@@ -148,8 +154,8 @@ const RangeInput = ({
     const lineWidth = `calc(100% + ${controlSize}rem)`;
     const innerWidth = `calc(100% - 2 * ${GLOBAL.padding} - ${controlSize}rem)`;
 
-    const container = useMemo(
-        () => makeContainer(width, labelFontSize, backgroundColor, color),
+    const emotion = useMemo(
+        () => makeEmotion(width, labelFontSize, backgroundColor, color),
         [width, labelFontSize, backgroundColor, color]
     );
     const controlWrapper = useMemo(
@@ -180,15 +186,12 @@ const RangeInput = ({
         ${controlBase}
         left: ${offset}%;
     `;
-    const leftLine = useMemo(
-        () => makeLine(`${offset}%`, controlColor),
-        [offset, controlColor]
-    );
+    const leftLine = makeLine(`${offset}%`, controlColor);
 
     const id = uniqueId("range-slider");
     return (
-        <div css={container}>
-            {labelAbove ? <label htmlFor={id}>{label}</label> : null}
+        <div css={emotion}>
+            {labelAbove && <label htmlFor={id}>{label}</label>}
             <div css={controlWrapper}>
                 <div css={control}>{value}</div>
                 <div css={fullLine} />
@@ -203,7 +206,7 @@ const RangeInput = ({
                     onChange={handleOnChange}
                 />
             </div>
-            {labelAbove ? null : <label htmlFor={id}>{label}</label>}
+            {!labelAbove && <label htmlFor={id}>{label}</label>}
         </div>
     );
 };

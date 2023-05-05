@@ -1,7 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useCallback } from "react";
 import { RGB } from "../../types";
-import { GLOBAL, smoothScroll } from "../../utils";
+import { GLOBAL, SvgPaths, smoothScroll } from "../../utils";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 
@@ -29,7 +29,7 @@ const Logo = ({ color }: LogoProps) => {
     return (
         <Button onClick={onClick}>
             <div css={emotion}>
-                <Icon svg={GLOBAL.svg.robot} />
+                <Icon svg={SvgPaths.robot} />
                 RL 2048
             </div>
         </Button>

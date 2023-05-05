@@ -11,7 +11,7 @@ const makeWrapper = (
     justify-content: center;
     align-items: center;
     height: ${(initialSize * rescaleFactor) / 16}rem;
-    width: ${(initialSize * rescaleFactor) / 16}rem;
+    aspect-ratio: 1;
 `;
 const makeEmotion = (
     scale: number,
@@ -47,23 +47,20 @@ const Icon = ({
     const wrapper = makeWrapper(initialSize, rescaleFactor);
     const emotion = makeEmotion(scale, rescaleFactor);
 
-    if (typeof svg === "string")
-        return (
-            <div css={wrapper}>
-                <div css={emotion}>
-                    <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        width='24'
-                        height='24'
-                        fill='currentColor'
-                    >
-                        <path fill={color} d={svg}></path>
-                    </svg>
-                </div>
+    return typeof svg === "string" ? (
+        <div css={wrapper}>
+            <div css={emotion}>
+                <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='24'
+                    height='24'
+                    fill='currentColor'
+                >
+                    <path fill={color} d={svg}></path>
+                </svg>
             </div>
-        );
-
-    return (
+        </div>
+    ) : (
         <div css={wrapper}>
             <div css={emotion}>{svg}</div>
         </div>

@@ -4,7 +4,7 @@ import {
     UserUpdateContext,
 } from "../../contexts/UserProvider/UserContext";
 import { StyledHTMLElement } from "../../types";
-import { GLOBAL } from "../../utils";
+import { SvgPaths } from "../../utils";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 
@@ -25,7 +25,7 @@ const toggleMotion = (move: boolean): void => {
 const AnimationSwitch = () => {
     const user = useContext(UserContext);
     const updateUser = useContext(UserUpdateContext);
-    const icon = user.animate ? GLOBAL.svg.yesMotion : GLOBAL.svg.noMotion;
+    const icon = user.animate ? SvgPaths.yesMotion : SvgPaths.noMotion;
 
     toggleMotion(user.animate);
 

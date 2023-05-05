@@ -24,6 +24,9 @@ const makeEmotion = (
     width: ${width};
     padding: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
+    &:hover {
+        box-shadow: ${GLOBAL.middleShadow};
+    }
 `;
 
 const makeControl = (

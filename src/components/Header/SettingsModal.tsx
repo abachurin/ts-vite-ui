@@ -4,7 +4,6 @@ import {
     User,
     UserContext,
     UserUpdateContext,
-    defaultUser,
 } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
 import { GLOBAL, changeBrightness } from "../../utils";
@@ -23,32 +22,29 @@ const emotion = css`
     display: flex;
     flex-direction: column;
     gap: ${GLOBAL.padding};
-    padding-block: ${GLOBAL.padding};
+    margin-block: ${GLOBAL.padding};
 `;
 const topHalf = css`
     display: flex;
-    gap: ${GLOBAL.padding};
+    gap: calc(${GLOBAL.padding} * 2);
     & > :first-of-type {
         flex: 1;
     }
 `;
-const checkboxBlock = css`
+const leftQuarter = css`
     display: flex;
     flex-direction: column;
     gap: ${GLOBAL.padding};
+    padding: ${GLOBAL.padding};
+    border-radius: ${GLOBAL.borderRadius};
+    box-shadow: ${GLOBAL.littleShadow};
+    &:hover {
+        box-shadow: ${GLOBAL.middleShadow};
+    }
 `;
 
 // Helper functions
-const defaultValues = {
-    sound: defaultUser.sound,
-    soundLevel: defaultUser.soundLevel,
-    animate: defaultUser.animate,
-    animationSpeed: defaultUser.animationSpeed,
-    legends: defaultUser.legends,
-    paletteName: defaultUser.paletteName,
-};
-type ValuesType = typeof defaultValues;
-const getUserValues = (user: User): ValuesType => {
+const getUserValues = (user: User) => {
     return {
         sound: user.sound,
         soundLevel: user.soundLevel,
@@ -59,6 +55,8 @@ const getUserValues = (user: User): ValuesType => {
     };
 };
 
+type ValuesType = ReturnType<typeof getUserValues>;
+
 /**
  * Returns a Modal component with a button that displays a settings section.
  * @param align - The alignment parameter of the button, which opens the modal.
@@ -67,6 +65,8 @@ const SettingsModal = ({ align }: AlignProps) => {
     const user = useContext(UserContext);
     const palette = palettes[user.paletteName];
     const updateUser = useContext(UserUpdateContext);
+
+    // const [currentValues, setCurrentValues] = useInitialValue(userValues);
 
     const [currentValues, setCurrentValues] = useState<ValuesType>(
         getUserValues(user)
@@ -99,11 +99,18 @@ const SettingsModal = ({ align }: AlignProps) => {
         color: ${palette.text};
     `;
 
+    const brightOne = changeBrightness(palette.one, 1.5);
+    const brightTwo = changeBrightness(palette.two, 1.5);
+
     const checkboxParameters = {
-        width: "10em",
-        color1: changeBrightness(palette.two, 1.5),
+        color1: brightTwo,
         color2: palette.background,
-        color3: changeBrightness(palette.one, 1.5),
+        color3: brightOne,
+        controlColor: palette.three,
+    };
+    const selectParameters = {
+        labelColor1: palette.two,
+        labelColor2: palette.one,
         controlColor: palette.three,
     };
     const sliderParameters = {
@@ -131,11 +138,11 @@ const SettingsModal = ({ align }: AlignProps) => {
             <ModalBody>
                 <form css={emotion}>
                     <div css={topHalf}>
-                        <div css={checkboxBlock}>
+                        <div css={leftQuarter}>
                             <Checkbox
                                 {...checkboxParameters}
                                 label='Animation'
-                                checked={user.animate}
+                                checked={currentValues.animate}
                                 onChange={(checked) =>
                                     updateValues({ animate: checked })
                                 }
@@ -143,7 +150,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                             <Checkbox
                                 {...checkboxParameters}
                                 label='Sound'
-                                checked={user.sound}
+                                checked={currentValues.sound}
                                 onChange={(checked) =>
                                     updateValues({ sound: checked })
                                 }
@@ -151,26 +158,29 @@ const SettingsModal = ({ align }: AlignProps) => {
                             <Checkbox
                                 {...checkboxParameters}
                                 label='Verbose'
-                                checked={user.legends}
+                                checked={currentValues.legends}
                                 onChange={(checked) =>
                                     updateValues({ legends: checked })
                                 }
                             />
                         </div>
                         <Select
+                            {...selectParameters}
+                            width='100%'
+                            label='Palette'
+                            optionValues={Object.keys(palettes)}
+                            initialValue={currentValues.paletteName}
                             onChange={(value) =>
                                 updateValues({ paletteName: value })
                             }
                         />
                     </div>
-
-                    <br />
                     <RangeInput
                         {...sliderParameters}
                         start={1}
                         end={10}
                         step={0.5}
-                        initialValue={user.animationSpeed}
+                        initialValue={currentValues.animationSpeed}
                         label='Falcon speed'
                         onChange={(value) =>
                             updateValues({ animationSpeed: value })
@@ -180,8 +190,8 @@ const SettingsModal = ({ align }: AlignProps) => {
                         {...sliderParameters}
                         start={0}
                         end={1}
-                        step={0.01}
-                        initialValue={user.soundLevel}
+                        step={0.1}
+                        initialValue={currentValues.soundLevel}
                         label='Sound level'
                         onChange={(value) =>
                             updateValues({ soundLevel: value })
@@ -195,9 +205,9 @@ const SettingsModal = ({ align }: AlignProps) => {
                     align='center'
                     backgroundColor={palette.one}
                     color='white'
-                    onClick={() => updateUser(defaultValues)}
+                    onClick={() => setCurrentValues(getUserValues(user))}
                 >
-                    Reset to Defaults
+                    Reset User Settings
                 </Button>
                 <Button
                     type='clickPress'
