@@ -1,5 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo, useState, useEffect, useCallback } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { uniqueId } from "lodash-es";
+import { useOutsideClick } from "../../hooks/useClickAwayListener";
 import { GLOBAL, SvgPaths } from "../../utils";
 import Icon from "./Icon/Icon";
 
@@ -92,6 +94,7 @@ const Select = ({
 }: SelectProps) => {
     const [optionsOpen, setOptionsOpen] = useState(false);
     const toggleOptions = () => setOptionsOpen(!optionsOpen);
+    const ref = useOutsideClick(toggleOptions);
 
     const [value, setValue] = useState(initialValue || optionValues[0]);
     useEffect(() => {
@@ -139,7 +142,7 @@ const Select = ({
     `;
 
     return (
-        <div css={emotion}>
+        <div css={emotion} ref={ref}>
             <label>{label}</label>
             <section onClick={toggleOptions}>
                 <main>{value}</main>
@@ -158,6 +161,7 @@ const Select = ({
                 <div css={optionsBox}>
                     {optionValues.map((v) => (
                         <div
+                            key={uniqueId()}
                             css={
                                 v === value
                                     ? css`
