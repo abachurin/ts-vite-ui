@@ -3,7 +3,7 @@ import { useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
 import { useOutsideClick } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
-import { GLOBAL, SvgPaths, changeBrightness } from "../../utils";
+import { GLOBAL, SvgPaths } from "../../utils";
 import Icon from "./Icon/Icon";
 
 // Emotion styles
