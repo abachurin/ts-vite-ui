@@ -19,12 +19,13 @@ const makeEmotion = (
     gap: ${GLOBAL.padding};
     width: ${width};
     background: linear-gradient(135deg, ${color1}, ${color2}, ${color3});
-    font-weight: 500;
     color: ${textColor};
     width: ${width};
     padding: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
+    box-shadow: ${GLOBAL.littleShadow};
     &:hover {
+        font-weight: 500;
         box-shadow: ${GLOBAL.middleShadow};
     }
 `;

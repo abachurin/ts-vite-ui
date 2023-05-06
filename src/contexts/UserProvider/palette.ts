@@ -45,4 +45,17 @@ export const palettes: Palettes = {
         two: "rgb(4, 96, 64)",
         three: "rgb(50, 50, 224)",
     },
+    "Nice Blue": {
+        name: "Nice Blue and a bit of Yellow",
+        background: "rgb(235, 235, 235)",
+        text: "rgb(64, 64, 64)",
+        header: "rgb(255, 255, 130)",
+        headerOpacity: 0.3,
+        logo: "rgb(130, 255, 255)",
+        pane: "rgb(50, 50, 224)",
+        paneOpacity: 0.1,
+        one: "rgb(204, 112, 0)",
+        two: "rgb(4, 96, 64)",
+        three: "rgb(50, 50, 224)",
+    },
 };

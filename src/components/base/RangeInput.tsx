@@ -19,13 +19,15 @@ const makeEmotion = (
     color: ${color};
     width: ${width};
     font-size: ${labelFontSize}rem;
-    font-weight: 500;
     & label {
         text-align: center;
         margin-bottom: ${GLOBAL.padding};
     }
     &:hover {
         box-shadow: ${GLOBAL.middleShadow};
+    }
+    &:hover label {
+        font-weight: 500;
     }
 `;
 
@@ -59,6 +61,9 @@ const makeControl = (
     font-size: ${labelFontSize * 0.8}rem;
     z-index: 100;
     transition: left 0.15s ease;
+    & ::selection {
+        background-color: transparent;
+    }
 `;
 const makeLine = (
     width: string,

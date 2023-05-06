@@ -2,10 +2,27 @@ import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
 import { useOutsideClick } from "../../hooks/useClickAwayListener";
-import { GLOBAL, SvgPaths } from "../../utils";
+import { Alignment } from "../../types";
+import { GLOBAL, SvgPaths, changeBrightness } from "../../utils";
 import Icon from "./Icon/Icon";
 
 // Emotion styles
+const makeContainer = (
+    color: string,
+    width: string,
+    fontSize: number
+): SerializedStyles => css`
+    position: relative;
+    color: ${color};
+    width: ${width};
+    font-size: ${fontSize}rem;
+    &:hover main {
+        box-shadow: ${GLOBAL.middleShadow};
+    }
+    &:hover label {
+        font-weight: 500;
+    }
+`;
 const makeEmotion = (
     width: string,
     fontSize: number,
@@ -16,52 +33,55 @@ const makeEmotion = (
     labelColor2: string,
     controlColor: string
 ): SerializedStyles => css`
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    box-shadow: ${GLOBAL.littleShadow};
-    border-radius: ${GLOBAL.borderRadius};
     padding: ${GLOBAL.padding};
+    border-radius: ${GLOBAL.borderRadius};
+    box-shadow: ${GLOBAL.littleShadow};
     background-color: ${backgroundColor};
     color: ${color};
     width: ${width};
-    font-size: ${fontSize * labelRatio}rem;
-    font-weight: 500;
-    &:hover {
-        box-shadow: ${GLOBAL.middleShadow};
-    }
-    & label {
-        text-align: center;
+    & > label {
+        display: block;
+        width: 100%;
+        font-size: ${fontSize * labelRatio}rem;
         background: linear-gradient(135deg, ${labelColor1}, ${labelColor2});
         background-clip: text;
+        border-bottom: 1px solid ${controlColor};
         text-fill-color: transparent;
     }
-    & section {
+    & > section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         position: relative;
         width: 100%;
-        font-size: ${fontSize}rem;
-        appearance: none;
-        outline: none;
-        border: 0;
-        border-radius: ${GLOBAL.borderRadius};
-        border: 1px solid ${controlColor};
+        margin-top: ${GLOBAL.padding};
     }
-    & aside {
-        position: absolute;
-        right: 0;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-    & main {
-        width: 100%;
-        padding: ${GLOBAL.padding};
-        font-size: ${fontSize}rem;
-        background-color: white;
-        appearance: none;
-        outline: none;
-        border: 0;
-        border-radius: ${GLOBAL.borderRadius};
-    }
+`;
+const thinGap = (
+    <div
+        css={css`
+            height: 0.2rem;
+        `}
+    ></div>
+);
+const makeOptionsBox = (
+    controlColor: string,
+    backgroundColor: string
+): SerializedStyles => css`
+    position: absolute;
+    width: max-content;
+    border: 1px solid ${controlColor};
+    border-top: none;
+    border-radius: 0 0 ${GLOBAL.borderRadius} ${GLOBAL.borderRadius};
+    background-color: ${backgroundColor};
+    transform: scale(0);
+    transition: transform 0.25s ease;
+    z-index: 1000;
+`;
+
+const optionStyle = css`
+    text-align: center;
+    padding: ${GLOBAL.padding};
 `;
 
 interface SelectProps {
@@ -76,6 +96,7 @@ interface SelectProps {
     label?: string;
     optionValues: string[];
     initialValue?: string;
+    alignOptions?: Alignment;
     onChange: (value: string) => void;
 }
 const Select = ({
@@ -90,11 +111,11 @@ const Select = ({
     label = "Select:",
     optionValues = [],
     initialValue = undefined,
+    alignOptions = "left",
     onChange,
 }: SelectProps) => {
-    const [optionsOpen, setOptionsOpen] = useState(false);
-    const toggleOptions = () => setOptionsOpen(!optionsOpen);
-    const ref = useOutsideClick(toggleOptions);
+    const [optionsOpen, setOptionsOpen] = useState(0);
+    const ref = useOutsideClick(() => setOptionsOpen(0));
 
     const [value, setValue] = useState(initialValue || optionValues[0]);
     useEffect(() => {
@@ -109,6 +130,10 @@ const Select = ({
         }
     };
 
+    const container = useMemo(
+        () => makeContainer(color, width, fontSize),
+        [color, width, fontSize]
+    );
     const emotion = useMemo(
         () =>
             makeEmotion(
@@ -133,49 +158,61 @@ const Select = ({
         ]
     );
 
+    const optionsBoxBase = useMemo(
+        () => makeOptionsBox(controlColor, backgroundColor),
+        [controlColor, backgroundColor]
+    );
+    const optionsBoxAlignment =
+        alignOptions === "left"
+            ? css`
+                  left: 0;
+              `
+            : css`
+                  right: 0;
+              `;
     const optionsBox = css`
-        margin-top: 2px;
-        background-color: pink;
-        border-radius: ${GLOBAL.borderRadius} 0 0 ${GLOBAL.borderRadius};
-        border: 1px 0 0 1px solid ${controlColor};
-        width: 100%;
+        ${optionsBoxBase}
+        ${optionsBoxAlignment}
+        transform: ${optionsOpen ? "scale(1)" : "scale(0)"};
     `;
 
     return (
-        <div css={emotion} ref={ref}>
-            <label>{label}</label>
-            <section onClick={toggleOptions}>
-                <main>{value}</main>
-                <aside>
-                    <Icon
-                        svg={
-                            optionsOpen
-                                ? SvgPaths.rightArrow
-                                : SvgPaths.leftArrow
-                        }
-                        color={controlColor}
-                    />
-                </aside>
-            </section>
-            {optionsOpen && (
-                <div css={optionsBox}>
-                    {optionValues.map((v) => (
-                        <div
-                            key={uniqueId()}
-                            css={
-                                v === value
-                                    ? css`
-                                          background-color: yellow;
-                                      `
-                                    : null
+        <div css={container} ref={ref}>
+            <main css={emotion}>
+                <label>{label}</label>
+                <section onClick={() => setOptionsOpen(1 - optionsOpen)}>
+                    <div>{value}</div>
+                    <aside>
+                        <Icon
+                            svg={
+                                optionsOpen
+                                    ? SvgPaths.rightArrow
+                                    : SvgPaths.leftArrow
                             }
-                            onClick={handleOption}
-                        >
-                            {v}
-                        </div>
-                    ))}
-                </div>
-            )}
+                            color={controlColor}
+                        />
+                    </aside>
+                </section>
+            </main>
+            {thinGap}
+            <div css={optionsBox}>
+                {optionValues.map((v) => (
+                    <div
+                        key={uniqueId()}
+                        css={
+                            v === value
+                                ? css`
+                                      ${optionStyle}
+                                      font-weight: 500;
+                                  `
+                                : optionStyle
+                        }
+                        onClick={handleOption}
+                    >
+                        {v}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

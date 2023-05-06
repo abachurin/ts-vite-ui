@@ -7,7 +7,7 @@ import {
 } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
 import { GLOBAL, changeBrightness } from "../../utils";
-import { AlignProps } from "../../types";
+import { AlignProps, Alignment } from "../../types";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";
@@ -19,27 +19,20 @@ import Select from "../base/Select";
 
 // Emotion styles
 const emotion = css`
-    display: flex;
-    flex-direction: column;
-    gap: ${GLOBAL.padding};
     margin-block: ${GLOBAL.padding};
-`;
-const topHalf = css`
-    display: flex;
-    gap: calc(${GLOBAL.padding} * 2);
-    & > :first-of-type {
-        flex: 1;
-    }
-`;
-const leftQuarter = css`
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
     gap: ${GLOBAL.padding};
-    padding: ${GLOBAL.padding};
-    border-radius: ${GLOBAL.borderRadius};
-    box-shadow: ${GLOBAL.littleShadow};
-    &:hover {
-        box-shadow: ${GLOBAL.middleShadow};
+    & > section:nth-of-type(3),
+    & > section:nth-of-type(4) {
+        grid-column: 1 / span 2;
+    }
+    & > section {
+        display: flex;
+        flex-direction: column;
+        gap: ${GLOBAL.padding};
+        padding: ${GLOBAL.padding};
     }
 `;
 
@@ -109,13 +102,15 @@ const SettingsModal = ({ align }: AlignProps) => {
         controlColor: palette.three,
     };
     const selectParameters = {
+        backgroundColor: "white",
         labelColor1: palette.two,
         labelColor2: palette.one,
         controlColor: palette.three,
+        alignOptions: "right" as Alignment,
     };
     const sliderParameters = {
         width: "100%",
-        backgroundColor: palette.background,
+        backgroundColor: "white",
         color: palette.text,
         controlColor: palette.three,
     };
@@ -137,33 +132,33 @@ const SettingsModal = ({ align }: AlignProps) => {
             </ModalHeader>
             <ModalBody>
                 <form css={emotion}>
-                    <div css={topHalf}>
-                        <div css={leftQuarter}>
-                            <Checkbox
-                                {...checkboxParameters}
-                                label='Animation'
-                                checked={currentValues.animate}
-                                onChange={(checked) =>
-                                    updateValues({ animate: checked })
-                                }
-                            />
-                            <Checkbox
-                                {...checkboxParameters}
-                                label='Sound'
-                                checked={currentValues.sound}
-                                onChange={(checked) =>
-                                    updateValues({ sound: checked })
-                                }
-                            />
-                            <Checkbox
-                                {...checkboxParameters}
-                                label='Verbose'
-                                checked={currentValues.legends}
-                                onChange={(checked) =>
-                                    updateValues({ legends: checked })
-                                }
-                            />
-                        </div>
+                    <section>
+                        <Checkbox
+                            {...checkboxParameters}
+                            label='Animation'
+                            checked={currentValues.animate}
+                            onChange={(checked) =>
+                                updateValues({ animate: checked })
+                            }
+                        />
+                        <Checkbox
+                            {...checkboxParameters}
+                            label='Sound'
+                            checked={currentValues.sound}
+                            onChange={(checked) =>
+                                updateValues({ sound: checked })
+                            }
+                        />
+                        <Checkbox
+                            {...checkboxParameters}
+                            label='Verbose'
+                            checked={currentValues.legends}
+                            onChange={(checked) =>
+                                updateValues({ legends: checked })
+                            }
+                        />
+                    </section>
+                    <section>
                         <Select
                             {...selectParameters}
                             width='100%'
@@ -174,29 +169,33 @@ const SettingsModal = ({ align }: AlignProps) => {
                                 updateValues({ paletteName: value })
                             }
                         />
-                    </div>
-                    <RangeInput
-                        {...sliderParameters}
-                        start={1}
-                        end={10}
-                        step={0.5}
-                        initialValue={currentValues.animationSpeed}
-                        label='Falcon speed'
-                        onChange={(value) =>
-                            updateValues({ animationSpeed: value })
-                        }
-                    />
-                    <RangeInput
-                        {...sliderParameters}
-                        start={0}
-                        end={1}
-                        step={0.1}
-                        initialValue={currentValues.soundLevel}
-                        label='Sound level'
-                        onChange={(value) =>
-                            updateValues({ soundLevel: value })
-                        }
-                    />
+                    </section>
+                    <section>
+                        <RangeInput
+                            {...sliderParameters}
+                            start={1}
+                            end={10}
+                            step={0.5}
+                            initialValue={currentValues.animationSpeed}
+                            label='Falcon speed'
+                            onChange={(value) =>
+                                updateValues({ animationSpeed: value })
+                            }
+                        />
+                    </section>
+                    <section>
+                        <RangeInput
+                            {...sliderParameters}
+                            start={0}
+                            end={1}
+                            step={0.1}
+                            initialValue={currentValues.soundLevel}
+                            label='Sound level'
+                            onChange={(value) =>
+                                updateValues({ soundLevel: value })
+                            }
+                        />
+                    </section>
                 </form>
             </ModalBody>
             <ModalFooter>
