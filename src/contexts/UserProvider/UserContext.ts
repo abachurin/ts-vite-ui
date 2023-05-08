@@ -12,9 +12,10 @@ export type User = {
     paletteName: string;
 };
 
-export type UserLogin = {
+export type LoginUser = {
     name: string;
     pwd: string;
+    action: "login" | "register";
 };
 
 export const defaultUser: User = {

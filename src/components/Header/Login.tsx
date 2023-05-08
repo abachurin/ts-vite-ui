@@ -1,13 +1,14 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo, useCallback, useContext, useState, useEffect } from "react";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import {
-    UserContext,
-    UserUpdateContext,
+    useUser,
+    useUserUpdate,
+    LoginUser,
     User,
-    UserLogin,
 } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
-import useAPI from "../../hooks/useAPI";
+import { connectAPI } from "../../api/utils";
 import { Alignment } from "../../types";
 import { GLOBAL } from "../../utils";
 import Modal from "../modal/Modal";
@@ -30,41 +31,47 @@ type LoginProps = {
     color?: string;
     align?: Alignment;
 };
+
 const Login = ({ color = "inherit", align = "left" }: LoginProps) => {
-    const user = useContext(UserContext);
+    const user = useUser();
     const palette = palettes[user.paletteName];
-    const updateUser = useContext(UserUpdateContext);
+    const updateUser = useUserUpdate();
 
     const [name, setName] = useState("");
     const [pwd, setPwd] = useState("");
-    const [loginData, setLoginData] = useState<UserLogin | undefined>();
     const [message, setMessage] = useState("");
 
-    // const { response, isLoading } = useAPI<User>(
-    //     "post",
-    //     "users/login",
-    //     loginData
-    // );
-
-    // if (response) {
-    //     if (typeof response.data === "object") {
-    //         updateUser(response.data);
-    //     } else if (typeof response.data === "string") {
-    //         setMessage(response.data);
-    //     } else console.log(response.error);
-    // }
-
-    const buttonText = useMemo(
-        (): JSX.Element => <div css={makeEmotion(color)}>{user.name}</div>,
-        [color, user]
+    const loginMutation = useMutation(
+        (data: LoginUser) =>
+            connectAPI<LoginUser, User>({
+                method: "post",
+                endpoint: "/users/login",
+                data: data,
+            }),
+        {
+            onSuccess: ({ result, error }) => {
+                if (result !== undefined) {
+                    setMessage(`Welcome, ${result.name}`);
+                    updateUser(result);
+                } else {
+                    setMessage(error ?? "Unknown error");
+                }
+            },
+        }
     );
+
+    const handleSubmit = (action: "login" | "register") => {
+        loginMutation.mutate({ name, pwd, action });
+    };
 
     return (
         <Modal
             button={{
                 type: "whooshRotate",
-                children: buttonText,
+                children: "Login",
                 align: align,
+                color: color,
+                fontSize: `${GLOBAL.logoScale}rem`,
             }}
             modal={{
                 width: "24em",
@@ -90,9 +97,10 @@ const Login = ({ color = "inherit", align = "left" }: LoginProps) => {
                     value={pwd}
                 />
             </form>
-            <Button onClick={() => setLoginData({ name, pwd })}>Submit</Button>
+            <Button onClick={() => handleSubmit("login")}>Submit</Button>
             <br />
             <p>{message}</p>
+            {loginMutation.isLoading && <div>Loading...</div>}
         </Modal>
     );
 };

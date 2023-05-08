@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { useUser } from "../../contexts/UserProvider/UserContext";
 import useDimensions from "../../hooks/useDimensions";
-import { GLOBAL, randomNum } from "../../utils";
+import { GLOBAL } from "../../utils";
 import Star from "./Star";
 
 // Emotion styles

@@ -1,6 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo } from "react";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
+import { useModalUpdate } from "../../../contexts/ModalProvider/ModalContext";
 import {
     ChildrenProps,
     Alignment,
@@ -10,7 +11,6 @@ import {
 import { GLOBAL } from "../../../utils";
 import { whooshRotateEmotion, whooshRotateClick } from "./whooshRotate";
 import { clickPressEmotion, clickPressClick } from "./clickPress";
-import { useModalUpdate } from "../../../contexts/ModalProvider/ModalContext";
 
 // Emotion styles
 const buttonStyles = {
@@ -35,7 +35,8 @@ const makeEmotion = (
     height: string,
     borderRadius: string,
     backgroundColor: string,
-    color: string
+    color: string,
+    fontSize: string
 ): SerializedStyles => css`
     position: relative;
     text-decoration: none;
@@ -43,7 +44,7 @@ const makeEmotion = (
     border-radius: ${borderRadius || GLOBAL.borderRadius};
     background-color: ${backgroundColor};
     color: ${color};
-    font-size: inherit;
+    font-size: ${fontSize};
     width: ${width};
     height: ${height};
 `;
@@ -111,6 +112,7 @@ export interface ButtonProps extends ChildrenProps {
     height?: string;
     backgroundColor?: string;
     color?: string;
+    fontSize?: string;
     borderRadius?: string;
     legend?: string;
     level?: number;
@@ -124,6 +126,7 @@ const Button = ({
     height = "auto",
     backgroundColor = "inherit",
     color = "inherit",
+    fontSize = "1rem",
     borderRadius = "",
     legend = "",
     level = 0,
@@ -139,7 +142,14 @@ const Button = ({
     const container = useMemo(() => makeContainer(align), [align]);
     const emotion = useMemo(
         () => css`
-            ${makeEmotion(width, height, borderRadius, backgroundColor, color)}
+            ${makeEmotion(
+                width,
+                height,
+                borderRadius,
+                backgroundColor,
+                color,
+                fontSize
+            )}
             ${buttonStyles[type].style(borderRadius)},
             ${showLegend ? makeLegend(align, legend) : ""}
         `,
@@ -151,6 +161,7 @@ const Button = ({
             legend,
             backgroundColor,
             color,
+            fontSize,
             borderRadius,
             showLegend,
         ]
