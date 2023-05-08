@@ -1,6 +1,6 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo, useContext } from "react";
-import { UserContext } from "../../../contexts/UserProvider/UserContext";
+import { useMemo } from "react";
+import { useUser } from "../../../contexts/UserProvider/UserContext";
 import {
     ChildrenProps,
     Alignment,
@@ -10,7 +10,7 @@ import {
 import { GLOBAL } from "../../../utils";
 import { whooshRotateEmotion, whooshRotateClick } from "./whooshRotate";
 import { clickPressEmotion, clickPressClick } from "./clickPress";
-import { ModalUpdateContext } from "../../../contexts/ModalProvider/ModalContext";
+import { useModalUpdate } from "../../../contexts/ModalProvider/ModalContext";
 
 // Emotion styles
 const buttonStyles = {
@@ -131,8 +131,8 @@ const Button = ({
     onClick,
     children,
 }: ButtonProps) => {
-    const changeIsOpen = useContext(ModalUpdateContext);
-    const user = useContext(UserContext);
+    const changeIsOpen = useModalUpdate();
+    const user = useUser();
     const volume = user.sound ? user.soundLevel : 0;
     const showLegend = user.legends;
 

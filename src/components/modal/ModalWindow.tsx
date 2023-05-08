@@ -1,12 +1,12 @@
 import { css, keyframes, SerializedStyles } from "@emotion/react";
 import ReactDOM from "react-dom";
-import { useCallback, useContext, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 import {
-    ModalContext,
-    ModalUpdateContext,
+    useModal,
+    useModalUpdate,
 } from "../../contexts/ModalProvider/ModalContext";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
 import { GLOBAL, makeSound } from "../../utils";
 
@@ -121,9 +121,9 @@ const ModalWindow = ({
     height = "auto",
     children,
 }: ModalWindowProps) => {
-    const isOpen = useContext(ModalContext);
-    const updateIsOpen = useContext(ModalUpdateContext);
-    const user = useContext(UserContext);
+    const isOpen = useModal();
+    const updateIsOpen = useModalUpdate();
+    const user = useUser();
 
     const baseModal = useMemo(
         () => makeBaseModal(backgroundColor, color, width, height),

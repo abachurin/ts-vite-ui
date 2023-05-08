@@ -19,6 +19,7 @@ export const whooshRotateClick: OnClickFunction = (
     el: HTMLButtonElement,
     volume: number
 ) => {
+    makeSound(clickSound, volume);
     el.animate(
         {
             transform: [
@@ -29,7 +30,6 @@ export const whooshRotateClick: OnClickFunction = (
             ],
             offset: [0, 0.37, 0.63, 1],
         },
-        1000
+        600
     );
-    makeSound(clickSound, volume);
 };

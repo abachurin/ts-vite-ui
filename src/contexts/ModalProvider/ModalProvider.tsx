@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ModalContext, ModalUpdateContext } from "./ModalContext";
 import { ChildrenProps, ModalState } from "../../types";
 
@@ -10,7 +10,12 @@ import { ChildrenProps, ModalState } from "../../types";
 const ModalProvider = ({ children }: ChildrenProps) => {
     const [isOpen, setIsOpen] = useState<ModalState>("none");
 
-    const changeIsOpen = (newState: ModalState) => setIsOpen(newState);
+    const changeIsOpen = useMemo(
+        () => (newState: ModalState) => {
+            setIsOpen(newState);
+        },
+        [setIsOpen]
+    );
 
     return (
         <ModalContext.Provider value={isOpen}>

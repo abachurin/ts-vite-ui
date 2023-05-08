@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
-import { useContext } from "react";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
 import { AlignProps } from "../../types";
 import Modal from "../modal/Modal";
@@ -35,7 +34,7 @@ const emotion = css`
  * @param align - The alignment parameter of the button, which opens the modal.
  */
 const ContactsModal = ({ align }: AlignProps) => {
-    const user = useContext(UserContext);
+    const user = useUser();
     const palette = palettes[user.paletteName];
 
     const headerStyle = css`

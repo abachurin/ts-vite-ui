@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
-import { useMemo, useContext } from "react";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { useMemo } from "react";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
 import useSmallScreen from "../../hooks/useSmallScreen";
 import { RGBA, RGB } from "../../types";
@@ -39,7 +39,7 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
 
 const Header = () => {
     const hiddenNavigation = useSmallScreen(GLOBAL.navBreakpoint);
-    const user = useContext(UserContext);
+    const user = useUser();
     const palette = palettes[user.paletteName];
     const backgroundColor = setTransparency(
         palette.header,

@@ -1,8 +1,8 @@
 import { css } from "@emotion/react";
-import { useState, useEffect, useContext } from "react";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { useMemo } from "react";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import useDimensions from "../../hooks/useDimensions";
-import { GLOBAL } from "../../utils";
+import { GLOBAL, randomNum } from "../../utils";
 import Star from "./Star";
 
 // Emotion styles
@@ -39,14 +39,13 @@ const createStarField = (
  */
 const StarField = () => {
     const [ref, width, height] = useDimensions();
-    const user = useContext(UserContext);
+    const user = useUser();
     const inverseSpeed = 11 - user.animationSpeed;
 
-    const [stars, setStars] = useState<JSX.Element[]>([]);
-
-    useEffect(() => {
-        setStars(createStarField(width, height, inverseSpeed));
-    }, [width, height, inverseSpeed]);
+    const stars = useMemo(
+        () => createStarField(width, height, inverseSpeed),
+        [width, height, inverseSpeed]
+    );
 
     return (
         <div ref={ref} css={emotion}>

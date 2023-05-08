@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, useContext } from "react";
 import { GLOBAL } from "../../utils";
 
 export type User = {
@@ -10,6 +10,11 @@ export type User = {
     animationSpeed: number;
     legends: boolean;
     paletteName: string;
+};
+
+export type UserLogin = {
+    name: string;
+    pwd: string;
 };
 
 export const defaultUser: User = {
@@ -25,5 +30,8 @@ export const defaultUser: User = {
 
 export const UserContext = createContext<User>(defaultUser);
 export const UserUpdateContext = createContext<(update: Partial<User>) => void>(
-    (update: Partial<User>) => console.log(update)
+    (update: Partial<User>) => console.log("hello " + update)
 );
+
+export const useUser = () => useContext(UserContext);
+export const useUserUpdate = () => useContext(UserUpdateContext);

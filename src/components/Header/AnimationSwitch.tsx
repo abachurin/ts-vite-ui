@@ -1,7 +1,6 @@
-import { useContext } from "react";
 import {
-    UserContext,
-    UserUpdateContext,
+    useUser,
+    useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
 import { StyledHTMLElement } from "../../types";
 import { SvgPaths } from "../../utils";
@@ -23,16 +22,16 @@ const toggleMotion = (move: boolean): void => {
  * with Icon depending on animation state.
  */
 const AnimationSwitch = () => {
-    const user = useContext(UserContext);
-    const updateUser = useContext(UserUpdateContext);
+    const user = useUser();
+    const updateUser = useUserUpdate();
     const icon = user.animate ? SvgPaths.yesMotion : SvgPaths.noMotion;
 
-    toggleMotion(user.animate);
+    Promise.resolve().then(() => toggleMotion(user.animate));
 
     const toggleAnimation = (): void => {
         const newAnimate = !user.animate;
         updateUser({ animate: newAnimate });
-        toggleMotion(newAnimate);
+        Promise.resolve().then(() => toggleMotion(user.animate));
     };
 
     return (

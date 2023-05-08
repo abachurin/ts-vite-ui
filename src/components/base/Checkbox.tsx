@@ -1,7 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
@@ -101,7 +101,7 @@ const Checkbox = ({
     label = "",
     onChange,
 }: CheckboxProps) => {
-    const user = useContext(UserContext);
+    const user = useUser();
 
     const [isChecked, setIsChecked] = useState(checked);
     useEffect(() => {

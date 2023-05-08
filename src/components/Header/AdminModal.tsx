@@ -1,5 +1,4 @@
-import { useContext } from "react";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
 import Modal from "../modal/Modal";
 import { GLOBAL } from "../../utils";
@@ -10,7 +9,7 @@ import { AlignProps } from "../../types";
  * @param align - The alignment parameter of the button, which opens the modal
  */
 const AdminModal = ({ align }: AlignProps) => {
-    const user = useContext(UserContext);
+    const user = useUser();
     const palette = palettes[user.paletteName];
 
     return (

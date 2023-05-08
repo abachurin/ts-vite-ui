@@ -14,7 +14,7 @@ export const GLOBAL = {
     littleShadow: "0 0 0.5em 0.1em rgba(0, 0, 0, 0.2)",
     middleShadow: "0 0 0.5em 0.1em rgba(0, 0, 0, 0.5)",
     starSpeed: 5,
-    windowResizeDelay: 200,
+    windowResizeDelay: 300,
     logoScale: 1.4,
     navBreakpoint: 600,
     maxContainerWidth: 1400,

@@ -1,7 +1,6 @@
-import { useContext } from "react";
 import {
-    UserContext,
-    UserUpdateContext,
+    useUser,
+    useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
 import { SvgPaths } from "../../utils";
 import Button from "../base/Button/Button";
@@ -12,17 +11,13 @@ import Icon from "../base/Icon/Icon";
  * with Icon depending on sound state.
  */
 const SoundSwitch = () => {
-    const user = useContext(UserContext);
-    const updateUser = useContext(UserUpdateContext);
+    const user = useUser();
+    const updateUser = useUserUpdate();
     const isSound = user.sound;
     const icon = isSound ? SvgPaths.yesSound : SvgPaths.noSound;
 
-    const toggleSound = (): void => {
-        updateUser({ sound: !isSound });
-    };
-
     return (
-        <Button onClick={toggleSound}>
+        <Button onClick={() => updateUser({ sound: !isSound })}>
             <Icon svg={icon} />
         </Button>
     );

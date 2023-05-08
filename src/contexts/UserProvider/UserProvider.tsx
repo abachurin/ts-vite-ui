@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
     User,
     UserContext,
@@ -14,9 +14,12 @@ import { ChildrenProps } from "../../types";
 const UserProvider = ({ children }: ChildrenProps) => {
     const [user, setUser] = useState(defaultUser);
 
-    const changeState = (update: Partial<User>) => {
-        setUser({ ...user, ...update });
-    };
+    const changeState = useMemo(
+        () => (update: Partial<User>) => {
+            setUser((prev) => ({ ...prev, ...update }));
+        },
+        [setUser]
+    );
 
     return (
         <UserContext.Provider value={user}>

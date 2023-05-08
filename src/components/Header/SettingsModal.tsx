@@ -1,9 +1,9 @@
 import { css } from "@emotion/react";
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
     User,
-    UserContext,
-    UserUpdateContext,
+    useUser,
+    useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
 import { GLOBAL, changeBrightness } from "../../utils";
@@ -55,9 +55,9 @@ type ValuesType = ReturnType<typeof getUserValues>;
  * @param align - The alignment parameter of the button, which opens the modal.
  */
 const SettingsModal = ({ align }: AlignProps) => {
-    const user = useContext(UserContext);
+    const user = useUser();
     const palette = palettes[user.paletteName];
-    const updateUser = useContext(UserUpdateContext);
+    const updateUser = useUserUpdate();
 
     // const [currentValues, setCurrentValues] = useInitialValue(userValues);
 

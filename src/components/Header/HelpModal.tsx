@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
-import { useState, useContext } from "react";
-import { UserContext } from "../../contexts/UserProvider/UserContext";
+import { useState } from "react";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -56,7 +56,7 @@ const sections = {
  * @param align - The alignment parameter of the button, which opens the modal.
  */
 const HelpModal = ({ align }: AlignProps) => {
-    const user = useContext(UserContext);
+    const user = useUser();
     const palette = palettes[user.paletteName];
     const [section, setSection] = useState<"guide" | "history" | "structure">(
         "guide"

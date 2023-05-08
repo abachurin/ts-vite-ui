@@ -75,7 +75,8 @@ const makeOptionsBox = (
     border-radius: 0 0 ${GLOBAL.borderRadius} ${GLOBAL.borderRadius};
     background-color: ${backgroundColor};
     transform: scale(0);
-    transition: transform 0.25s ease;
+    opacity: 0;
+    transition: transform 0.25s ease, opacity 0.25s ease;
     z-index: 1000;
 `;
 
@@ -173,6 +174,7 @@ const Select = ({
     const optionsBox = css`
         ${optionsBoxBase}
         ${optionsBoxAlignment}
+        opacity: ${optionsOpen ? 1 : 0};
         transform: ${optionsOpen ? "scale(1)" : "scale(0)"};
     `;
 
