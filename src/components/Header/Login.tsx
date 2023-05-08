@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+// import { css, SerializedStyles } from "@emotion/react";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
@@ -15,11 +15,11 @@ import Modal from "../modal/Modal";
 import Button from "../base/Button/Button";
 
 // Emotion styles
-const makeEmotion = (color: string): SerializedStyles => css`
-    font-size: ${GLOBAL.logoScale}rem;
-    color: ${color};
-    text-align: center;
-`;
+// const makeEmotion = (color: string): SerializedStyles => css`
+//     font-size: ${GLOBAL.logoScale}rem;
+//     color: ${color};
+//     text-align: center;
+// `;
 
 /**
  * Renders a login section with a button that displays the user's name and
@@ -50,6 +50,8 @@ const Login = ({ color = "inherit", align = "left" }: LoginProps) => {
             }),
         {
             onSuccess: ({ result, error }) => {
+                console.log(result);
+                console.log(error);
                 if (result !== undefined) {
                     setMessage(`Welcome, ${result.name}`);
                     updateUser(result);
