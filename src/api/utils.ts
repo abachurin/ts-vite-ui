@@ -23,7 +23,6 @@ export const connectAPI = async <DataType, ResultType>({
             url: BACK_URL + endpoint,
             data,
         });
-
         return { result: response.data };
     } catch (error) {
         return { error: (error as AxiosError).message };
