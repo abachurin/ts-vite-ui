@@ -105,9 +105,9 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
  * @param fontSize - The font size of the button.
  * @param borderRadius - The CSS border radius of the button.
  * @param legend - The text to display when hovering over the button if it is disabled.
+ * @param disabled - Whether the button is disabled.
  * @param level - The minimum user level required to click the button.
  * @param toggleModal - Whether the button should open or close a parent modal window.
- * @param disabled - Whether the button is disabled.
  * @param onClick - The function to call when the button is clicked.
  * @param children - The child components to render within the button.
  * when clicked. Note, that this prop is actually used by the parent ModalWindow component,
@@ -123,8 +123,8 @@ export interface ButtonProps extends ChildrenProps {
     fontSize?: string;
     borderRadius?: string;
     legend?: string;
-    level?: number;
     disabled?: boolean;
+    level?: number;
     toggleModal?: ModalState;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
@@ -138,8 +138,8 @@ const Button = ({
     fontSize = "1rem",
     borderRadius = "",
     legend = "",
-    level = 0,
     disabled = false,
+    level = 0,
     toggleModal = "none",
     onClick,
     children,
