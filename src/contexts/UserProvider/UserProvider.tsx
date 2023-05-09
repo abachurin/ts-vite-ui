@@ -16,7 +16,9 @@ const UserProvider = ({ children }: ChildrenProps) => {
 
     const changeState = useMemo(
         () => (update: Partial<User>) => {
-            setUser((prev) => ({ ...prev, ...update }));
+            Promise.resolve().then(() =>
+                setUser((prev) => ({ ...prev, ...update }))
+            );
         },
         [setUser]
     );

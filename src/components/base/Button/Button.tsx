@@ -38,6 +38,9 @@ const makeEmotion = (
     color: string,
     fontSize: string
 ): SerializedStyles => css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
     text-decoration: none;
     padding: ${GLOBAL.padding};
@@ -97,9 +100,14 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
  * @param align - The alignment of the button.
  * @param width - The width of the button.
  * @param height - The height of the button.
+ * @param backgroundColor - The background color of the button.
+ * @param color - The text color of the button.
+ * @param fontSize - The font size of the button.
+ * @param borderRadius - The CSS border radius of the button.
  * @param legend - The text to display when hovering over the button if it is disabled.
  * @param level - The minimum user level required to click the button.
  * @param toggleModal - Whether the button should open or close a parent modal window.
+ * @param disabled - Whether the button is disabled.
  * @param onClick - The function to call when the button is clicked.
  * @param children - The child components to render within the button.
  * when clicked. Note, that this prop is actually used by the parent ModalWindow component,
@@ -116,6 +124,7 @@ export interface ButtonProps extends ChildrenProps {
     borderRadius?: string;
     legend?: string;
     level?: number;
+    disabled?: boolean;
     toggleModal?: ModalState;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
@@ -130,6 +139,7 @@ const Button = ({
     borderRadius = "",
     legend = "",
     level = 0,
+    disabled = false,
     toggleModal = "none",
     onClick,
     children,
@@ -179,7 +189,7 @@ const Button = ({
                     flash(e.currentTarget as HTMLButtonElement, volume);
                     onClick && onClick(e);
                 }}
-                disabled={user.level < level}
+                disabled={disabled || user.level < level}
             >
                 {children}
             </button>

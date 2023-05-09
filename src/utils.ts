@@ -20,6 +20,7 @@ export const GLOBAL = {
     maxContainerWidth: 1400,
     minPaneWidth: 340,
     contactButtonWidth: "12rem",
+    messageDuration: 5000,
     userLevel: {
         guest: 0,
         user: 1,
@@ -43,6 +44,7 @@ export const SvgPaths = {
     email: "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10h5v-2h-5c-4.34 0-8-3.66-8-8s3.66-8 8-8 8 3.66 8 8v1.43c0 .79-.71 1.57-1.5 1.57s-1.5-.78-1.5-1.57V12c0-2.76-2.24-5-5-5s-5 2.24-5 5 2.24 5 5 5c1.38 0 2.64-.56 3.54-1.47.65.89 1.77 1.47 2.96 1.47 1.97 0 3.5-1.6 3.5-3.57V12c0-5.52-4.48-10-10-10zm0 13c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z",
     leftArrow: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z",
     rightArrow: "M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z",
+    logout: "M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z",
 };
 
 /**
@@ -125,4 +127,9 @@ export function makeSound(sound: string, volumeSource: number | User): void {
         audio.volume = volumeSource.sound ? volumeSource.soundLevel : 0;
     }
     audio.play();
+}
+
+export function checkRe(text: string | undefined): boolean {
+    const re = /^[0-9A-Za-z-_]+$/;
+    return text !== undefined && re.test(text);
 }

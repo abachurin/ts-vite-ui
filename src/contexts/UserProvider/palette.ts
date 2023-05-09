@@ -12,6 +12,8 @@ interface Palette {
     one: RGB;
     two: RGB;
     three: RGB;
+    success: RGB;
+    error: RGB;
 }
 
 type Palettes = {
@@ -31,6 +33,8 @@ export const palettes: Palettes = {
         one: "rgb(204, 112, 0)",
         two: "rgb(4, 96, 64)",
         three: "rgb(50, 50, 224)",
+        success: "rgb(4, 96, 64)",
+        error: "rgb(255, 0, 0)",
     },
     Two: {
         name: "Two",
@@ -44,6 +48,8 @@ export const palettes: Palettes = {
         one: "rgb(204, 112, 0)",
         two: "rgb(4, 96, 64)",
         three: "rgb(50, 50, 224)",
+        success: "rgb(4, 96, 64)",
+        error: "rgb(255, 0, 0)",
     },
     "Nice Blue": {
         name: "Nice Blue and a bit of Yellow",
@@ -57,5 +63,7 @@ export const palettes: Palettes = {
         one: "rgb(204, 112, 0)",
         two: "rgb(4, 96, 64)",
         three: "rgb(50, 50, 224)",
+        success: "rgb(4, 96, 64)",
+        error: "rgb(255, 0, 0)",
     },
 };

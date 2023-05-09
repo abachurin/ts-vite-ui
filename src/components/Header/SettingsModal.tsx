@@ -15,7 +15,7 @@ import ModalFooter from "../modal/ModalFooter";
 import Button from "../base/Button/Button";
 import Checkbox from "../base/Checkbox";
 import RangeInput from "../base/RangeInput";
-import Select from "../base/Select";
+import Dropdown from "../base/Dropdown";
 
 // Emotion styles
 const emotion = css`
@@ -101,7 +101,7 @@ const SettingsModal = ({ align }: AlignProps) => {
         color3: brightOne,
         controlColor: palette.three,
     };
-    const selectParameters = {
+    const dropdownParameters = {
         backgroundColor: "white",
         labelColor1: palette.two,
         labelColor2: palette.one,
@@ -159,8 +159,8 @@ const SettingsModal = ({ align }: AlignProps) => {
                         />
                     </section>
                     <section>
-                        <Select
-                            {...selectParameters}
+                        <Dropdown
+                            {...dropdownParameters}
                             width='100%'
                             label='Palette'
                             optionValues={Object.keys(palettes)}

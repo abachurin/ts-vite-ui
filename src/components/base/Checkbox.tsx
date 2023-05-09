@@ -42,6 +42,7 @@ const makeControl = (
     padding: ${controlSize * 0.1}rem;
     background-color: rgb(170, 170, 170);
     vertical-align: middle;
+    cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.1, 1.4);
     ::after {
         content: "";

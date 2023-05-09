@@ -40,7 +40,7 @@ const createStarField = (
 const StarField = () => {
     const [ref, width, height] = useDimensions();
     const user = useUser();
-    const inverseSpeed = 11 - user.animationSpeed;
+    const inverseSpeed = 20 / user.animationSpeed;
 
     const stars = useMemo(
         () => createStarField(width, height, inverseSpeed),

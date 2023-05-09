@@ -39,13 +39,14 @@ const makeEmotion = (
     background-color: ${backgroundColor};
     color: ${color};
     width: ${width};
-    & > label {
-        display: block;
+    & > header {
         width: 100%;
+        border-bottom: 1px solid ${controlColor};
+    }
+    & > header > label {
         font-size: ${fontSize * labelRatio}rem;
         background: linear-gradient(135deg, ${labelColor1}, ${labelColor2});
         background-clip: text;
-        border-bottom: 1px solid ${controlColor};
         text-fill-color: transparent;
     }
     & > section {
@@ -54,6 +55,7 @@ const makeEmotion = (
         align-items: center;
         position: relative;
         width: 100%;
+        cursor: pointer;
         margin-top: ${GLOBAL.padding};
     }
 `;
@@ -85,7 +87,23 @@ const optionStyle = css`
     padding: ${GLOBAL.padding};
 `;
 
-interface SelectProps {
+/**
+ * A dropdown component with configurable options.
+ * @param width - Width.
+ * @param fontSize - Font size.
+ * @param labelRatio - Ratio of label size to font size.
+ * @param backgroundColor - Background color.
+ * @param labelColor1 - colors 1-2 for gradient label text
+ * @param labelColor2
+ * @param controlColor - Color of the dropdown control.
+ * @param color - Text color.
+ * @param label - Dropdown label.
+ * @param optionValues - Array of values to display as dropdown options.
+ * @param initialValue - The initially selected dropdown value, first option as default.
+ * @param alignOptions - Alignment of the options box ("left" or "right").
+ * @param onChange - Function to be called when dropdown value changes.
+ */
+interface DropdownProps {
     width?: string;
     fontSize?: number;
     labelRatio?: number;
@@ -100,10 +118,10 @@ interface SelectProps {
     alignOptions?: Alignment;
     onChange: (value: string) => void;
 }
-const Select = ({
+const Dropdown = ({
     width = "auto",
-    fontSize = 0.8,
-    labelRatio = 1.25,
+    fontSize = 1,
+    labelRatio = 0.8,
     backgroundColor = "inherit",
     labelColor1 = "black",
     labelColor2 = "black",
@@ -114,7 +132,7 @@ const Select = ({
     initialValue = undefined,
     alignOptions = "left",
     onChange,
-}: SelectProps) => {
+}: DropdownProps) => {
     const [optionsOpen, setOptionsOpen] = useState(0);
     const ref = useOutsideClick(() => setOptionsOpen(0));
 
@@ -181,7 +199,9 @@ const Select = ({
     return (
         <div css={container} ref={ref}>
             <main css={emotion}>
-                <label>{label}</label>
+                <header>
+                    <label>{label}</label>
+                </header>
                 <section onClick={() => setOptionsOpen(1 - optionsOpen)}>
                     <div>{value}</div>
                     <aside>
@@ -219,4 +239,4 @@ const Select = ({
     );
 };
 
-export default Select;
+export default Dropdown;

@@ -11,6 +11,14 @@ export type OnClickFunction = (el: HTMLButtonElement, volume: number) => void;
 export type StyledHTMLElement = HTMLElement & {
     style: CSSStyleDeclaration;
 };
+export type InputType =
+    | "text"
+    | "password"
+    | "email"
+    | "number"
+    | "search"
+    | "tel"
+    | "url";
 
 // Common Prop types
 export interface ChildrenProps {
