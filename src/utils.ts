@@ -45,6 +45,7 @@ export const SvgPaths = {
     leftArrow: "M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z",
     rightArrow: "M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z",
     logout: "M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z",
+    login: "M11,7L9.6,8.4l2.6,2.6H2v2h10.2l-2.6,2.6L11,17l5-5L11,7z M20,19h-8v2h8c1.1,0,2-0.9,2-2V5c0-1.1-0.9-2-2-2h-8v2h8V19z",
 };
 
 /**
@@ -129,6 +130,10 @@ export function makeSound(sound: string, volumeSource: number | User): void {
     audio.play();
 }
 
+/**
+ * Checks if the given string has only letters, numbers, dashes and underscores.
+ * @param text - The text to check
+ */
 export function checkRe(text: string | undefined): boolean {
     const re = /^[0-9A-Za-z-_]+$/;
     return text !== undefined && re.test(text);

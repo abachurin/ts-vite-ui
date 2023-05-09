@@ -27,7 +27,7 @@ const emotion = css`
     margin-block: ${GLOBAL.padding};
     display: flex;
     flex-direction: column;
-    gap: ${GLOBAL.padding};
+    gap: calc(${GLOBAL.padding} * 2);
     & > * {
         flex: 1;
     }
@@ -110,11 +110,18 @@ const Login = ({ align = "left" }: LoginProps) => {
         controlColor: palette.three,
     };
 
+    const buttonText =
+        user.name === "Login" ? (
+            <Icon svg={SvgPaths.login} rescaleFactor={1.2} />
+        ) : (
+            user.name
+        );
+
     return (
         <Modal
             button={{
                 type: "whooshRotate",
-                children: user.name,
+                children: buttonText,
                 align: align,
                 color: palette.logo,
                 fontSize: `${GLOBAL.logoScale}rem`,

@@ -36,6 +36,11 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
         justify-content: center;
     }
 `;
+const smallScreenStyle = css`
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+`;
 
 const Header = () => {
     const hiddenNavigation = useSmallScreen(GLOBAL.navBreakpoint);
@@ -59,17 +64,19 @@ const Header = () => {
                     <SoundSwitch />
                     <AnimationSwitch />
                 </Nav>
-                <ToggleNav
-                    align='right'
-                    backgroundColor={backgroundColor}
-                    logoColor={palette.logo}
-                >
-                    <HelpModal />
-                    <ContactsModal />
-                    <AdminModal />
-                    <SettingsModal />
-                    <Login color={palette.logo} />
-                </ToggleNav>
+                <div css={smallScreenStyle}>
+                    <ToggleNav
+                        align='right'
+                        backgroundColor={backgroundColor}
+                        logoColor={palette.logo}
+                    >
+                        <HelpModal />
+                        <ContactsModal />
+                        <AdminModal />
+                        <SettingsModal />
+                    </ToggleNav>
+                    <Login align='right' />
+                </div>
             </div>
         </>
     ) : (
@@ -84,7 +91,7 @@ const Header = () => {
                     <SoundSwitch />
                     <AnimationSwitch />
                 </Nav>
-                <Login color={palette.logo} align='right' />
+                <Login align='right' />
             </div>
         </>
     );
