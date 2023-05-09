@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import {
     User,
     useUser,
+    usePalette,
     useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
@@ -56,7 +57,7 @@ type ValuesType = ReturnType<typeof getUserValues>;
  */
 const SettingsModal = ({ align }: AlignProps) => {
     const user = useUser();
-    const palette = palettes[user.paletteName];
+    const palette = usePalette();
     const updateUser = useUserUpdate();
 
     // const [currentValues, setCurrentValues] = useInitialValue(userValues);

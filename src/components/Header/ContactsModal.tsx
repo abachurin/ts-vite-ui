@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
-import { useUser } from "../../contexts/UserProvider/UserContext";
-import { palettes } from "../../contexts/UserProvider/palette";
+import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { AlignProps } from "../../types";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
@@ -34,8 +33,7 @@ const emotion = css`
  * @param align - The alignment parameter of the button, which opens the modal.
  */
 const ContactsModal = ({ align }: AlignProps) => {
-    const user = useUser();
-    const palette = palettes[user.paletteName];
+    const palette = usePalette();
 
     const headerStyle = css`
         color: ${palette.text};

@@ -1,16 +1,15 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
-import { useUser } from "../../contexts/UserProvider/UserContext";
-import { palettes } from "../../contexts/UserProvider/palette";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import Modal from "../modal/Modal";
+import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { AlignProps } from "../../types";
+import { GLOBAL } from "../../utils";
+import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";
 import ButtonGroup from "../base/Button/ButtonGroup";
 import Button from "../base/Button/Button";
-import { GLOBAL } from "../../utils";
 
 // Emotion styles
 
@@ -56,8 +55,7 @@ const sections = {
  * @param align - The alignment parameter of the button, which opens the modal.
  */
 const HelpModal = ({ align }: AlignProps) => {
-    const user = useUser();
-    const palette = palettes[user.paletteName];
+    const palette = usePalette();
     const [section, setSection] = useState<"guide" | "history" | "structure">(
         "guide"
     );

@@ -1,7 +1,6 @@
 import { css } from "@emotion/react";
 import { useState, useRef } from "react";
-import { palettes } from "../contexts/UserProvider/palette";
-import { useUser } from "../contexts/UserProvider/UserContext";
+import { usePalette } from "../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../utils";
 
 const useAlertMessage = (
@@ -12,8 +11,7 @@ const useAlertMessage = (
 ] => {
     const [message, setMessage] = useState<React.ReactNode>(initialMessage);
     const timeoutId = useRef<NodeJS.Timeout>();
-    const user = useUser();
-    const palette = palettes[user.paletteName];
+    const palette = usePalette();
 
     const createMessage = (
         text = "",

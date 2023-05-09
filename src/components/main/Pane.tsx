@@ -1,7 +1,6 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo } from "react";
-import { useUser } from "../../contexts/UserProvider/UserContext";
-import { palettes } from "../../contexts/UserProvider/palette";
+import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps, RGBA } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
 
@@ -30,8 +29,7 @@ interface PaneProps extends ChildrenProps {
     id?: string;
 }
 const Pane = ({ id, children }: PaneProps) => {
-    const user = useUser();
-    const palette = palettes[user.paletteName];
+    const palette = usePalette();
     const backgroundColor = setTransparency(palette.pane, palette.paneOpacity);
     const color = palette.background;
 

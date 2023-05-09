@@ -1,29 +1,28 @@
-import { css, SerializedStyles } from "@emotion/react";
-import { useCallback } from "react";
-import { RGB } from "../../types";
+import { css } from "@emotion/react";
+import { useCallback, useMemo } from "react";
+import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, SvgPaths, smoothScroll } from "../../utils";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 
-// Emotion styles
-const makeEmotion = (color: RGB): SerializedStyles => css`
-    display: flex;
-    align-items: center;
-    gap: 0.1em;
-    font-size: ${GLOBAL.logoScale}rem;
-    color: ${color};
-    transform: translateX(-0.2em);
-`;
-
 /**
- * Renders a logo with a given color.
- * @param color - The color of the logo.
+ * Renders a logo, works as a link to top of the page
  */
-type LogoProps = {
-    color: RGB;
-};
-const Logo = ({ color }: LogoProps) => {
-    const emotion = makeEmotion(color);
+const Logo = () => {
+    const palette = usePalette();
+    const color = palette.logo;
+    const emotion = useMemo(
+        () => css`
+            display: flex;
+            align-items: center;
+            gap: 0.1em;
+            font-size: ${GLOBAL.logoScale}rem;
+            color: ${color};
+            transform: translateX(-0.2em);
+        `,
+        [color]
+    );
+
     const onClick = useCallback((): void => smoothScroll("#agent-pane"), []);
 
     return (

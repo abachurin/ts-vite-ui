@@ -1,4 +1,5 @@
 import { createContext, useContext } from "react";
+import { palettes } from "./palette";
 import { GLOBAL } from "../../utils";
 
 export type User = {
@@ -36,3 +37,8 @@ export const UserUpdateContext = createContext<(update: Partial<User>) => void>(
 
 export const useUser = () => useContext(UserContext);
 export const useUserUpdate = () => useContext(UserUpdateContext);
+
+export const usePalette = () => {
+    const user = useUser();
+    return palettes[user.paletteName];
+};

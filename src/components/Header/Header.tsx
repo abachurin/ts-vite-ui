@@ -1,7 +1,6 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
-import { useUser } from "../../contexts/UserProvider/UserContext";
-import { palettes } from "../../contexts/UserProvider/palette";
+import { usePalette } from "../../contexts/UserProvider/UserContext";
 import useSmallScreen from "../../hooks/useSmallScreen";
 import { RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
@@ -42,10 +41,12 @@ const smallScreenStyle = css`
     align-items: center;
 `;
 
+/**
+ * Header component that renders the header section of the application.
+ */
 const Header = () => {
     const hiddenNavigation = useSmallScreen(GLOBAL.navBreakpoint);
-    const user = useUser();
-    const palette = palettes[user.paletteName];
+    const palette = usePalette();
     const backgroundColor = setTransparency(
         palette.header,
         palette.headerOpacity
@@ -59,7 +60,7 @@ const Header = () => {
     return hiddenNavigation ? (
         <>
             <div css={emotion}>
-                <Logo color={palette.logo} />
+                <Logo />
                 <Nav>
                     <SoundSwitch />
                     <AnimationSwitch />
@@ -82,7 +83,7 @@ const Header = () => {
     ) : (
         <>
             <div css={emotion}>
-                <Logo color={palette.logo} />
+                <Logo />
                 <Nav>
                     <HelpModal />
                     <ContactsModal />

@@ -3,12 +3,12 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import {
     useUser,
+    usePalette,
     useUserUpdate,
     LoginUser,
     User,
     defaultUser,
 } from "../../contexts/UserProvider/UserContext";
-import { palettes } from "../../contexts/UserProvider/palette";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { connectAPI } from "../../api/utils";
 import { Alignment } from "../../types";
@@ -50,7 +50,7 @@ type LoginProps = {
 
 const Login = ({ align = "left" }: LoginProps) => {
     const user = useUser();
-    const palette = palettes[user.paletteName];
+    const palette = usePalette();
     const updateUser = useUserUpdate();
 
     const [name, setName] = useState<string | undefined>();
