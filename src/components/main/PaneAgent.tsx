@@ -1,3 +1,8 @@
+import { css, SerializedStyles } from "@emotion/react";
+import { useMemo } from "react";
+import { useUser } from "../../contexts/UserProvider/UserContext";
+import { palettes } from "../../contexts/UserProvider/palette";
+import { GLOBAL, setTransparency } from "../../utils";
 import Pane from "./Pane";
 
 /**

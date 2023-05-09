@@ -35,7 +35,7 @@ const createStarField = (
 };
 
 /**
- * Renders a star field with a number of stars on the screen, which depends on window size.
+ * Renders a star field with a number of stars on the screen which depends on window size.
  */
 const StarField = () => {
     const [ref, width, height] = useDimensions();
