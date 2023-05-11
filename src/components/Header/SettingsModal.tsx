@@ -1,14 +1,13 @@
 import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import {
-    User,
     useUser,
     usePalette,
     useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
 import { palettes } from "../../contexts/UserProvider/palette";
 import { GLOBAL, changeBrightness } from "../../utils";
-import { AlignProps, Alignment } from "../../types";
+import { AlignProps, Alignment, User } from "../../types";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";

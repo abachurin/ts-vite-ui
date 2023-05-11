@@ -1,5 +1,5 @@
 import { RGB, RGBA } from "./types";
-import { User } from "./contexts/UserProvider/UserContext";
+import { User } from "./types";
 
 // GLOBAL parameters
 export const GLOBAL = {

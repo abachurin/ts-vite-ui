@@ -4,7 +4,6 @@ import { usePalette } from "../../contexts/UserProvider/UserContext";
 import useSmallScreen from "../../hooks/useSmallScreen";
 import { RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
-import Nav from "../base/Nav";
 import ToggleNav from "../base/ToggleNav";
 import Logo from "./Logo";
 import SoundSwitch from "./SoundSwitch";
@@ -31,14 +30,17 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
     & > * {
         flex: 1;
     }
-    & > :nth-of-type(2) {
-        justify-content: center;
-    }
 `;
 const smallScreenStyle = css`
     display: flex;
     justify-content: flex-end;
     align-items: center;
+`;
+
+const nav = css`
+    display: flex;
+    justify-content: center;
+    gap: ${GLOBAL.padding};
 `;
 
 /**
@@ -59,12 +61,12 @@ const Header = () => {
 
     return hiddenNavigation ? (
         <>
-            <div css={emotion}>
+            <header css={emotion}>
                 <Logo />
-                <Nav>
+                <nav css={nav}>
                     <SoundSwitch />
                     <AnimationSwitch />
-                </Nav>
+                </nav>
                 <div css={smallScreenStyle}>
                     <ToggleNav
                         align='right'
@@ -78,22 +80,22 @@ const Header = () => {
                     </ToggleNav>
                     <Login align='right' />
                 </div>
-            </div>
+            </header>
         </>
     ) : (
         <>
-            <div css={emotion}>
+            <header css={emotion}>
                 <Logo />
-                <Nav>
+                <nav css={nav}>
                     <HelpModal />
                     <ContactsModal />
                     <AdminModal />
                     <SettingsModal />
                     <SoundSwitch />
                     <AnimationSwitch />
-                </Nav>
+                </nav>
                 <Login align='right' />
-            </div>
+            </header>
         </>
     );
 };

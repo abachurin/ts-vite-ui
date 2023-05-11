@@ -1,23 +1,7 @@
 import { createContext, useContext } from "react";
-import { palettes } from "./palette";
+import { User } from "../../types";
 import { GLOBAL } from "../../utils";
-
-export type User = {
-    name: string;
-    level: number;
-    sound: boolean;
-    soundLevel: number;
-    animate: boolean;
-    animationSpeed: number;
-    legends: boolean;
-    paletteName: string;
-};
-
-export type LoginUser = {
-    name: string;
-    pwd: string;
-    action: "login" | "register";
-};
+import { palettes } from "./palette";
 
 export const defaultUser: User = {
     name: "Login",

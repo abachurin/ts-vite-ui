@@ -1,4 +1,6 @@
-import { css } from "@emotion/react";
+import { css, SerializedStyles } from "@emotion/react";
+import { useMemo } from "react";
+import { usePalette } from "./contexts/UserProvider/UserContext";
 import UserProvider from "./contexts/UserProvider/UserProvider";
 import { GLOBAL } from "./utils";
 import StarField from "./components/background/StarField";
@@ -8,7 +10,7 @@ import PaneGame from "./components/main/PaneGame";
 import Footer from "./components/Footer/Footer";
 
 // Emotion styles
-const container = css`
+const makeEmotion = (textColor: string): SerializedStyles => css`
     position: relative;
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -20,31 +22,36 @@ const container = css`
     margin: 0 auto;
     padding: calc(2 * ${GLOBAL.padding});
     max-width: ${GLOBAL.maxContainerWidth}px;
-`;
-const main = css`
-    display: flex;
-    gap: ${GLOBAL.padding};
-    flex-wrap: wrap;
-    overflow: auto;
-    color: white;
+    & > main {
+        display: flex;
+        gap: ${GLOBAL.padding};
+        flex-wrap: wrap;
+        overflow: auto;
+        color: ${textColor};
+    }
 `;
 
 /**
  * Render the App component.
  */
 function App() {
+    const palette = usePalette();
+    const textColor = palette.background;
+
+    const emotion = useMemo(() => makeEmotion(textColor), [textColor]);
+
     return (
         <>
             <UserProvider>
                 <StarField />
-                <div css={container}>
+                <header css={emotion}>
                     <Header />
-                    <div css={main}>
+                    <main>
                         <PaneAgent />
                         <PaneGame />
-                    </div>
+                    </main>
                     <Footer />
-                </div>
+                </header>
             </UserProvider>
         </>
     );

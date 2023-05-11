@@ -1,5 +1,6 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo } from "react";
+import ModeProvider from "../../contexts/ModeProvider/ModeProvider";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps, RGBA } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
@@ -12,12 +13,10 @@ const makeEmotion = (
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     min-width: ${GLOBAL.minPaneWidth}px;
     min-height: 30em;
     background-color: ${backgroundColor};
     color: ${color};
-    padding: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
 `;
 
@@ -39,9 +38,11 @@ const Pane = ({ id, children }: PaneProps) => {
     );
 
     return (
-        <div id={id} css={emotion}>
-            {children}
-        </div>
+        <ModeProvider>
+            <main id={id} css={emotion}>
+                {children}
+            </main>
+        </ModeProvider>
     );
 };
 

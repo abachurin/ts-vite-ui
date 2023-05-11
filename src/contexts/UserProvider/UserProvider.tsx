@@ -1,11 +1,6 @@
 import { useState, useMemo } from "react";
-import {
-    User,
-    UserContext,
-    UserUpdateContext,
-    defaultUser,
-} from "./UserContext";
-import { ChildrenProps } from "../../types";
+import { UserContext, UserUpdateContext, defaultUser } from "./UserContext";
+import { ChildrenProps, User } from "../../types";
 
 /**
  * Creates a UserProvider Context Provider.

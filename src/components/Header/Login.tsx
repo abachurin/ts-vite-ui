@@ -5,13 +5,11 @@ import {
     useUser,
     usePalette,
     useUserUpdate,
-    LoginUser,
-    User,
     defaultUser,
 } from "../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { connectAPI } from "../../api/utils";
-import { Alignment } from "../../types";
+import { Alignment, User, LoginUser } from "../../types";
 import { GLOBAL, SvgPaths, checkRe } from "../../utils";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";

@@ -1,9 +1,9 @@
 import { css } from "@emotion/react";
 import clickSound from "../../../assets/sounds/mixkit-gate-latch-click-1924.wav";
-import { OnClickFunction } from "../../../types";
+import { ButtonExtraStyle, ButtonSound } from "../../../types";
 import { GLOBAL, makeSound } from "../../../utils";
 
-export const clickPressEmotion = (borderRadius: string) => css`
+export const clickPressEmotion: ButtonExtraStyle = (borderRadius) => css`
     border: 0;
     :hover:enabled {
         cursor: pointer;
@@ -23,10 +23,7 @@ export const clickPressEmotion = (borderRadius: string) => css`
     }
 `;
 
-export const clickPressClick: OnClickFunction = (
-    el: HTMLButtonElement,
-    volume: number
-) => {
+export const clickPressClick: ButtonSound = (el, volume) => {
     el.animate(
         {
             transform: [

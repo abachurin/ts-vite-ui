@@ -67,7 +67,6 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
                 text-align: left;
                 transform: scale(0);
                 transition: transform 0.25s;
-                z-index: 2;
             }
             &:hover:disabled::before {
                 transform: scale(1);
@@ -135,7 +134,7 @@ const Button = ({
     height = "auto",
     backgroundColor = "inherit",
     color = "inherit",
-    fontSize = "1rem",
+    fontSize = "inherit",
     borderRadius = "",
     legend = "",
     disabled = false,
@@ -146,7 +145,6 @@ const Button = ({
 }: ButtonProps) => {
     const changeIsOpen = useModalUpdate();
     const user = useUser();
-    const volume = user.sound ? user.soundLevel : 0;
     const showLegend = user.legends;
 
     const container = useMemo(() => makeContainer(align), [align]);
@@ -186,7 +184,7 @@ const Button = ({
                 data-legend={legend}
                 onClick={(e) => {
                     if (toggleModal !== "none") changeIsOpen(toggleModal);
-                    flash(e.currentTarget as HTMLButtonElement, volume);
+                    flash(e.currentTarget as HTMLButtonElement, user);
                     onClick && onClick(e);
                 }}
                 disabled={disabled || user.level < level}

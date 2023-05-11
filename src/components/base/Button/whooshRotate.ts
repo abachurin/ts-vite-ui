@@ -1,9 +1,9 @@
 import { css } from "@emotion/react";
 import clickSound from "../../../assets/sounds/mixkit-arrow-whoosh-1491.wav";
-import { OnClickFunction } from "../../../types";
+import { ButtonExtraStyle, ButtonSound } from "../../../types";
 import { GLOBAL, makeSound } from "../../../utils";
 
-export const whooshRotateEmotion = (borderRadius: string) => css`
+export const whooshRotateEmotion: ButtonExtraStyle = (borderRadius) => css`
     border: 0;
     border-radius: ${borderRadius || GLOBAL.borderRadius};
     &:hover:enabled {
@@ -15,10 +15,7 @@ export const whooshRotateEmotion = (borderRadius: string) => css`
     }
 `;
 
-export const whooshRotateClick: OnClickFunction = (
-    el: HTMLButtonElement,
-    volume: number
-) => {
+export const whooshRotateClick: ButtonSound = (el, volume) => {
     makeSound(clickSound, volume);
     el.animate(
         {
