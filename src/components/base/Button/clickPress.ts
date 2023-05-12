@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import clickSound from "../../../assets/sounds/mixkit-gate-latch-click-1924.wav";
-import { ButtonExtraStyle, ButtonSound } from "../../../types";
+import { ButtonExtraStyle, ButtonEffects } from "../../../types";
 import { GLOBAL, makeSound } from "../../../utils";
 
 export const clickPressEmotion: ButtonExtraStyle = (borderRadius) => css`
@@ -23,19 +23,23 @@ export const clickPressEmotion: ButtonExtraStyle = (borderRadius) => css`
     }
 `;
 
-export const clickPressClick: ButtonSound = (el, volume) => {
-    el.animate(
-        {
-            transform: [
-                "translateX(0) translateY(0)",
-                "translateX(0.2rem) translateY(-0.2rem)",
-                "translateX(0) translateY(0)",
-            ],
-            opacity: [1, 0.7, 1],
-
-            offset: [0, 0.5, 1],
-        },
-        300
-    );
+export const clickPressClick: ButtonEffects = (
+    button,
+    volume,
+    animate = true
+) => {
     makeSound(clickSound, volume);
+    animate &&
+        button.animate(
+            {
+                transform: [
+                    "translateX(0) translateY(0)",
+                    "translateX(0.2rem) translateY(-0.2rem)",
+                    "translateX(0) translateY(0)",
+                ],
+                opacity: [1, 0.7, 1],
+                offset: [0, 0.5, 1],
+            },
+            300
+        );
 };

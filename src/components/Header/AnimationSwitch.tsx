@@ -1,5 +1,5 @@
 import {
-    useUser,
+    useAnimate,
     useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
 import { StyledHTMLElement } from "../../types";
@@ -22,16 +22,16 @@ const toggleMotion = (move: boolean): void => {
  * with Icon depending on animation state.
  */
 const AnimationSwitch = () => {
-    const user = useUser();
+    const animate = useAnimate();
     const updateUser = useUserUpdate();
-    const icon = user.animate ? SvgPaths.yesMotion : SvgPaths.noMotion;
+    const icon = animate ? SvgPaths.yesMotion : SvgPaths.noMotion;
 
-    Promise.resolve().then(() => toggleMotion(user.animate));
+    Promise.resolve().then(() => toggleMotion(animate));
 
     const toggleAnimation = (): void => {
-        const newAnimate = !user.animate;
+        const newAnimate = !animate;
         updateUser({ animate: newAnimate });
-        Promise.resolve().then(() => toggleMotion(user.animate));
+        Promise.resolve().then(() => toggleMotion(animate));
     };
 
     return (

@@ -19,7 +19,7 @@ const TrainModal = () => {
                 legend: "Register to unlock",
                 level: GLOBAL.userLevel.user,
                 onClick: () => {
-                    modeUpdate("train");
+                    modeUpdate({ agent: "train" });
                 },
             }}
             modal={{

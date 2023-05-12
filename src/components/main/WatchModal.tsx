@@ -17,16 +17,14 @@ const WatchModal = ({ align }: AlignProps) => {
                 backgroundColor: palette.one,
                 align: align,
                 children: "Watch",
-                onClick: () => {
-                    modeUpdate("watch");
-                },
+                onClick: () => modeUpdate({ game: "watch" }),
             }}
             modal={{
                 backgroundColor: palette.background,
                 color: palette.text,
             }}
         >
-            Admin section
+            Watch !!!
         </Modal>
     );
 };

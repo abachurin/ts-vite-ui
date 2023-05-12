@@ -1,7 +1,6 @@
 import { useModeUpdate } from "../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import Modal from "../modal/Modal";
-import { GLOBAL } from "../../utils";
 import { AlignProps } from "../../types";
 
 /**
@@ -19,7 +18,7 @@ const ReplayModal = ({ align }: AlignProps) => {
                 align: align,
                 children: "Replay",
                 onClick: () => {
-                    modeUpdate("replay");
+                    modeUpdate({ game: "replay" });
                 },
             }}
             modal={{
@@ -27,7 +26,7 @@ const ReplayModal = ({ align }: AlignProps) => {
                 color: palette.text,
             }}
         >
-            Admin section
+            Replay !!!
         </Modal>
     );
 };

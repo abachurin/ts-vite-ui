@@ -6,7 +6,7 @@ import {
     useModal,
     useModalUpdate,
 } from "../../contexts/ModalProvider/ModalContext";
-import { useUser } from "../../contexts/UserProvider/UserContext";
+import { useUser, useAnimate } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
 import { GLOBAL, makeSound } from "../../utils";
 
@@ -21,7 +21,7 @@ const baseContainer = css`
     right: 0;
     bottom: 0;
     transform: scale(0);
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.07);
     z-index: 100;
 `;
 
@@ -124,49 +124,72 @@ const ModalWindow = ({
     const isOpen = useModal();
     const updateIsOpen = useModalUpdate();
     const user = useUser();
+    const animate = useAnimate();
 
     const baseModal = useMemo(
         () => makeBaseModal(backgroundColor, color, width, height),
         [backgroundColor, color, width, height]
     );
 
-    const containerStyle = isOpen
-        ? css`
-              ${baseContainer};
-              transform: scaleY(0.01) scaleX(0);
-              animation: ${unFold} 1s cubic-bezier(0.165, 0.84, 0.44, 1)
-                  forwards;
-          `
-        : css`
-              ${baseContainer};
-              transform: scale(1);
-              animation: ${fold} 0.5s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)
-                  forwards;
-          `;
-
-    const modalStyle = isOpen
-        ? css`
-              ${baseModal};
-              transform: scale(0);
-              animation: ${zoom} 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1)
-                  forwards;
-          `
-        : css`
-              ${baseModal};
-              animation: ${unZoom} 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-                  forwards;
-          `;
-
     const closeModal = useCallback(() => {
         makeSound(clickSound, user);
         updateIsOpen(false);
+        setTimeout(() => {
+            updateIsOpen("none");
+        }, 800);
     }, [updateIsOpen, user]);
 
     if (isOpen === "none") return null;
 
+    // If animation is switched off we just open/close Modal immediately
+    const containerStyle = isOpen
+        ? animate
+            ? css`
+                  ${baseContainer}
+                  transform: scaleY(0.01) scaleX(0);
+                  animation: ${unFold} 1s cubic-bezier(0.165, 0.84, 0.44, 1)
+                      forwards;
+              `
+            : css`
+                  ${baseContainer}
+                  transform: scale(1);
+              `
+        : animate
+        ? css`
+              ${baseContainer}
+              transform: scale(1);
+              animation: ${fold} 0.5s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)
+                  forwards;
+          `
+        : css`
+              display: none;
+          `;
+
+    const modalStyle = isOpen
+        ? animate
+            ? css`
+                  ${baseModal}
+                  transform: scale(0);
+                  animation: ${zoom} 0.5s 0.8s
+                      cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+              `
+            : css`
+                  ${baseModal}
+                  transform: scale(1);
+              `
+        : animate
+        ? css`
+              ${baseModal}
+              animation: ${unZoom} 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
+            forwards;
+          `
+        : css`
+              display: none;
+          `;
+
     return ReactDOM.createPortal(
         <div css={containerStyle}>
-            <div onClick={closeModal} css={backgroundStyle}></div>
+            <div onClick={closeModal} css={backgroundStyle} />
             <div css={modalStyle}>{children}</div>
         </div>,
         document.getElementById("modal") as HTMLElement

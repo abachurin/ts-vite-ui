@@ -1,6 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "./contexts/UserProvider/UserContext";
+import ModeProvider from "./contexts/ModeProvider/ModeProvider";
 import UserProvider from "./contexts/UserProvider/UserProvider";
 import { GLOBAL } from "./utils";
 import StarField from "./components/background/StarField";
@@ -42,17 +43,19 @@ function App() {
 
     return (
         <>
-            <UserProvider>
-                <StarField />
-                <header css={emotion}>
-                    <Header />
-                    <main>
-                        <PaneAgent />
-                        <PaneGame />
-                    </main>
-                    <Footer />
-                </header>
-            </UserProvider>
+            <ModeProvider>
+                <UserProvider>
+                    <StarField />
+                    <header css={emotion}>
+                        <Header />
+                        <main>
+                            <PaneAgent />
+                            <PaneGame />
+                        </main>
+                        <Footer />
+                    </header>
+                </UserProvider>
+            </ModeProvider>
         </>
     );
 }

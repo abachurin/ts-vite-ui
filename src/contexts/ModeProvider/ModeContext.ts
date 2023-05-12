@@ -1,10 +1,16 @@
 import { createContext, useContext } from "react";
 import { ModeOfAction } from "../../types";
 
-export const ModeContext = createContext<ModeOfAction>("none");
+export const BaseMode: ModeOfAction = {
+    agent: "none",
+    game: "none",
+};
+export const ModeContext = createContext<ModeOfAction>(BaseMode);
 export const ModeUpdateContext = createContext<
-    (newState: ModeOfAction) => void
->((newState: ModeOfAction) => console.log(newState));
+    (update: Partial<ModeOfAction>) => void
+>((update) => {
+    console.log("Mode Context = " + update);
+});
 
 export const useMode = () => useContext(ModeContext);
 export const useModeUpdate = () => useContext(ModeUpdateContext);

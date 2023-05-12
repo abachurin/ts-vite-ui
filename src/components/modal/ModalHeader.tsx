@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { ChildrenProps } from "../../types";
 import { GLOBAL } from "../../utils";
-import CloseButton from "../base/CloseButton";
+import CloseButton from "../base/Button/CloseButton";
 
 // Emotion styles
 const emotion = css`

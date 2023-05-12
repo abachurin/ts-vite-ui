@@ -71,6 +71,7 @@ const makeOptionsBox = (
     backgroundColor: string
 ): SerializedStyles => css`
     position: absolute;
+    min-width: 100%;
     width: max-content;
     border: 1px solid ${controlColor};
     border-top: none;

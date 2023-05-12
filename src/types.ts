@@ -71,16 +71,26 @@ export type Palettes = {
 // Button types
 export type ButtonVariants = "whooshRotate" | "clickPress";
 export type ButtonExtraStyle = (background: string) => SerializedStyles;
-export type ButtonSound = (
+export type ButtonEffects = (
     el: HTMLButtonElement,
-    volume: number | User
+    volume: number | User,
+    animate: boolean
 ) => void;
+export type OnClick = (e: React.MouseEvent<HTMLButtonElement>) => void;
 
 // Mode types
-export type ModeOfAction =
-    | "none"
-    | "train"
-    | "test"
-    | "watch"
-    | "replay"
-    | "play";
+export type ModeOfAction = {
+    agent: "none" | "train" | "test";
+    game: "none" | "watch" | "replay" | "play";
+};
+
+// Draggable types
+export type Position = {
+    x: string;
+    y: string;
+};
+export type Offset = {
+    x: number;
+    y: number;
+};
+export type PositionType = "fixed" | "absolute";

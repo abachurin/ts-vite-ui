@@ -1,12 +1,16 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo } from "react";
-import { useUser } from "../../../contexts/UserProvider/UserContext";
+import {
+    useUser,
+    useAnimate,
+} from "../../../contexts/UserProvider/UserContext";
 import { useModalUpdate } from "../../../contexts/ModalProvider/ModalContext";
 import {
     ChildrenProps,
     Alignment,
     ButtonVariants,
     ModalState,
+    OnClick,
 } from "../../../types";
 import { GLOBAL } from "../../../utils";
 import { whooshRotateEmotion, whooshRotateClick } from "./whooshRotate";
@@ -125,7 +129,7 @@ export interface ButtonProps extends ChildrenProps {
     disabled?: boolean;
     level?: number;
     toggleModal?: ModalState;
-    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onClick?: OnClick;
 }
 const Button = ({
     type = "whooshRotate",
@@ -146,6 +150,7 @@ const Button = ({
     const changeIsOpen = useModalUpdate();
     const user = useUser();
     const showLegend = user.legends;
+    const animate = useAnimate();
 
     const container = useMemo(() => makeContainer(align), [align]);
     const emotion = useMemo(
@@ -184,7 +189,7 @@ const Button = ({
                 data-legend={legend}
                 onClick={(e) => {
                     if (toggleModal !== "none") changeIsOpen(toggleModal);
-                    flash(e.currentTarget as HTMLButtonElement, user);
+                    flash(e.currentTarget as HTMLButtonElement, user, animate);
                     onClick && onClick(e);
                 }}
                 disabled={disabled || user.level < level}

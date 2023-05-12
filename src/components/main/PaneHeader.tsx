@@ -65,7 +65,7 @@ const PaneHeader = ({ type, children }: PaneHeaderProps) => {
     return (
         <header css={emotion} onClick={scrollToPane}>
             <nav>{children}</nav>
-            <aside>{modeDescriptions[mode]}</aside>
+            <aside>{modeDescriptions[mode[type]]}</aside>
         </header>
     );
 };

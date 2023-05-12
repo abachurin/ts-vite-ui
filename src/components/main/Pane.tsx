@@ -1,6 +1,5 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo } from "react";
-import ModeProvider from "../../contexts/ModeProvider/ModeProvider";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps, RGBA } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
@@ -38,11 +37,9 @@ const Pane = ({ id, children }: PaneProps) => {
     );
 
     return (
-        <ModeProvider>
-            <main id={id} css={emotion}>
-                {children}
-            </main>
-        </ModeProvider>
+        <main id={id} css={emotion}>
+            {children}
+        </main>
     );
 };
 

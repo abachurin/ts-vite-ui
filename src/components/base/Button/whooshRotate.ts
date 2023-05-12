@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import clickSound from "../../../assets/sounds/mixkit-arrow-whoosh-1491.wav";
-import { ButtonExtraStyle, ButtonSound } from "../../../types";
+import { ButtonExtraStyle, ButtonEffects } from "../../../types";
 import { GLOBAL, makeSound } from "../../../utils";
 
 export const whooshRotateEmotion: ButtonExtraStyle = (borderRadius) => css`
@@ -15,18 +15,23 @@ export const whooshRotateEmotion: ButtonExtraStyle = (borderRadius) => css`
     }
 `;
 
-export const whooshRotateClick: ButtonSound = (el, volume) => {
+export const whooshRotateClick: ButtonEffects = (
+    button,
+    volume,
+    animate = true
+) => {
     makeSound(clickSound, volume);
-    el.animate(
-        {
-            transform: [
-                "rotateY(0deg)",
-                "rotateY(90deg)",
-                "rotateY(90deg)",
-                "rotateY(0deg)",
-            ],
-            offset: [0, 0.37, 0.63, 1],
-        },
-        600
-    );
+    animate &&
+        button.animate(
+            {
+                transform: [
+                    "rotateY(0deg)",
+                    "rotateY(90deg)",
+                    "rotateY(90deg)",
+                    "rotateY(0deg)",
+                ],
+                offset: [0, 0.37, 0.63, 1],
+            },
+            600
+        );
 };

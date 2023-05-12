@@ -18,7 +18,7 @@ const TestModal = () => {
                 align: "left",
                 children: "Test",
                 onClick: () => {
-                    modeUpdate("test");
+                    modeUpdate({ agent: "test" });
                 },
             }}
             modal={{
@@ -27,7 +27,7 @@ const TestModal = () => {
                 color: palette.text,
             }}
         >
-            Train Agent
+            Test Agent
         </Modal>
     );
 };
