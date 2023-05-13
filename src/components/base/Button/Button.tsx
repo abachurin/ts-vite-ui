@@ -53,6 +53,13 @@ const makeEmotion = (
     font-size: ${fontSize};
     width: ${width};
     height: ${height};
+    :hover:enabled {
+        cursor: pointer;
+    }
+    :disabled {
+        cursor: not-allowed;
+        color: rgb(128, 128, 128);
+    }
 `;
 
 const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
@@ -77,14 +84,14 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
             ${
                 align === "right"
                     ? `
-                        &:before {
+                        &::before {
                             top: 2em;
                             right: 100%;
                         }
                     `
                     : `
-                        &:before {
-                            top: 100%;
+                        &::before {
+                            top: 110%;
                             left: 1em;
                         }
                     `

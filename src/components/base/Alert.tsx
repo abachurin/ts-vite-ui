@@ -1,5 +1,5 @@
 import { css, keyframes, SerializedStyles } from "@emotion/react";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import {
     usePalette,
     useAnimate,
@@ -7,7 +7,6 @@ import {
 import { ChildrenProps } from "../../types";
 import { GLOBAL } from "../../utils";
 import CloseButton from "./Button/CloseButton";
-import dragMe from "../HOC/Draggable";
 
 // Emotion styles
 const zoom = keyframes`
@@ -39,16 +38,11 @@ const makeEmotion = (
         color: ${color};
     `;
 
-interface AlertProps extends ChildrenProps {
+export interface AlertProps extends ChildrenProps {
     bad?: boolean;
-    duration?: number;
+    closeAlert: () => void;
 }
-const StaticAlert = ({
-    bad = true,
-    // duration = GLOBAL.messageDuration,
-    duration = 0,
-    children,
-}: AlertProps) => {
+const StaticAlert = ({ bad = true, closeAlert, children }: AlertProps) => {
     const animate = useAnimate();
     const palette = usePalette();
     const borderColor = bad ? palette.error : palette.success;
@@ -61,35 +55,12 @@ const StaticAlert = ({
         [borderColor, palette, animate]
     );
 
-    const [isOpen, setIsOpen] = useState(true);
-
-    useEffect(() => {
-        if (duration && isOpen) {
-            const timeout = setTimeout(() => {
-                setIsOpen(false);
-            }, duration);
-
-            return () => {
-                clearTimeout(timeout);
-            };
-        }
-    }, [duration, isOpen]);
-
-    if (!isOpen) {
-        return null;
-    }
-
     return (
         <div css={emotion}>
             {children}
-            <CloseButton
-                onClick={() => setIsOpen(false)}
-                toggleModal={"none"}
-            />
+            <CloseButton onClick={closeAlert} toggleModal={"none"} />
         </div>
     );
 };
 
-const Alert = dragMe(StaticAlert);
-
-export default Alert;
+export default StaticAlert;

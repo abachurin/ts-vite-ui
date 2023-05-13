@@ -7,11 +7,7 @@ export const whooshRotateEmotion: ButtonExtraStyle = (borderRadius) => css`
     border: 0;
     border-radius: ${borderRadius || GLOBAL.borderRadius};
     &:hover:enabled {
-        cursor: pointer;
         box-shadow: 0 0 0.2em white, 0 0 1em white;
-    }
-    :disabled {
-        opacity: 0.75;
     }
 `;
 

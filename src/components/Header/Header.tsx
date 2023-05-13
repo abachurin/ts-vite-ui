@@ -27,7 +27,8 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
     background-color: ${backgroundColor};
     color: ${color};
     border-radius: ${GLOBAL.borderRadius};
-    & > * {
+    z-index: 3;
+    s & > * {
         flex: 1;
     }
 `;

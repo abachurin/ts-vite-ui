@@ -21,8 +21,18 @@ const baseContainer = css`
     right: 0;
     bottom: 0;
     transform: scale(0);
-    background: rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.1);
     z-index: 100;
+`;
+
+const blockingContainer = css`
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.001);
+    z-index: 50;
 `;
 
 const backgroundStyle = css`
@@ -31,6 +41,7 @@ const backgroundStyle = css`
     top: 0;
     right: 0;
     bottom: 0;
+    z-index: 200;
 `;
 
 const unFold = keyframes`
@@ -88,7 +99,7 @@ const makeBaseModal = (
     width: ${width};
     height: ${height};
     max-height: 76%;
-    z-index: 100;
+    z-index: 300;
 `;
 
 /**
@@ -188,10 +199,13 @@ const ModalWindow = ({
           `;
 
     return ReactDOM.createPortal(
-        <div css={containerStyle}>
-            <div onClick={closeModal} css={backgroundStyle} />
-            <div css={modalStyle}>{children}</div>
-        </div>,
+        <>
+            <div css={blockingContainer}></div>
+            <div css={containerStyle}>
+                <div onClick={closeModal} css={backgroundStyle} />
+                <div css={modalStyle}>{children}</div>
+            </div>
+        </>,
         document.getElementById("modal") as HTMLElement
     );
 };
