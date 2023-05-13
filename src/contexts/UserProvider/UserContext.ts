@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 import useMotion from "../../hooks/useReducedMotion";
 import { User } from "../../types";
 import { GLOBAL } from "../../utils";
-import { palettes } from "./palette";
+import { palettes } from "../palette";
 
 export const defaultUser: User = {
     name: "Login",

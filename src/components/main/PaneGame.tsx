@@ -16,10 +16,10 @@ import Alert from "../base/Alert";
 const PaneAgent = () => {
     const palette = usePalette();
     const modeUpdate = useModeUpdate();
-    const [state, setState] = useState({ isOpen: false });
+    const [showAlert, setShowAlert] = useState(false);
 
     const playYourself = () => {
-        setState({ isOpen: true });
+        setShowAlert(true);
         modeUpdate({ game: "play" });
     };
 
@@ -32,9 +32,11 @@ const PaneAgent = () => {
                     Play Yourself
                 </Button>
             </PaneHeader>
-            <Alert state={state}>
-                <h1>Ola!</h1>
-            </Alert>
+            {showAlert && (
+                <Alert>
+                    <p>This is an alert message!</p>
+                </Alert>
+            )}
         </Pane>
     );
 };

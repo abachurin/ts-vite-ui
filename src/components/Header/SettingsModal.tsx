@@ -5,7 +5,7 @@ import {
     usePalette,
     useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
-import { palettes } from "../../contexts/UserProvider/palette";
+import { palettes } from "../../contexts/palette";
 import { GLOBAL, changeBrightness } from "../../utils";
 import { AlignProps, Alignment, User } from "../../types";
 import Modal from "../modal/Modal";

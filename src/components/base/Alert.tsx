@@ -1,52 +1,91 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css, keyframes, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
-import { usePalette } from "../../contexts/UserProvider/UserContext";
+import {
+    usePalette,
+    useAnimate,
+} from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
 import { GLOBAL } from "../../utils";
 import CloseButton from "./Button/CloseButton";
 import dragMe from "../HOC/Draggable";
 
 // Emotion styles
-const makeEmotion = (backgroundColor: string): SerializedStyles => css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: ${GLOBAL.padding};
-    padding-left: calc(${GLOBAL.padding} * 2);
-    border-radius: ${GLOBAL.borderRadius};
-    box-shadow: ${GLOBAL.boxShadow};
-    background-color: ${backgroundColor};
+const zoom = keyframes`
+    0% {
+        transform:scale(0);
+    }
+    100% {
+        transform:scale(1);
+    }
 `;
+const animation = css`
+    animation: ${zoom} 0.3s ease-in-out;
+`;
+const makeEmotion = (
+    borderColor: string,
+    backgroundColor: string,
+    color: string
+): SerializedStyles =>
+    css`
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: ${GLOBAL.padding};
+        padding: ${GLOBAL.padding};
+        padding-left: calc(${GLOBAL.padding} * 2);
+        border-radius: ${GLOBAL.borderRadius};
+        box-shadow: ${GLOBAL.insetShadow(borderColor)};
+        background-color: ${backgroundColor};
+        color: ${color};
+    `;
+
 interface AlertProps extends ChildrenProps {
-    state?: { isOpen: boolean };
     bad?: boolean;
     duration?: number;
 }
 const StaticAlert = ({
-    state = { isOpen: false },
     bad = true,
-    duration = 5000,
+    // duration = GLOBAL.messageDuration,
+    duration = 0,
     children,
 }: AlertProps) => {
-    const [show, setShow] = useState(state["isOpen"]);
-    useEffect(() => setShow(state["isOpen"]), [state]);
-    if (show) {
-        setTimeout(() => setShow(false), duration);
-    }
-
+    const animate = useAnimate();
     const palette = usePalette();
-    const backgroundColor = bad ? palette.one : palette.two;
+    const borderColor = bad ? palette.error : palette.success;
 
     const emotion = useMemo(
-        () => makeEmotion(backgroundColor),
-        [backgroundColor]
+        () => css`
+            ${makeEmotion(borderColor, palette.background, palette.text)}
+            ${animate ? animation : null},
+        `,
+        [borderColor, palette, animate]
     );
-    if (!show) return null;
+
+    const [isOpen, setIsOpen] = useState(true);
+
+    useEffect(() => {
+        if (duration && isOpen) {
+            const timeout = setTimeout(() => {
+                setIsOpen(false);
+            }, duration);
+
+            return () => {
+                clearTimeout(timeout);
+            };
+        }
+    }, [duration, isOpen]);
+
+    if (!isOpen) {
+        return null;
+    }
 
     return (
         <div css={emotion}>
             {children}
-            <CloseButton onClick={() => setShow(false)} />
+            <CloseButton
+                onClick={() => setIsOpen(false)}
+                toggleModal={"none"}
+            />
         </div>
     );
 };

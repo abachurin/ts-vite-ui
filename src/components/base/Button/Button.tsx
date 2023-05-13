@@ -10,7 +10,6 @@ import {
     Alignment,
     ButtonVariants,
     ModalState,
-    OnClick,
 } from "../../../types";
 import { GLOBAL } from "../../../utils";
 import { whooshRotateEmotion, whooshRotateClick } from "./whooshRotate";
@@ -129,7 +128,7 @@ export interface ButtonProps extends ChildrenProps {
     disabled?: boolean;
     level?: number;
     toggleModal?: ModalState;
-    onClick?: OnClick;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 const Button = ({
     type = "whooshRotate",

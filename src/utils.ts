@@ -13,6 +13,7 @@ export const GLOBAL = {
     boxShadow: "0 0 0.5em 0.1em rgba(255, 255, 255, 0.2)",
     littleShadow: "0 0 0.5em 0.1em rgba(0, 0, 0, 0.2)",
     middleShadow: "0 0 0.5em 0.1em rgba(0, 0, 0, 0.5)",
+    insetShadow: (color: string) => "inset 0 0 0.5em 0.1em " + color,
     starSpeed: 5,
     windowResizeDelay: 300,
     logoScale: 1.4,
@@ -20,7 +21,7 @@ export const GLOBAL = {
     maxContainerWidth: 1400,
     minPaneWidth: 340,
     contactButtonWidth: "12rem",
-    messageDuration: 5000,
+    messageDuration: 10000,
     userLevel: {
         guest: 0,
         user: 1,
