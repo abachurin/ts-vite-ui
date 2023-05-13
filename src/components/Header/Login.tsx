@@ -154,7 +154,9 @@ const Login = ({ align = "left" }: LoginProps) => {
                             type='clickPress'
                             backgroundColor={palette.one}
                             color={palette.background}
-                            onClick={(e) => handleSubmit(e, "login")}
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                                handleSubmit(e, "login")
+                            }
                         >
                             Login
                         </Button>
@@ -162,7 +164,9 @@ const Login = ({ align = "left" }: LoginProps) => {
                             type='clickPress'
                             backgroundColor={palette.two}
                             color={palette.background}
-                            onClick={(e) => handleSubmit(e, "register")}
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                                handleSubmit(e, "register")
+                            }
                         >
                             Register
                         </Button>
@@ -172,7 +176,9 @@ const Login = ({ align = "left" }: LoginProps) => {
                             backgroundColor={palette.three}
                             color={palette.background}
                             disabled={user.name === "Login"}
-                            onClick={(e) => handleSubmit(e, "logout")}
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
+                                handleSubmit(e, "logout")
+                            }
                         >
                             <Icon svg={SvgPaths.logout} />
                         </Button>

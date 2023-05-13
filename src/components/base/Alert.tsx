@@ -18,12 +18,21 @@ const makeEmotion = (backgroundColor: string): SerializedStyles => css`
     background-color: ${backgroundColor};
 `;
 interface AlertProps extends ChildrenProps {
-    isOpen?: boolean;
+    state?: { isOpen: boolean };
     bad?: boolean;
+    duration?: number;
 }
-const StaticAlert = ({ isOpen = false, bad = true, children }: AlertProps) => {
-    const [show, setShow] = useState(isOpen);
-    useEffect(() => setShow(isOpen), [isOpen]);
+const StaticAlert = ({
+    state = { isOpen: false },
+    bad = true,
+    duration = 5000,
+    children,
+}: AlertProps) => {
+    const [show, setShow] = useState(state["isOpen"]);
+    useEffect(() => setShow(state["isOpen"]), [state]);
+    if (show) {
+        setTimeout(() => setShow(false), duration);
+    }
 
     const palette = usePalette();
     const backgroundColor = bad ? palette.one : palette.two;

@@ -1,4 +1,3 @@
-import { OnClick } from "../../../types";
 import { SvgPaths } from "../../../utils";
 import Button from "./Button";
 import Icon from "../Icon/Icon";
@@ -8,7 +7,7 @@ import Icon from "../Icon/Icon";
  */
 type CloseButtonProps = {
     toggleModal?: "none" | false;
-    onClick?: OnClick;
+    onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 const CloseButton = ({ toggleModal = false, onClick }: CloseButtonProps) => {
     return (
