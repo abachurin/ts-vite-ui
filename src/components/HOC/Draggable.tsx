@@ -18,7 +18,7 @@ const makeEmotion = (
 
 // Helper functions
 const defaultPosition: Position = { x: "50%", y: "50%" };
-const defaultOffset: Offset = { x: 0, y: 0 };
+const zeroOffset: Offset = { x: 0, y: 0 };
 
 const dragMe = <P extends object>(
     ToDrag: React.ComponentType<P>,
@@ -27,21 +27,29 @@ const dragMe = <P extends object>(
 ) => {
     return (props: P) => {
         const [isDragging, setIsDragging] = useState(false);
-        const [offset, setOffset] = useState<Offset>(defaultOffset);
-        const currentOffset = useRef<Offset>({ x: 0, y: 0 });
+        const [offset, setOffset] = useState<Offset>(zeroOffset);
+        const currentOffset = useRef<Offset>(zeroOffset);
+
+        const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+            setIsDragging(true);
+            const { clientX, clientY } = e;
+            currentOffset.current = {
+                x: clientX,
+                y: clientY,
+            };
+        };
+        const handleMouseUp = () => {
+            setIsDragging(false);
+        };
 
         useEffect(() => {
             const handleMouseMove = (e: MouseEvent) => {
                 if (!isDragging) return;
                 const { clientX, clientY } = e;
                 setOffset({
-                    x: clientX - currentOffset.current.x,
-                    y: clientY - currentOffset.current.y,
+                    x: clientX - currentOffset.current.x + offset.x,
+                    y: clientY - currentOffset.current.y + offset.y,
                 });
-            };
-
-            const handleMouseUp = () => {
-                setIsDragging(false);
             };
 
             if (isDragging) {
@@ -54,16 +62,6 @@ const dragMe = <P extends object>(
                 document.removeEventListener("mouseup", handleMouseUp);
             };
         }, [isDragging]);
-
-        const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-            setIsDragging(true);
-            const { clientX, clientY } = e;
-            const rect = e.currentTarget.getBoundingClientRect();
-            currentOffset.current = {
-                x: clientX - rect.left,
-                y: clientY - rect.top,
-            };
-        };
 
         const left = `calc(${initialPosition.x} + ${offset.x}px)`;
         const top = `calc(${initialPosition.y} + ${offset.y}px)`;

@@ -76,7 +76,6 @@ export type ButtonEffects = (
     volume: number | User,
     animate: boolean
 ) => void;
-export type OnClick = (e: React.MouseEvent<HTMLButtonElement>) => void;
 
 // Mode types
 export type ModeOfAction = {
