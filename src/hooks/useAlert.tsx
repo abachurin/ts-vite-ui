@@ -1,7 +1,7 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { ChildrenProps, Position, PositionType } from "../types";
 import { GLOBAL } from "../utils";
-import StaticAlert, { AlertProps } from "../components/base/Alert";
+import StaticAlert, { AlertProps } from "../components/base/StaticAlert";
 import dragMe from "../components/HOC/Draggable";
 
 interface AlertHookProps extends ChildrenProps {

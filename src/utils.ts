@@ -21,7 +21,7 @@ export const GLOBAL = {
     maxContainerWidth: 1400,
     minPaneWidth: 340,
     contactButtonWidth: "12rem",
-    messageDuration: 10000,
+    messageDuration: 5000,
     userLevel: {
         guest: 0,
         user: 1,

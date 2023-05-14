@@ -25,7 +25,7 @@ const baseContainer = css`
     z-index: 100;
 `;
 
-const blockingContainer = css`
+const baseBlock = css`
     position: fixed;
     left: 0;
     top: 0;
@@ -33,6 +33,7 @@ const blockingContainer = css`
     bottom: 0;
     background: rgba(255, 255, 255, 0.001);
     z-index: 50;
+    transform: scale(0);
 `;
 
 const backgroundStyle = css`
@@ -198,9 +199,16 @@ const ModalWindow = ({
               display: none;
           `;
 
+    const block = isOpen
+        ? baseBlock
+        : css`
+              ${baseBlock}
+              transform: scale(1);
+          `;
+
     return ReactDOM.createPortal(
         <>
-            <div css={blockingContainer}></div>
+            <div css={block}></div>
             <div css={containerStyle}>
                 <div onClick={closeModal} css={backgroundStyle} />
                 <div css={modalStyle}>{children}</div>

@@ -10,7 +10,7 @@ const emotion = css`
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding-inline: calc(${GLOBAL.padding} * 2);
+    padding-left: calc(${GLOBAL.padding} * 2);
     padding-block: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius} ${GLOBAL.borderRadius} 0 0;
     border-bottom: 1px solid white;

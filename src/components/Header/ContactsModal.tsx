@@ -14,17 +14,16 @@ const emotion = css`
     display: flex;
     flex-direction: column;
     gap: ${GLOBAL.padding};
-    padding-bottom: calc(${GLOBAL.padding} * 2);
+    padding-block: calc(${GLOBAL.padding} * 2);
     & > * {
-        flex: 1;
         display: flex;
+        justify-content: space-between;
         align-items: center;
+        padding-right: ${GLOBAL.padding};
         gap: ${GLOBAL.padding};
     }
-    & > * > :last-child {
-        flex: 1;
+    & * {
         text-transform: uppercase;
-        font-weight: 400;
     }
 `;
 
@@ -34,10 +33,6 @@ const emotion = css`
  */
 const ContactsModal = ({ align }: AlignProps) => {
     const palette = usePalette();
-
-    const headerStyle = css`
-        color: ${palette.text};
-    `;
 
     return (
         <Modal
@@ -49,7 +44,7 @@ const ContactsModal = ({ align }: AlignProps) => {
             }}
         >
             <ModalHeader>
-                <h1 css={headerStyle}>Contact the Author via:</h1>
+                <h1>Contact the Author via:</h1>
             </ModalHeader>
             <ModalBody>
                 <div css={emotion}>

@@ -57,7 +57,6 @@ const makeEmotion = (
         cursor: pointer;
     }
     :disabled {
-        cursor: not-allowed;
         color: rgb(128, 128, 128);
     }
 `;
@@ -72,6 +71,7 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
                 color: black;
                 font-size: 0.7em;
                 padding: ${GLOBAL.padding};
+                border-radius: ${GLOBAL.borderRadius};
                 content: attr(data-legend);
                 white-space: wrap;
                 text-align: left;

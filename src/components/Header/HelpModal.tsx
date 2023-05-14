@@ -21,7 +21,7 @@ const emotion = css`
 `;
 
 const markdown = css`
-    padding: ${GLOBAL.padding};
+    padding: calc(${GLOBAL.padding} * 2);
     text-align: justify;
     text-justify: inter-word;
     & img {
