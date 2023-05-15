@@ -3,7 +3,6 @@ import {
     useModeUpdate,
 } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
-import useAlert from "../../../hooks/useAlert";
 import Pane from "../Pane";
 import PaneHeader from "../PaneHeader";
 import PaneBody from "../PaneBody";
@@ -20,6 +19,7 @@ import Button from "../../base/Button/Button";
 const PaneGame = () => {
     const palette = usePalette();
     const mode = useMode();
+    const gameMode = mode.game
     const modeUpdate = useModeUpdate();
 
     const playYourself = () => {
@@ -27,6 +27,8 @@ const PaneGame = () => {
     };
 
     const values = Array.from({ length: 16 }, (_, i) => i);
+    const footer = gameMode === "play"?
+    
 
     return (
         <Pane id='game-pane'>
@@ -45,6 +47,7 @@ const PaneGame = () => {
                     values={values}
                     lastTile={15}
                 />
+
             </PaneBody>
         </Pane>
     );

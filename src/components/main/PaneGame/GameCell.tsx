@@ -34,7 +34,6 @@ type GameCellProps = {
 };
 const GameCell = ({ size, value, blink = false }: GameCellProps) => {
     const palette = usePalette();
-    console.log(value, boardColors[value]);
     const emotion = css`
         ${makeEmotion(size, boardColors[value], palette.background)}
         ${blink && blinkMe}
