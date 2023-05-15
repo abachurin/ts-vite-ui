@@ -66,10 +66,11 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
         ? `
             &::before {
                 position: absolute;
-                width: 10em;
+                width: max-content;
+                max-width: 10em;
                 background-color: white;
                 color: black;
-                font-size: 0.7em;
+                font-size: 0.85em;
                 padding: ${GLOBAL.padding};
                 border-radius: ${GLOBAL.borderRadius};
                 content: attr(data-legend);

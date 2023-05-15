@@ -1,5 +1,5 @@
-import Pane from "./Pane";
-import PaneHeader from "./PaneHeader";
+import Pane from "../Pane";
+import PaneHeader from "../PaneHeader";
 import TrainModal from "./TrainModal";
 import TestModal from "./TestModal";
 

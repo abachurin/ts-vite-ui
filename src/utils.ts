@@ -49,6 +49,25 @@ export const SvgPaths = {
     login: "M11,7L9.6,8.4l2.6,2.6H2v2h10.2l-2.6,2.6L11,17l5-5L11,7z M20,19h-8v2h8c1.1,0,2-0.9,2-2V5c0-1.1-0.9-2-2-2h-8v2h8V19z",
 };
 
+export const boardColors: Record<number, string> = {
+    0: "white",
+    1: "hsl(255, 100%, 75%)",
+    2: "hsl(300, 100%, 55%)",
+    3: "hsl(120, 100%, 40%)",
+    4: "hsl(30, 100%, 50%)",
+    5: "hsl(192, 100%, 35%)",
+    6: "hsl(336, 100%, 50%)",
+    7: "hsl(80, 100%, 30%)",
+    8: "hsl(30, 30%, 30%)",
+    9: "hsl(220, 100%, 70%)",
+    10: "hsl(12, 100%, 55%)",
+    11: "hsl(165, 100%, 30%)",
+    12: "hsl(270, 100%, 40%)",
+    13: "hsl(255, 100%, 45%)",
+    14: "hsl(0, 100%, 30%)",
+    15: "hsl(0, 0%, 20%)",
+};
+
 /**
  * Generate a random number between start and end (inclusive).
  * @param end - The maximum number to generate.
@@ -63,9 +82,9 @@ export function randomNum(end: number, start = 0): number {
  * @param selector - The CSS selector of the element to scroll to.
  */
 export function smoothScroll(selector: string): void {
-    document.querySelector(selector)?.scrollIntoView({
-        behavior: "smooth",
-    });
+    document
+        .querySelector(selector)
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 /**

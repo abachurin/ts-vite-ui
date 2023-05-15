@@ -71,12 +71,14 @@ const makeOptionsBox = (
     backgroundColor: string
 ): SerializedStyles => css`
     position: absolute;
-    min-width: 100%;
+    min-width: 80%;
     width: max-content;
     border: 1px solid ${controlColor};
     border-top: none;
     border-radius: 0 0 ${GLOBAL.borderRadius} ${GLOBAL.borderRadius};
     background-color: ${backgroundColor};
+    font-size: 0.8em;
+    line-height: 0.9em;
     transform: scale(0);
     opacity: 0;
     transition: transform 0.25s ease, opacity 0.25s ease;

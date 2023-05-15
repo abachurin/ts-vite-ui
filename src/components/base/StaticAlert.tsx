@@ -4,7 +4,7 @@ import {
     usePalette,
     useAnimate,
 } from "../../contexts/UserProvider/UserContext";
-import { ChildrenProps } from "../../types";
+import { ChildrenProps, AlertColors } from "../../types";
 import { GLOBAL } from "../../utils";
 import CloseButton from "./Button/CloseButton";
 
@@ -34,22 +34,29 @@ const makeEmotion = (
         padding-left: calc(${GLOBAL.padding} * 2);
         border-radius: ${GLOBAL.borderRadius};
         box-shadow: ${GLOBAL.insetShadow(borderColor)};
-        background-color: ${backgroundColor};
+        background: linear-gradient(135deg, ${borderColor}, ${backgroundColor});
         color: ${color};
     `;
 
 export interface AlertProps extends ChildrenProps {
-    bad?: boolean;
+    type?: AlertColors;
     closeAlert: () => void;
 }
-const StaticAlert = ({ bad = true, closeAlert, children }: AlertProps) => {
+const StaticAlert = ({
+    type = "warning",
+    closeAlert,
+    children,
+}: AlertProps) => {
     const animate = useAnimate();
     const palette = usePalette();
-    const borderColor = bad ? palette.error : palette.success;
+    const borderColor =
+        type === "error" || type === "warning"
+            ? palette.error
+            : palette.success;
 
     const emotion = useMemo(
         () => css`
-            ${makeEmotion(borderColor, palette.background, palette.text)}
+            ${makeEmotion(borderColor, palette.text, palette.background)}
             ${animate ? animation : null},
         `,
         [borderColor, palette, animate]
@@ -57,7 +64,7 @@ const StaticAlert = ({ bad = true, closeAlert, children }: AlertProps) => {
 
     return (
         <div css={emotion}>
-            {children}
+            {children || "Lo! Behold!"}
             <CloseButton onClick={closeAlert} toggleModal={"none"} />
         </div>
     );

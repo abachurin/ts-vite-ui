@@ -1,7 +1,7 @@
-import { useModeUpdate } from "../../contexts/ModeProvider/ModeContext";
-import { usePalette } from "../../contexts/UserProvider/UserContext";
-import Modal from "../modal/Modal";
-import { GLOBAL } from "../../utils";
+import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
+import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import Modal from "../../modal/Modal";
+import { GLOBAL } from "../../../utils";
 
 /**
  * Returns a React Modal component containing the Admin section.

@@ -6,8 +6,8 @@ import UserProvider from "./contexts/UserProvider/UserProvider";
 import { GLOBAL } from "./utils";
 import StarField from "./components/background/StarField";
 import Header from "./components/Header/Header";
-import PaneAgent from "./components/main/PaneAgent";
-import PaneGame from "./components/main/PaneGame";
+import PaneAgent from "./components/main/PaneAgent/PaneAgent";
+import PaneGame from "./components/main/PaneGame/PaneGame";
 import Footer from "./components/Footer/Footer";
 
 // Emotion styles

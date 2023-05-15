@@ -93,3 +93,6 @@ export type Offset = {
     y: number;
 };
 export type PositionType = "fixed" | "absolute";
+
+// Alert types
+export type AlertColors = "success" | "error" | "warning" | "info";

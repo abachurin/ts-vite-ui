@@ -1,12 +1,12 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
-import { ChildrenProps, Position, PositionType } from "../types";
+import { ChildrenProps, Position, PositionType, AlertColors } from "../types";
 import { GLOBAL } from "../utils";
 import StaticAlert, { AlertProps } from "../components/base/StaticAlert";
 import dragMe from "../components/HOC/Draggable";
 
 interface AlertHookProps extends ChildrenProps {
     draggable?: boolean;
-    bad?: boolean;
+    type?: AlertColors;
     initialPosition?: Position;
     positionType?: PositionType;
     duration?: number;
@@ -14,7 +14,7 @@ interface AlertHookProps extends ChildrenProps {
 
 const useAlert = ({
     draggable = true,
-    bad,
+    type,
     initialPosition,
     positionType,
     duration = GLOBAL.messageDuration,
@@ -47,7 +47,7 @@ const useAlert = ({
     }, [showAlert, duration]);
 
     const props: AlertProps = {
-        bad: bad,
+        type: type,
         closeAlert: closeAlert,
         children: children,
     };
