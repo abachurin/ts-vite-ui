@@ -43,8 +43,8 @@ function App() {
 
     return (
         <>
-            <ModeProvider>
-                <UserProvider>
+            <UserProvider>
+                <ModeProvider>
                     <StarField />
                     <header css={emotion}>
                         <Header />
@@ -54,8 +54,8 @@ function App() {
                         </main>
                         <Footer />
                     </header>
-                </UserProvider>
-            </ModeProvider>
+                </ModeProvider>
+            </UserProvider>
         </>
     );
 }

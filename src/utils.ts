@@ -68,6 +68,13 @@ export const boardColors: Record<number, string> = {
     15: "hsl(0, 0%, 20%)",
 };
 
+export const arrows: Record<string, string> = {
+    left: "&#8592",
+    up: "&#8593",
+    right: "&#8594",
+    down: "&#8595",
+};
+
 /**
  * Generate a random number between start and end (inclusive).
  * @param end - The maximum number to generate.
