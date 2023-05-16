@@ -165,3 +165,18 @@ export function checkRe(text: string | undefined): boolean {
     const re = /^[0-9A-Za-z-_]+$/;
     return text !== undefined && re.test(text);
 }
+
+/**
+ * Performs a deep copy of the given object by first serializing it to JSON and then
+ * deserializing it back into a new object.
+ */
+export function deepCopy<T>(obj: T): T {
+    return JSON.parse(JSON.stringify(obj));
+}
+
+/**
+ * Checks if two Objects are deeply equal.
+ */
+export function deepEqual<T>(a: T, b: T): boolean {
+    return JSON.stringify(a) === JSON.stringify(b);
+}
