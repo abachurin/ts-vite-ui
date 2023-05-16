@@ -19,7 +19,7 @@ import Button from "../../base/Button/Button";
 const PaneGame = () => {
     const palette = usePalette();
     const mode = useMode();
-    const gameMode = mode.game
+    const gameMode = mode.game;
     const modeUpdate = useModeUpdate();
 
     const playYourself = () => {
@@ -27,8 +27,7 @@ const PaneGame = () => {
     };
 
     const values = Array.from({ length: 16 }, (_, i) => i);
-    const footer = gameMode === "play"?
-    
+    const footer = gameMode === "play" ? "play" : "watch";
 
     return (
         <Pane id='game-pane'>
@@ -47,7 +46,6 @@ const PaneGame = () => {
                     values={values}
                     lastTile={15}
                 />
-
             </PaneBody>
         </Pane>
     );
