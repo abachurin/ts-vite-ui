@@ -14,6 +14,7 @@ function useSwipe(): number {
 
                 const dx = touchEndX - touchStartX;
                 const dy = touchEndY - touchStartY;
+                console.log(dx, dy);
 
                 if (Math.abs(dx) > Math.abs(dy)) {
                     if (dx > 0) {

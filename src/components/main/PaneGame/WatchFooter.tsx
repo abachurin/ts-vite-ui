@@ -1,5 +1,3 @@
-import React from "react";
-
 const WatchFooter = () => {
     return <div>WatchFooter</div>;
 };

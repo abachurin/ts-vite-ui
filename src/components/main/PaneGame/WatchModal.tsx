@@ -1,4 +1,3 @@
-import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import Modal from "../../modal/Modal";
 import { AlignProps } from "../../../types";
@@ -8,7 +7,6 @@ import { AlignProps } from "../../../types";
  * @param align - The alignment parameter of the button, which opens the modal
  */
 const WatchModal = ({ align }: AlignProps) => {
-    const modeUpdate = useModeUpdate();
     const palette = usePalette();
 
     return (

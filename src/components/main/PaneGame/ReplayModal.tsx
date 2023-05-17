@@ -1,4 +1,3 @@
-import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import Modal from "../../modal/Modal";
 import { AlignProps } from "../../../types";
@@ -9,7 +8,6 @@ import { AlignProps } from "../../../types";
  */
 const ReplayModal = ({ align }: AlignProps) => {
     const palette = usePalette();
-    const modeUpdate = useModeUpdate();
 
     return (
         <Modal
