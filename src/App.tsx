@@ -1,17 +1,14 @@
-import { css, SerializedStyles } from "@emotion/react";
-import { useMemo } from "react";
-import { usePalette } from "./contexts/UserProvider/UserContext";
+import { css } from "@emotion/react";
 import ModeProvider from "./contexts/ModeProvider/ModeProvider";
 import UserProvider from "./contexts/UserProvider/UserProvider";
 import { GLOBAL } from "./utils";
 import StarField from "./components/background/StarField";
 import Header from "./components/Header/Header";
-import PaneAgent from "./components/main/PaneAgent/PaneAgent";
-import PaneGame from "./components/main/PaneGame/PaneGame";
+import Main from "./components/main/Main";
 import Footer from "./components/Footer/Footer";
 
 // Emotion styles
-const makeEmotion = (textColor: string): SerializedStyles => css`
+const emotion = css`
     position: relative;
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -23,37 +20,19 @@ const makeEmotion = (textColor: string): SerializedStyles => css`
     margin: 0 auto;
     padding: calc(2 * ${GLOBAL.padding});
     max-width: ${GLOBAL.maxContainerWidth}px;
-    & > main {
-        display: flex;
-        gap: ${GLOBAL.padding};
-        flex-wrap: wrap;
-        overflow: auto;
-        color: ${textColor};
-    }
 `;
 
-/**
- * Render the App component.
- */
 function App() {
-    const palette = usePalette();
-    const textColor = palette.background;
-
-    const emotion = useMemo(() => makeEmotion(textColor), [textColor]);
-
     return (
         <>
             <UserProvider>
                 <ModeProvider>
                     <StarField />
-                    <header css={emotion}>
+                    <main css={emotion}>
                         <Header />
-                        <main>
-                            <PaneAgent />
-                            <PaneGame />
-                        </main>
+                        <Main />
                         <Footer />
-                    </header>
+                    </main>
                 </ModeProvider>
             </UserProvider>
         </>

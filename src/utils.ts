@@ -20,6 +20,8 @@ export const GLOBAL = {
     navBreakpoint: 600,
     maxContainerWidth: 1400,
     minPaneWidth: 340,
+    gameCellSize: "6rem",
+    gameCellPadding: "3px",
     contactButtonWidth: "12rem",
     messageDuration: 5000,
     userLevel: {
@@ -66,13 +68,6 @@ export const boardColors: Record<number, string> = {
     13: "hsl(255, 100%, 45%)",
     14: "hsl(0, 100%, 30%)",
     15: "hsl(0, 0%, 20%)",
-};
-
-export const arrows: Record<string, string> = {
-    left: "&#8592",
-    up: "&#8593",
-    right: "&#8594",
-    down: "&#8595",
 };
 
 /**

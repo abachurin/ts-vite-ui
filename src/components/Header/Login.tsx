@@ -23,6 +23,7 @@ import Input from "../base/Input";
 // Emotion styles
 const emotion = css`
     margin-block: ${GLOBAL.padding};
+    padding-inline: ${GLOBAL.padding};
     display: flex;
     flex-direction: column;
     gap: calc(${GLOBAL.padding} * 2);

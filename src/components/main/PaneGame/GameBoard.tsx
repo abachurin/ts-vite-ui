@@ -1,3 +1,5 @@
+import { gameMoves } from "../../../store/gameLogic";
+import useGameStore from "../../../store/gameStore";
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo } from "react";
 import { uniqueId } from "lodash-es";
@@ -38,25 +40,9 @@ const makeEmotion = (
     }
 `;
 
-type GameBoardProps = {
-    size: string;
-    score: number;
-    moves: number;
-    values: number[];
-    lastTile?: number;
-    nextMove?: number;
-    isOver?: boolean | undefined;
-};
-const GameBoard = ({
-    size,
-    score,
-    moves,
-    values,
-    lastTile = -1,
-    nextMove,
-    isOver,
-}: GameBoardProps) => {
+const GameBoard = () => {
     const palette = usePalette();
+    const game = useGameStore((state) => state.game);
 
     const emotion = useMemo(
         () =>
@@ -68,25 +54,33 @@ const GameBoard = ({
             ),
         [palette]
     );
-    console.log(size);
+
+    const values = [
+        ...game.current[0],
+        ...game.current[1],
+        ...game.current[2],
+        ...game.current[3],
+    ];
+    const lastTilePosition =
+        (game.lastTile?.position.x || 0) * 4 +
+        (game.lastTile?.position.y || -1);
 
     return (
         <div css={emotion}>
             <header>
-                <label>Score: {score}</label>
-                <label>Moves: {moves}</label>
-                {nextMove !== undefined ? (
-                    <label>Next Move: {nextMove}</label>
+                <div>Score: {game.score}</div>
+                <div>Moves: {game.pointer.move}</div>
+                {game.nextMove !== undefined ? (
+                    <label>Next Move: {gameMoves[game.nextMove]}</label>
                 ) : null}
-                {isOver && <label>Game over!</label>}
+                {game.isOver && <label>Game over!</label>}
             </header>
             <main>
                 {values.map((value, idx) => (
                     <GameCell
                         key={uniqueId()}
-                        size={size}
                         value={value}
-                        blink={idx === lastTile}
+                        blink={idx === lastTilePosition}
                     />
                 ))}
             </main>

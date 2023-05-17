@@ -1,19 +1,18 @@
 import { css, keyframes, SerializedStyles } from "@emotion/react";
-import { boardColors } from "../../../utils";
+import { GLOBAL, boardColors } from "../../../utils";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 
 // Emotion styles
 const makeEmotion = (
-    size: string,
     backgroundColor: string,
     color: string
 ): SerializedStyles => css`
-    width: ${size};
-    height: ${size};
+    width: ${GLOBAL.gameCellSize};
+    height: ${GLOBAL.gameCellSize};
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 2px;
+    border-radius: ${GLOBAL.gameCellPadding};
     background-color: ${backgroundColor};
     color: ${color};
     font-size: 1rem;
@@ -28,14 +27,13 @@ const blinkMe = css`
 `;
 
 type GameCellProps = {
-    size: string;
     value: keyof typeof boardColors;
     blink?: boolean;
 };
-const GameCell = ({ size, value, blink = false }: GameCellProps) => {
+const GameCell = ({ value, blink = false }: GameCellProps) => {
     const palette = usePalette();
     const emotion = css`
-        ${makeEmotion(size, boardColors[value], palette.background)}
+        ${makeEmotion(boardColors[value], palette.background)}
         ${blink && blinkMe}
     `;
 

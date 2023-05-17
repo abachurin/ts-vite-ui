@@ -1,22 +1,34 @@
+import useGameStore from "../../../store/gameStore";
+import { useUser } from "../../../contexts/UserProvider/UserContext";
 import {
     useMode,
     useModeUpdate,
 } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import useAlert from "../../../hooks/useAlert";
 import Pane from "../Pane";
 import PaneHeader from "../PaneHeader";
 import PaneBody from "../PaneBody";
 import GameBoard from "./GameBoard";
+import PlayFooter from "./PlayFooter";
+import WatchFooter from "./WatchFooter";
 import WatchModal from "./WatchModal";
 import ReplayModal from "./ReplayModal";
 import Button from "../../base/Button/Button";
-
-// Emotion styles
+import Instruction from "./Instruction";
 
 /**
  * Renders the Game Pane component on the right, goes bottom on small screen.
  */
 const PaneGame = () => {
+    const user = useUser();
+    const [instruction, openInstruction] = useAlert({
+        onlyOnce: true,
+        type: "info",
+        duration: 100000,
+        children: user.legends ? <Instruction /> : null,
+    });
+
     const palette = usePalette();
     const mode = useMode();
     const gameMode = mode.game;
@@ -24,10 +36,8 @@ const PaneGame = () => {
 
     const playYourself = () => {
         modeUpdate({ game: "play" });
+        openInstruction();
     };
-
-    const values = Array.from({ length: 16 }, (_, i) => i);
-    const footer = gameMode === "play" ? "play" : "watch";
 
     return (
         <Pane id='game-pane'>
@@ -39,14 +49,10 @@ const PaneGame = () => {
                 </Button>
             </PaneHeader>
             <PaneBody>
-                <GameBoard
-                    size={"5rem"}
-                    score={0}
-                    moves={0}
-                    values={values}
-                    lastTile={15}
-                />
+                <GameBoard />
             </PaneBody>
+            {gameMode === "play" ? <PlayFooter /> : <WatchFooter />}
+            {instruction}
         </Pane>
     );
 };

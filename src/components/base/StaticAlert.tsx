@@ -28,7 +28,7 @@ const makeEmotion = (
     css`
         display: flex;
         justify-content: center;
-        align-items: center;
+        // align-items: center;
         gap: ${GLOBAL.padding};
         padding: ${GLOBAL.padding};
         padding-left: calc(${GLOBAL.padding} * 2);
@@ -42,17 +42,10 @@ export interface AlertProps extends ChildrenProps {
     type?: AlertColors;
     closeAlert: () => void;
 }
-const StaticAlert = ({
-    type = "warning",
-    closeAlert,
-    children,
-}: AlertProps) => {
+const StaticAlert = ({ type = "info", closeAlert, children }: AlertProps) => {
     const animate = useAnimate();
     const palette = usePalette();
-    const borderColor =
-        type === "error" || type === "warning"
-            ? palette.error
-            : palette.success;
+    const borderColor = palette[type];
 
     const emotion = useMemo(
         () => css`
@@ -62,9 +55,11 @@ const StaticAlert = ({
         [borderColor, palette, animate]
     );
 
+    if (!children) return null;
+
     return (
         <div css={emotion}>
-            {children || "Lo! Behold!"}
+            {children}
             <CloseButton onClick={closeAlert} toggleModal={"none"} />
         </div>
     );

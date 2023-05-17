@@ -146,9 +146,6 @@ const ModalWindow = ({
     const closeModal = useCallback(() => {
         makeSound(clickSound, user);
         updateIsOpen(false);
-        setTimeout(() => {
-            updateIsOpen("none");
-        }, 800);
     }, [updateIsOpen, user]);
 
     if (isOpen === "none") return null;

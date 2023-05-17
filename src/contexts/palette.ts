@@ -15,6 +15,8 @@ export const palettes: Palettes = {
         three: "rgb(50, 50, 224)",
         success: "rgb(4, 96, 64)",
         error: "rgb(255, 0, 0)",
+        warning: "rgb(255, 153, 51)",
+        info: "rgb(0, 153, 204)",
     },
     Two: {
         name: "Two",
@@ -30,5 +32,7 @@ export const palettes: Palettes = {
         three: "rgb(50, 50, 224)",
         success: "rgb(4, 96, 64)",
         error: "rgb(255, 0, 0)",
+        warning: "rgb(255, 153, 51)",
+        info: "rgb(51, 204, 255)",
     },
 };

@@ -13,6 +13,11 @@ const ModalProvider = ({ children }: ChildrenProps) => {
     const changeIsOpen = useMemo(
         () => (newState: ModalState) => {
             setIsOpen(newState);
+            if (newState === false) {
+                setTimeout(() => {
+                    setIsOpen("none");
+                }, 800);
+            }
         },
         [setIsOpen]
     );

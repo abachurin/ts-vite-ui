@@ -62,6 +62,8 @@ export interface Palette {
     three: RGB;
     success: RGB;
     error: RGB;
+    warning: RGB;
+    info: RGB;
 }
 
 export type Palettes = {
@@ -80,7 +82,7 @@ export type ButtonEffects = (
 // Mode types
 export type ModeOfAction = {
     agent: "none" | "train" | "test";
-    game: "none" | "watch" | "replay" | "play";
+    game: "watch" | "replay" | "play";
 };
 
 // Draggable types

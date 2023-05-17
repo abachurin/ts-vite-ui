@@ -7,4 +7,6 @@ export const ModalUpdateContext = createContext<(update: ModalState) => void>(
 );
 
 export const useModal = () => useContext(ModalContext);
-export const useModalUpdate = () => useContext(ModalUpdateContext);
+export const useModalUpdate = () => {
+    return useContext(ModalUpdateContext);
+};

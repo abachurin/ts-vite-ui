@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect, useRef } from "react";
+import React, { ReactNode, useState, useEffect, useRef } from "react";
 import { ChildrenProps, Position, PositionType, AlertColors } from "../types";
 import { GLOBAL } from "../utils";
 import StaticAlert, { AlertProps } from "../components/base/StaticAlert";
@@ -6,6 +6,7 @@ import dragMe from "../components/HOC/Draggable";
 
 interface AlertHookProps extends ChildrenProps {
     draggable?: boolean;
+    onlyOnce?: boolean;
     type?: AlertColors;
     initialPosition?: Position;
     positionType?: PositionType;
@@ -14,12 +15,14 @@ interface AlertHookProps extends ChildrenProps {
 
 const useAlert = ({
     draggable = true,
+    onlyOnce = false,
     type,
     initialPosition,
     positionType,
     duration = GLOBAL.messageDuration,
     children,
 }: AlertHookProps): [ReactNode, () => void] => {
+    const notYetClicked = useRef(true);
     const [showAlert, setShowAlert] = useState(false);
 
     const AlertComponent: React.ComponentType<AlertProps> = draggable
@@ -27,7 +30,8 @@ const useAlert = ({
         : StaticAlert;
 
     const openAlert = () => {
-        setShowAlert(true);
+        if (onlyOnce && notYetClicked.current) setShowAlert(true);
+        notYetClicked.current = false;
     };
 
     const closeAlert = () => {
