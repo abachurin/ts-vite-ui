@@ -14,7 +14,7 @@ const ReplayModal = ({ align }: AlignProps) => {
     return (
         <Modal
             button={{
-                backgroundColor: palette.one,
+                background: palette.one,
                 align: align,
                 onClick: () => modeUpdate({ game: "replay" }),
                 children: "Replay",

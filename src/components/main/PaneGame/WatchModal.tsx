@@ -14,7 +14,7 @@ const WatchModal = ({ align }: AlignProps) => {
     return (
         <Modal
             button={{
-                backgroundColor: palette.one,
+                background: palette.one,
                 align: align,
                 onClick: () => modeUpdate({ game: "watch" }),
                 children: "Watch",

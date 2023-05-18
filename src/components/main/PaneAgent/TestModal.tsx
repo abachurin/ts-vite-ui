@@ -13,7 +13,7 @@ const TestModal = () => {
     return (
         <Modal
             button={{
-                backgroundColor: palette.two,
+                background: palette.two,
                 align: "left",
                 children: "Test",
                 onClick: () => {

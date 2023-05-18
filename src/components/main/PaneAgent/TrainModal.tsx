@@ -14,7 +14,7 @@ const TrainModal = () => {
     return (
         <Modal
             button={{
-                backgroundColor: palette.two,
+                background: palette.two,
                 children: "Train",
                 legend: "Register to unlock",
                 level: GLOBAL.userLevel.user,
