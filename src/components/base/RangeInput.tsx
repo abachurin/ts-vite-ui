@@ -1,6 +1,5 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useState, useEffect, useMemo } from "react";
-import { uniqueId } from "lodash-es";
 import { GLOBAL } from "../../utils";
 
 // Emotion styles
