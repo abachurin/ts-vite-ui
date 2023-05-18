@@ -82,7 +82,7 @@ export type ButtonEffects = (
 // Mode types
 export type ModeOfAction = {
     agent: "none" | "train" | "test";
-    game: "watch" | "replay" | "play";
+    game: "none" | "watch" | "replay" | "play";
 };
 
 // Draggable types

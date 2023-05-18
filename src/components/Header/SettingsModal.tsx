@@ -80,7 +80,7 @@ const SettingsModal = ({ align }: AlignProps) => {
             <Button
                 type='clickPress'
                 align='center'
-                backgroundColor={palette.two}
+                background={palette.two}
                 color='white'
                 onClick={() => console.log("saving user settings")}
             >
@@ -202,7 +202,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                 <Button
                     type='clickPress'
                     align='center'
-                    backgroundColor={palette.one}
+                    background={palette.one}
                     color='white'
                     onClick={() => setCurrentValues(getUserValues(user))}
                 >
@@ -211,7 +211,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                 <Button
                     type='clickPress'
                     align='center'
-                    backgroundColor={palette.three}
+                    background={palette.three}
                     color='white'
                     onClick={() => updateUser(currentValues)}
                 >

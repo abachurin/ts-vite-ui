@@ -3,33 +3,36 @@ import { useEffect } from "react";
 import useGameStore from "../../../store/gameStore";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useArrowKeys from "../../../hooks/useArrowKeys";
-import useSwipe from "../../../hooks/useSwipe";
 import { ButtonVariants } from "../../../types";
-import { GLOBAL } from "../../../utils";
+import { GLOBAL, changeBrightness } from "../../../utils";
 import Button from "../../base/Button/Button";
 
 // Emotion styles
 const emotion = css`
-    width: calc(${GLOBAL.gameCellSize} * 4 + ${GLOBAL.gameCellPadding} * 3);
-    margin: 0 auto;
     display: flex;
-    gap: ${GLOBAL.gameCellPadding};
-    & > * {
+    flex-direction: column;
+    gap: ${GLOBAL.padding};
+    & main {
+        margin-block: ${GLOBAL.padding};
         flex: 1;
+        display: flex;
         justify-content: center;
-        border: 1px solid yellow;
+    }
+    & section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: calc(${GLOBAL.padding} * 2);
     }
 `;
 
 const PlayFooter = () => {
     const palette = usePalette();
     const key = useArrowKeys();
-
-    const gameBoard = document.querySelector(
-        "#game-board"
-    ) as HTMLElement | null;
-    const swipe = useSwipe(gameBoard);
     const fullMove = useGameStore((state) => state.fullMove);
+    const newGame = useGameStore((state) => state.newGame);
 
     useEffect(() => {
         if (key >= 0) {
@@ -37,50 +40,58 @@ const PlayFooter = () => {
         }
     }, [key, fullMove]);
 
-    useEffect(() => {
-        if (swipe >= 0) {
-            fullMove(swipe);
-        }
-    }, [swipe, fullMove]);
-
     const arrowProps = {
         type: "clickPress" as ButtonVariants,
-        backgroundColor: palette.three,
         fontSize: "2rem",
+        width: "7rem",
+        height: "3rem",
     };
+    const colorUp = changeBrightness(palette.header, palette.headerOpacity);
+    const colorFooter = `linear-gradient(135deg, ${palette.one}, ${palette.three}, ${palette.two})`;
 
     return (
         <div css={emotion}>
-            <Button {...arrowProps} onClick={() => fullMove(0)}>
-                &larr;
-            </Button>
-            <section>
-                <Button {...arrowProps} onClick={() => fullMove(1)}>
-                    &uarr;
-                </Button>
-                <Button {...arrowProps} onClick={() => fullMove(3)}>
-                    &darr;
-                </Button>
-            </section>
-            <Button {...arrowProps} onClick={() => fullMove(2)}>
-                &rarr;
-            </Button>
-            <section>
+            <main>
                 <Button
-                    type='clickPress'
-                    width='100%'
-                    backgroundColor={palette.one}
+                    {...arrowProps}
+                    background={palette.one}
+                    onClick={() => fullMove(0)}
                 >
-                    Restart
+                    &larr;
                 </Button>
+                <section>
+                    <Button
+                        {...arrowProps}
+                        background={colorUp}
+                        onClick={() => fullMove(1)}
+                    >
+                        &uarr;
+                    </Button>
+                    <Button
+                        {...arrowProps}
+                        background={palette.three}
+                        onClick={() => fullMove(3)}
+                    >
+                        &darr;
+                    </Button>
+                </section>
                 <Button
-                    type='clickPress'
-                    width='100%'
-                    backgroundColor={palette.two}
+                    {...arrowProps}
+                    background={palette.two}
+                    onClick={() => fullMove(2)}
                 >
-                    Replay
+                    &rarr;
                 </Button>
-            </section>
+            </main>
+            <Button
+                type='clickPress'
+                width='100%'
+                background={colorFooter}
+                fontSize='1rem'
+                onClick={() => newGame()}
+            >
+                RESTART
+            </Button>
         </div>
     );
 };

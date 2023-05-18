@@ -1,16 +1,12 @@
 import { useUser } from "../../../contexts/UserProvider/UserContext";
-import {
-    useMode,
-    useModeUpdate,
-} from "../../../contexts/ModeProvider/ModeContext";
+import useGameStore from "../../../store/gameStore";
+import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useAlert from "../../../hooks/useAlert";
 import Pane from "../Pane";
 import PaneHeader from "../PaneHeader";
 import PaneBody from "../PaneBody";
 import GameBoard from "./GameBoard";
-import PlayFooter from "./PlayFooter";
-import WatchFooter from "./WatchFooter";
 import WatchModal from "./WatchModal";
 import ReplayModal from "./ReplayModal";
 import Button from "../../base/Button/Button";
@@ -29,12 +25,12 @@ const PaneGame = () => {
     });
 
     const palette = usePalette();
-    const mode = useMode();
-    const gameMode = mode.game;
     const modeUpdate = useModeUpdate();
+    const newGame = useGameStore((state) => state.newGame);
 
     const playYourself = () => {
         modeUpdate({ game: "play" });
+        newGame();
         openInstruction();
     };
 
@@ -43,14 +39,13 @@ const PaneGame = () => {
             <PaneHeader type='game'>
                 <WatchModal />
                 <ReplayModal />
-                <Button backgroundColor={palette.one} onClick={playYourself}>
+                <Button background={palette.one} onClick={playYourself}>
                     Play Yourself
                 </Button>
             </PaneHeader>
             <PaneBody>
                 <GameBoard />
             </PaneBody>
-            {gameMode === "play" ? <PlayFooter /> : <WatchFooter />}
             {instruction}
         </Pane>
     );

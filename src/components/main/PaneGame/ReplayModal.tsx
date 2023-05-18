@@ -1,3 +1,4 @@
+import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import Modal from "../../modal/Modal";
 import { AlignProps } from "../../../types";
@@ -7,6 +8,7 @@ import { AlignProps } from "../../../types";
  * @param align - The alignment parameter of the button, which opens the modal
  */
 const ReplayModal = ({ align }: AlignProps) => {
+    const modeUpdate = useModeUpdate();
     const palette = usePalette();
 
     return (
@@ -14,6 +16,7 @@ const ReplayModal = ({ align }: AlignProps) => {
             button={{
                 backgroundColor: palette.one,
                 align: align,
+                onClick: () => modeUpdate({ game: "replay" }),
                 children: "Replay",
             }}
             modal={{

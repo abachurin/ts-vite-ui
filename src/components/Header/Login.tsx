@@ -153,7 +153,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                     <ButtonGroup height='2rem'>
                         <Button
                             type='clickPress'
-                            backgroundColor={palette.one}
+                            background={palette.one}
                             color={palette.background}
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                                 handleSubmit(e, "login")
@@ -163,7 +163,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                         </Button>
                         <Button
                             type='clickPress'
-                            backgroundColor={palette.two}
+                            background={palette.two}
                             color={palette.background}
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                                 handleSubmit(e, "register")
@@ -174,7 +174,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                         <Button
                             type='clickPress'
                             align='right'
-                            backgroundColor={palette.three}
+                            background={palette.three}
                             color={palette.background}
                             disabled={user.name === "Login"}
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) =>

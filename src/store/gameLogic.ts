@@ -56,7 +56,7 @@ export abstract class GameLogic {
         ];
     }
 
-    private static emptyGame(): Game {
+    public static emptyGame(): Game {
         return {
             idx: "game_" + uniqueId(),
             initial: this.emptyBoard(),

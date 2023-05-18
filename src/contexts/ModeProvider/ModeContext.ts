@@ -3,7 +3,7 @@ import { ModeOfAction } from "../../types";
 
 export const BaseMode: ModeOfAction = {
     agent: "none",
-    game: "play",
+    game: "none",
 };
 export const ModeContext = createContext<ModeOfAction>(BaseMode);
 export const ModeUpdateContext = createContext<

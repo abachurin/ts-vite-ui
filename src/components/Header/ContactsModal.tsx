@@ -59,7 +59,7 @@ const ContactsModal = ({ align }: AlignProps) => {
                             type='clickPress'
                             align='center'
                             width={GLOBAL.contactButtonWidth}
-                            backgroundColor={palette.one}
+                            background={palette.one}
                             color={palette.background}
                             onClick={() =>
                                 window.open("mailto: bachurin.alex@gmail.com")
@@ -78,7 +78,7 @@ const ContactsModal = ({ align }: AlignProps) => {
                             type='clickPress'
                             align='center'
                             width={GLOBAL.contactButtonWidth}
-                            backgroundColor={palette.two}
+                            background={palette.two}
                             color={palette.background}
                             onClick={() =>
                                 window.open("https://wa.me/351961072567")
@@ -97,7 +97,7 @@ const ContactsModal = ({ align }: AlignProps) => {
                             type='clickPress'
                             align='center'
                             width={GLOBAL.contactButtonWidth}
-                            backgroundColor={palette.three}
+                            background={palette.three}
                             color={palette.background}
                             onClick={() =>
                                 window.open("https://t.me/abachurin1974")

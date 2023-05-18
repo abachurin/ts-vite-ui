@@ -19,6 +19,7 @@ const makeEmotion = (color: string): SerializedStyles => css`
     }
     & > footer {
         font-size: 0.9em;
+        padding-bottom: ${GLOBAL.padding};
     }
 `;
 
@@ -30,8 +31,9 @@ const Instruction = () => {
         <div css={emotion}>
             <header>Controls</header>
             <main>
-                Press arrow buttons, keyboard arrows or swipe screen to move.
-                Whatever suits.
+                Press arrow buttons or keyboard arrows to move. Swipe on mobile
+                devices is not implemented yet. Anyway, if you really want to
+                play 2048, better to use the official App.
             </main>
             <footer>
                 p.s. This instruction can be permanently switched off buy

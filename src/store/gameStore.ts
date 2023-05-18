@@ -35,7 +35,7 @@ interface GameStore {
 }
 
 const useGameStore = create<GameStore>()((set) => ({
-    game: GameLogic.newGame(),
+    game: GameLogic.emptyGame(),
 
     fullMove: (move?: number) =>
         set((state) => ({

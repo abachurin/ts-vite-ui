@@ -48,7 +48,7 @@ const makeEmotion = (
     text-decoration: none;
     padding: ${GLOBAL.padding};
     border-radius: ${borderRadius || GLOBAL.borderRadius};
-    background-color: ${backgroundColor};
+    background: ${backgroundColor};
     color: ${color};
     font-size: ${fontSize};
     width: ${width};
@@ -128,7 +128,7 @@ export interface ButtonProps extends ChildrenProps {
     align?: Alignment;
     width?: string;
     height?: string;
-    backgroundColor?: string;
+    background?: string;
     color?: string;
     fontSize?: string;
     borderRadius?: string;
@@ -143,7 +143,7 @@ const Button = ({
     align = "left",
     width = "auto",
     height = "auto",
-    backgroundColor = "inherit",
+    background = "inherit",
     color = "inherit",
     fontSize = "inherit",
     borderRadius = "",
@@ -166,7 +166,7 @@ const Button = ({
                 width,
                 height,
                 borderRadius,
-                backgroundColor,
+                background,
                 color,
                 fontSize
             )}
@@ -179,7 +179,7 @@ const Button = ({
             width,
             height,
             legend,
-            backgroundColor,
+            background,
             color,
             fontSize,
             borderRadius,

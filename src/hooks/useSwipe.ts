@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function useSwipe(element: HTMLElement | null | Document = document): number {
+function useSwipe(): number {
     const [swipe, setSwipe] = useState<number>(-1);
     const [startX, setStartX] = useState<number>(0);
     const [startY, setStartY] = useState<number>(0);
@@ -31,12 +31,14 @@ function useSwipe(element: HTMLElement | null | Document = document): number {
                     setSwipe(1);
                 }
             }
+            setTimeout(() => {
+                setSwipe(-1);
+            }, 0);
         }
     };
 
     useEffect(() => {
-        if ("ontouchstart" in window && element != null) {
-            console.log("touchstart added");
+        if ("ontouchstart" in window) {
             document.addEventListener("touchstart", handleStart);
             document.addEventListener("touchend", handleEnd);
             return () => {

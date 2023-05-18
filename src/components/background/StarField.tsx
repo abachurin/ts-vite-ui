@@ -28,7 +28,8 @@ const createStarField = (
     inverseSpeed: number
 ): JSX.Element[] => {
     const numberStars =
-        width > 600 ? GLOBAL.numOfStars.big : GLOBAL.numOfStars.small;
+        // Need to rewrite this with canvas, doesn't work nicely on mobiles in the current state
+        width > 600 ? GLOBAL.numOfStars.big : 0;
     return Array.from({ length: numberStars }, () =>
         Star({ inverseSpeed, width, height })
     );

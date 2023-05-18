@@ -193,10 +193,9 @@ const RangeInput = ({
     `;
     const leftLine = makeLine(`${offset}%`, controlColor);
 
-    const id = uniqueId("range-slider");
     return (
         <div css={emotion}>
-            {labelAbove && <label htmlFor={id}>{label}</label>}
+            {labelAbove && <label>{label}</label>}
             <div css={controlWrapper}>
                 <div css={control}>{value}</div>
                 <div css={fullLine} />
@@ -211,7 +210,7 @@ const RangeInput = ({
                     onChange={handleOnChange}
                 />
             </div>
-            {!labelAbove && <label htmlFor={id}>{label}</label>}
+            {!labelAbove && <label>{label}</label>}
         </div>
     );
 };

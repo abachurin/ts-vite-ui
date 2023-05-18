@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { css, SerializedStyles } from "@emotion/react";
-import { useMode } from "../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../../utils";
 import PaneAgent from "./PaneAgent/PaneAgent";
@@ -15,26 +14,12 @@ const makeEmotion = (textColor: string): SerializedStyles => css`
     overflow: auto;
     color: ${textColor};
 `;
-const fixBoard = css`
-    position: sticky;
-    overflow: hidden;
-    top: 0;
-    z-index: 1;
-`;
 
 const Main = () => {
-    const mode = useMode();
     const palette = usePalette();
     const textColor = palette.background;
 
-    const emotion = useMemo(
-        () =>
-            css`
-                ${makeEmotion(textColor)}
-                ${mode.game === "play" ? fixBoard : ""}
-            `,
-        [textColor, mode.game]
-    );
+    const emotion = useMemo(() => makeEmotion(textColor), [textColor]);
 
     return (
         <main css={emotion}>

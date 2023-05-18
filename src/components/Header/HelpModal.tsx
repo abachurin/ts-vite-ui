@@ -76,7 +76,7 @@ const HelpModal = ({ align }: AlignProps) => {
                     <ButtonGroup>
                         <Button
                             type='clickPress'
-                            backgroundColor={palette.one}
+                            background={palette.one}
                             color={palette.background}
                             onClick={() => setSection("guide")}
                         >
@@ -84,7 +84,7 @@ const HelpModal = ({ align }: AlignProps) => {
                         </Button>
                         <Button
                             type='clickPress'
-                            backgroundColor={palette.two}
+                            background={palette.two}
                             color={palette.background}
                             onClick={() => setSection("history")}
                         >
@@ -92,7 +92,7 @@ const HelpModal = ({ align }: AlignProps) => {
                         </Button>
                         <Button
                             type='clickPress'
-                            backgroundColor={palette.three}
+                            background={palette.three}
                             color={palette.background}
                             onClick={() => setSection("structure")}
                         >
