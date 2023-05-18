@@ -66,7 +66,7 @@ const GameBoard = () => {
         (game.lastTile?.position.y || -1);
 
     return (
-        <div css={emotion}>
+        <div id='game-board' css={emotion}>
             <header>
                 <div>Score: {game.score}</div>
                 <div>Moves: {game.pointer.move}</div>

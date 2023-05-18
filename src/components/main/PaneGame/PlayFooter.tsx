@@ -24,16 +24,24 @@ const emotion = css`
 const PlayFooter = () => {
     const palette = usePalette();
     const key = useArrowKeys();
-    const swipe = useSwipe();
+
+    const gameBoard = document.querySelector(
+        "#game-board"
+    ) as HTMLElement | null;
+    const swipe = useSwipe(gameBoard);
     const fullMove = useGameStore((state) => state.fullMove);
 
     useEffect(() => {
         if (key >= 0) {
             fullMove(key);
-        } else if (swipe >= 0) {
+        }
+    }, [key, fullMove]);
+
+    useEffect(() => {
+        if (swipe >= 0) {
             fullMove(swipe);
         }
-    }, [key, swipe, fullMove]);
+    }, [swipe, fullMove]);
 
     const arrowProps = {
         type: "clickPress" as ButtonVariants,

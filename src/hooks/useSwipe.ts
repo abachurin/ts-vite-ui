@@ -1,49 +1,50 @@
 import { useEffect, useState } from "react";
 
-function useSwipe(): number {
+function useSwipe(element: HTMLElement | null | Document = document): number {
     const [swipe, setSwipe] = useState<number>(-1);
+    const [startX, setStartX] = useState<number>(0);
+    const [startY, setStartY] = useState<number>(0);
 
-    useEffect(() => {
-        function handleTouchStart(event: TouchEvent) {
-            const touchStartX = event.touches[0].clientX;
-            const touchStartY = event.touches[0].clientY;
+    const handleStart = (e: TouchEvent): void => {
+        setStartX(e.touches[0].clientX);
+        setStartY(e.touches[0].clientY);
+    };
 
-            function handleTouchEnd(event: TouchEvent) {
-                const touchEndX = event.changedTouches[0].clientX;
-                const touchEndY = event.changedTouches[0].clientY;
+    const handleEnd = (e: TouchEvent): void => {
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
 
-                const dx = touchEndX - touchStartX;
-                const dy = touchEndY - touchStartY;
-                console.log(dx, dy);
+        if (Math.abs(dx) + Math.abs(dy) > 100) {
+            setStartX(0);
+            setStartY(0);
 
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    if (dx > 0) {
-                        setSwipe(2);
-                    } else {
-                        setSwipe(0);
-                    }
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (dx > 0) {
+                    setSwipe(2);
                 } else {
-                    if (dy > 0) {
-                        setSwipe(3);
-                    } else {
-                        setSwipe(1);
-                    }
+                    setSwipe(0);
+                }
+            } else {
+                if (dy > 0) {
+                    setSwipe(3);
+                } else {
+                    setSwipe(1);
                 }
             }
+        }
+    };
 
-            document.addEventListener("touchend", handleTouchEnd);
+    useEffect(() => {
+        if ("ontouchstart" in window && element != null) {
+            console.log("touchstart added");
+            document.addEventListener("touchstart", handleStart);
+            document.addEventListener("touchend", handleEnd);
             return () => {
-                document.removeEventListener("touchend", handleTouchEnd);
+                document.removeEventListener("touchstart", handleStart);
+                document.removeEventListener("touchend", handleEnd);
             };
         }
-
-        if ("ontouchstart" in window) {
-            document.addEventListener("touchstart", handleTouchStart);
-        }
-        return () => {
-            document.removeEventListener("touchstart", handleTouchStart);
-        };
-    }, []);
+    });
 
     return swipe;
 }
