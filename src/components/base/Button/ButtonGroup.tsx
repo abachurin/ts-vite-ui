@@ -1,11 +1,26 @@
 import { css } from "@emotion/react";
-import React, { Children, ReactNode, ReactElement, cloneElement } from "react";
+import React, {
+    Children,
+    ReactNode,
+    ReactElement,
+    cloneElement,
+    useCallback,
+} from "react";
 import { ChildrenProps } from "../../../types";
 import { GLOBAL } from "../../../utils";
 
 // Emotion styles
 const emotion = css`
     display: flex;
+    width: fit-content;
+    height: fit-content;
+    border-radius: ${GLOBAL.borderRadius};
+    box-shadow: ${GLOBAL.littleShadow};
+    background: 
+    margin-block: auto;
+    :hover {
+        box-shadow: ${GLOBAL.middleShadow};
+    }
 `;
 
 /**
@@ -25,19 +40,22 @@ const ButtonGroup = ({
 }: ButtonGroupProps) => {
     const lastIdx = Children.count(children) - 1;
 
-    const renderChild = (child: ReactNode, idx: number): ReactNode => {
-        const borderRadius =
-            idx === 0
-                ? `${GLOBAL.borderRadius} 0 0 ${GLOBAL.borderRadius}`
-                : idx === lastIdx
-                ? `0 ${GLOBAL.borderRadius} ${GLOBAL.borderRadius} 0`
-                : "0";
-        return cloneElement(child as ReactElement, {
-            borderRadius: borderRadius,
-            width: width || "auto",
-            height: height || "auto",
-        });
-    };
+    const renderChild = useCallback(
+        (child: ReactNode, idx: number): ReactNode => {
+            const borderRadius =
+                idx === 0
+                    ? `${GLOBAL.borderRadius} 0 0 ${GLOBAL.borderRadius}`
+                    : idx === lastIdx
+                    ? `0 ${GLOBAL.borderRadius} ${GLOBAL.borderRadius} 0`
+                    : "0";
+            return cloneElement(child as ReactElement, {
+                borderRadius: borderRadius,
+                width: width || "auto",
+                height: height || "auto",
+            });
+        },
+        [width, height, lastIdx]
+    );
 
     return (
         <div css={emotion}>
