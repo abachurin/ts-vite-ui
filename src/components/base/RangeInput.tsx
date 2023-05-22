@@ -18,14 +18,14 @@ const makeEmotion = (
     color: ${color};
     width: ${width};
     font-size: ${labelFontSize}rem;
-    & label {
+    & header {
         text-align: center;
         margin-bottom: ${GLOBAL.padding};
     }
     &:hover {
         box-shadow: ${GLOBAL.middleShadow};
     }
-    &:hover label {
+    &:hover header {
         font-weight: 500;
     }
 `;
@@ -194,7 +194,7 @@ const RangeInput = ({
 
     return (
         <div css={emotion}>
-            {labelAbove && <label>{label}</label>}
+            {labelAbove && <header>{label}</header>}
             <div css={controlWrapper}>
                 <div css={control}>{value}</div>
                 <div css={fullLine} />
@@ -209,7 +209,7 @@ const RangeInput = ({
                     onChange={handleOnChange}
                 />
             </div>
-            {!labelAbove && <label>{label}</label>}
+            {!labelAbove && <header>{label}</header>}
         </div>
     );
 };

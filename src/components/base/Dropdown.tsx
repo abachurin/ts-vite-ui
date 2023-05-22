@@ -10,44 +10,47 @@ import Icon from "./Icon/Icon";
 const makeContainer = (
     color: string,
     width: string,
-    fontSize: number
+    fontSize: number,
+    standAlone: boolean,
+    zIndex: number | "auto"
 ): SerializedStyles => css`
     position: relative;
     color: ${color};
     width: ${width};
     font-size: ${fontSize}rem;
+    z-index: ${zIndex};
     &:hover main {
-        box-shadow: ${GLOBAL.middleShadow};
-    }
-    &:hover label {
-        font-weight: 500;
+        box-shadow: ${standAlone ? "" : GLOBAL.middleShadow};
     }
 `;
 const makeEmotion = (
-    width: string,
     fontSize: number,
     labelRatio: number,
     backgroundColor: string,
-    color: string,
     labelColor1: string,
     labelColor2: string,
-    controlColor: string
+    controlColor: string,
+    standAlone: boolean,
+    disabled: boolean
 ): SerializedStyles => css`
     padding: ${GLOBAL.padding};
-    border-radius: ${GLOBAL.borderRadius};
-    box-shadow: ${GLOBAL.littleShadow};
+    border-radius: ${standAlone ? "" : GLOBAL.borderRadius};
+    box-shadow: ${standAlone ? "" : GLOBAL.littleShadow};
     background-color: ${backgroundColor};
-    color: ${color};
-    width: ${width};
+    opacity: ${disabled ? 0.7 : 1};
     & > header {
         width: 100%;
         border-bottom: 1px solid ${controlColor};
     }
-    & > header > label {
+    & > header > div {
+        width: max-content;
         font-size: ${fontSize * labelRatio}rem;
         background: linear-gradient(135deg, ${labelColor1}, ${labelColor2});
         background-clip: text;
         text-fill-color: transparent;
+    }
+    &:hover > header {
+        font-weight: ${disabled ? "auto" : "500"};
     }
     & > section {
         display: flex;
@@ -55,34 +58,28 @@ const makeEmotion = (
         align-items: center;
         position: relative;
         width: 100%;
-        cursor: pointer;
+        cursor: ${disabled ? "default" : "pointer"};
         margin-top: ${GLOBAL.padding};
     }
 `;
-const thinGap = (
-    <div
-        css={css`
-            height: 0.2rem;
-        `}
-    ></div>
-);
 const makeOptionsBox = (
     controlColor: string,
-    backgroundColor: string
+    backgroundColor: string,
+    zIndex: number | "auto"
 ): SerializedStyles => css`
     position: absolute;
     min-width: 80%;
     width: max-content;
     border: 1px solid ${controlColor};
-    border-top: none;
+    border-top: 1px dotted ${controlColor};
     border-radius: 0 0 ${GLOBAL.borderRadius} ${GLOBAL.borderRadius};
     background-color: ${backgroundColor};
     font-size: 0.8em;
     line-height: 0.9em;
+    z-index: ${zIndex === "auto" ? "auto" : zIndex + 1};
     transform: scale(0);
     opacity: 0;
     transition: transform 0.25s ease, opacity 0.25s ease;
-    z-index: 1000;
 `;
 
 const optionStyle = css`
@@ -119,6 +116,9 @@ interface DropdownProps {
     optionValues: string[];
     initialValue?: string;
     alignOptions?: Alignment;
+    standAlone?: boolean;
+    disabled?: boolean;
+    zIndex?: number | "auto";
     onChange: (value: string) => void;
 }
 const Dropdown = ({
@@ -134,6 +134,9 @@ const Dropdown = ({
     optionValues = [],
     initialValue = undefined,
     alignOptions = "left",
+    standAlone = false,
+    disabled = false,
+    zIndex = "auto",
     onChange,
 }: DropdownProps) => {
     const [optionsOpen, setOptionsOpen] = useState(0);
@@ -153,36 +156,36 @@ const Dropdown = ({
     };
 
     const container = useMemo(
-        () => makeContainer(color, width, fontSize),
-        [color, width, fontSize]
+        () => makeContainer(color, width, fontSize, standAlone, zIndex),
+        [color, width, fontSize, standAlone, zIndex]
     );
     const emotion = useMemo(
         () =>
             makeEmotion(
-                width,
                 fontSize,
                 labelRatio,
                 backgroundColor,
-                color,
                 labelColor1,
                 labelColor2,
-                controlColor
+                controlColor,
+                standAlone,
+                disabled
             ),
         [
-            width,
             fontSize,
             labelRatio,
             backgroundColor,
-            color,
             labelColor1,
             labelColor2,
             controlColor,
+            standAlone,
+            disabled,
         ]
     );
 
     const optionsBoxBase = useMemo(
-        () => makeOptionsBox(controlColor, backgroundColor),
-        [controlColor, backgroundColor]
+        () => makeOptionsBox(controlColor, backgroundColor, zIndex),
+        [controlColor, backgroundColor, zIndex]
     );
     const optionsBoxAlignment =
         alignOptions === "left"
@@ -192,25 +195,27 @@ const Dropdown = ({
             : css`
                   right: 0;
               `;
+
+    const showOptions = optionsOpen && !disabled;
     const optionsBox = css`
         ${optionsBoxBase}
         ${optionsBoxAlignment}
-        opacity: ${optionsOpen ? 1 : 0};
-        transform: ${optionsOpen ? "scale(1)" : "scale(0)"};
+        opacity: ${showOptions ? 1 : 0};
+        transform: ${showOptions ? "scale(1)" : "scale(0)"};
     `;
 
     return (
         <div css={container} ref={ref}>
             <main css={emotion}>
                 <header>
-                    <label>{label}</label>
+                    <div>{label}</div>
                 </header>
                 <section onClick={() => setOptionsOpen(1 - optionsOpen)}>
                     <div>{value}</div>
                     <aside>
                         <Icon
                             svg={
-                                optionsOpen
+                                showOptions
                                     ? SvgPaths.rightArrow
                                     : SvgPaths.leftArrow
                             }
@@ -219,7 +224,6 @@ const Dropdown = ({
                     </aside>
                 </section>
             </main>
-            {thinGap}
             <div css={optionsBox}>
                 {optionValues.map((v) => (
                     <div

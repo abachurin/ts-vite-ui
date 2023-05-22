@@ -5,15 +5,9 @@ import { GLOBAL, makeSound } from "../../../utils";
 
 export const clickPressEmotion: ButtonExtraStyle = (borderRadius) => css`
     border: 0;
-    :hover:enabled::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border-radius: ${borderRadius || GLOBAL.borderRadius};
-        background-color: rgba(255, 255, 255, 0.1);
+    :hover:enabled {
+        box-shadow: ${GLOBAL.insetShadow("white", 0.1)};
+        opacity: 0.85;
     }
 `;
 

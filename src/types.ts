@@ -98,3 +98,26 @@ export type PositionType = "fixed" | "absolute";
 
 // Alert types
 export type AlertColors = "success" | "error" | "warning" | "info";
+
+// Agent types
+export interface Agent {
+    name: string;
+    N: number;
+    alpha: number;
+    decay: number;
+    step: number;
+    min_alpha: number;
+}
+export interface TrainingJob extends Agent {
+    episodes: number;
+    isNew: boolean;
+}
+export interface AgentWatching {
+    name: string;
+    depth: number;
+    width: number;
+    trigger: number;
+}
+export interface AgentTesting extends AgentWatching {
+    episodes: number;
+}

@@ -13,7 +13,8 @@ export const GLOBAL = {
     boxShadow: "0 0 0.5em 0.1em rgba(255, 255, 255, 0.2)",
     littleShadow: "0 0 0.5em 0.1em rgba(0, 0, 0, 0.2)",
     middleShadow: "0 0 0.5em 0.1em rgba(0, 0, 0, 0.5)",
-    insetShadow: (color: string) => "inset 0 0 0.5em 0.1em " + color,
+    insetShadow: (color: string, blurRadius = 0.5) =>
+        `inset 0 0 ${blurRadius}rem 0.1rem ${color}`,
     starSpeed: 5,
     windowResizeDelay: 300,
     logoScale: 1.4,

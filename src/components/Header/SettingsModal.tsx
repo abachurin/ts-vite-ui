@@ -69,7 +69,7 @@ const SettingsModal = ({ align }: AlignProps) => {
     }, [user]);
 
     const updateValues = (values: Partial<ValuesType>) =>
-        setCurrentValues({ ...currentValues, ...values });
+        setCurrentValues((prevValues) => ({ ...prevValues, ...values }));
 
     const headerText =
         user.name === "Login"

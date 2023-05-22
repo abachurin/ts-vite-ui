@@ -24,12 +24,15 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
     align-items: center;
     gap: ${GLOBAL.padding};
     box-shadow: ${GLOBAL.boxShadow};
+    border-radius: ${GLOBAL.borderRadius};
     background-color: ${backgroundColor};
     color: ${color};
-    border-radius: ${GLOBAL.borderRadius};
     z-index: 3;
-    s & > * {
+    & > * {
         flex: 1;
+    }
+    & * {
+        text-transform: uppercase;
     }
 `;
 const smallScreenStyle = css`

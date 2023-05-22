@@ -32,8 +32,7 @@ const emotion = css`
     }
     & > :last-of-type {
         margin-top: calc(${GLOBAL.padding} * 2);
-        display: flex;
-        justify-content: flex-end;
+        margin-left: auto;
     }
 `;
 const initialMessage = "Enter Name and Password";

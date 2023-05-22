@@ -99,7 +99,7 @@ const makeBaseModal = (
     color: ${color};
     width: ${width};
     height: ${height};
-    max-height: 76%;
+    max-height: 90%;
     z-index: 300;
 `;
 

@@ -1,6 +1,9 @@
 import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useGameStore from "../../../store/gameStore";
-import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
+import {
+    useMode,
+    useModeUpdate,
+} from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useAlert from "../../../hooks/useAlert";
 import Pane from "../Pane";
@@ -26,11 +29,12 @@ const PaneGame = () => {
 
     const palette = usePalette();
     const modeUpdate = useModeUpdate();
+    const mode = useMode();
     const newGame = useGameStore((state) => state.newGame);
 
     const playYourself = () => {
+        if (mode.game === "none") newGame();
         modeUpdate({ game: "play" });
-        newGame();
         openInstruction();
     };
 

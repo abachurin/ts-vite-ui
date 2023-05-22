@@ -1,26 +1,9 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
-import { uniqueId } from "lodash-es";
 import { InputType } from "../../types";
 import { GLOBAL } from "../../utils";
 
 // Emotion styles
-const makeContainer = (
-    color: string,
-    width: string,
-    fontSize: number
-): SerializedStyles => css`
-    position: relative;
-    color: ${color};
-    width: ${width};
-    font-size: ${fontSize}rem;
-    &:hover main {
-        box-shadow: ${GLOBAL.middleShadow};
-    }
-    &:hover label {
-        font-weight: 500;
-    }
-`;
 const makeEmotion = (
     width: string,
     fontSize: number,
@@ -29,33 +12,46 @@ const makeEmotion = (
     color: string,
     labelColor1: string,
     labelColor2: string,
-    controlColor: string
+    controlColor: string,
+    standAlone: boolean,
+    disabled: boolean,
+    zIndex: number | "auto"
 ): SerializedStyles => css`
     padding: ${GLOBAL.padding};
-    border-radius: ${GLOBAL.borderRadius};
-    box-shadow: ${GLOBAL.littleShadow};
+    border-radius: ${standAlone ? "" : GLOBAL.borderRadius};
+    box-shadow: ${standAlone ? "" : GLOBAL.littleShadow};
     background-color: ${backgroundColor};
     color: ${color};
     width: ${width};
+    font-size: ${fontSize}rem;
+    opacity: ${disabled ? 0.7 : 1};
+    z-index: ${zIndex};
+    :hover {
+        box-shadow: ${standAlone ? "" : GLOBAL.middleShadow};
+    }
     & > header {
         width: 100%;
         border-bottom: 1px solid ${controlColor};
     }
-    & > header > label {
-        font-size: ${fontSize / labelRatio}rem;
+    & > header > div {
+        width: max-content;
+        font-size: ${fontSize * labelRatio}rem;
         background: linear-gradient(135deg, ${labelColor1}, ${labelColor2});
         background-clip: text;
         text-fill-color: transparent;
+    }
+    &:hover > header {
+        font-weight: ${disabled ? "auto" : "500"};
     }
     & > input {
         border: none;
         color: ${color};
         font-size: ${fontSize}rem;
         width: 100%;
-        cursor: pointer;
+        cursor: ${disabled ? "default" : "pointer"};
         margin-top: ${GLOBAL.padding};
     }
-    &>input: focus {
+    & > input:focus {
         appearance: none;
         outline: none;
     }
@@ -75,12 +71,15 @@ interface InputProps {
     step?: number;
     placeholder?: string;
     initialValue?: string | number;
+    standAlone?: boolean;
+    disabled?: boolean;
+    zIndex?: number | "auto";
     onChange: (value: string | number) => void;
 }
 const Input = ({
     width = "auto",
     fontSize = 1,
-    labelRatio = 1.25,
+    labelRatio = 0.8,
     backgroundColor = "inherit",
     labelColor1 = "black",
     labelColor2 = "black",
@@ -91,6 +90,9 @@ const Input = ({
     step,
     placeholder = "",
     initialValue,
+    standAlone = false,
+    disabled = false,
+    zIndex = "auto",
     onChange,
 }: InputProps) => {
     const [value, setValue] = useState(initialValue || "");
@@ -104,10 +106,6 @@ const Input = ({
         onChange(e.target.value);
     };
 
-    const container = useMemo(
-        () => makeContainer(color, width, fontSize),
-        [color, width, fontSize]
-    );
     const emotion = useMemo(
         () =>
             makeEmotion(
@@ -118,7 +116,10 @@ const Input = ({
                 color,
                 labelColor1,
                 labelColor2,
-                controlColor
+                controlColor,
+                standAlone,
+                disabled,
+                zIndex
             ),
         [
             width,
@@ -129,22 +130,24 @@ const Input = ({
             labelColor1,
             labelColor2,
             controlColor,
+            standAlone,
+            disabled,
+            zIndex,
         ]
     );
 
-    const id = uniqueId();
     return (
-        <div css={container}>
+        <div>
             <main css={emotion}>
                 <header>
-                    <label htmlFor={id}>{label}</label>
+                    <div>{label}</div>
                 </header>
                 <input
-                    id={id}
                     type={type}
                     step={step}
                     placeholder={placeholder}
                     value={value}
+                    disabled={disabled}
                     onChange={handleChange}
                 />
             </main>
