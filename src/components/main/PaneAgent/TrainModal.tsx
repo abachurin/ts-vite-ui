@@ -31,22 +31,32 @@ const emotion = css`
     & > * {
         flex: 1;
     }
+    & > section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: ${GLOBAL.padding};
+    }
+    & > section > * {
+        flex: 1;
+    }
 `;
 
 // Helper functions
 const defaultParams = {
-    N: 4,
-    alpha: 0.2,
-    decay: 0.95,
-    step: 1000,
-    min_alpha: 0.01,
-    episodes: 10000,
+    N: undefined,
+    alpha: undefined,
+    decay: undefined,
+    step: undefined,
+    min_alpha: undefined,
+    episodes: undefined,
+    name: undefined,
+    isNew: true,
 };
-const setDefaultValues = (user: User) => {
+const setDefaultValues = (user: User): TrainingJob => {
     return {
         ...defaultParams,
-        name: user.name,
-        isNew: true,
+        user: user.name,
     };
 };
 
@@ -68,12 +78,6 @@ const TrainModal = () => {
         setValues((prevValues) => ({ ...prevValues, ...values }));
 
     const inputParameters = {
-        backgroundColor: "white",
-        labelColor1: palette.two,
-        labelColor2: palette.one,
-        controlColor: palette.three,
-    };
-    const dropdownParameters = {
         backgroundColor: "white",
         labelColor1: palette.two,
         labelColor2: palette.one,
@@ -103,61 +107,119 @@ const TrainModal = () => {
             <ModalBody overflow='visible'>
                 <main css={emotion}>
                     <Radio
+                        backgroundColor={palette.background}
                         controlColor={palette.three}
                         color1={palette.two}
                         color2={palette.one}
                         label={"Train new / keep training existing Agent"}
                         options={["New", "Existing"]}
+                        initialValue={values.isNew ? "New" : "Existing"}
                         onChange={(value: string) =>
                             updateValues({ isNew: value === "New" })
                         }
                     />
-                    <Input
-                        {...inputParameters}
-                        onChange={(value: string | number) =>
-                            console.log(value + " 1")
-                        }
-                        placeholder='Name'
-                    />
-                    <Input
-                        {...inputParameters}
-                        onChange={(value: string | number) =>
-                            console.log(value + " 2")
-                        }
-                        placeholder='Name'
-                    />
-                    <Input
-                        {...inputParameters}
-                        onChange={(value: string | number) =>
-                            console.log(value + " 3")
-                        }
-                        placeholder='Name'
-                    />
-                    <Dropdown
-                        {...dropdownParameters}
-                        onChange={(value: string | number) =>
-                            console.log(value) + " 4"
-                        }
-                        optionValues={["one", "two", "three"]}
-                        alignOptions='right'
-                        zIndex={20}
-                    />
-                    <Input
-                        {...inputParameters}
-                        onChange={(value: string | number) =>
-                            console.log(value + " 5")
-                        }
-                        placeholder='Name'
-                    />
-                    <Dropdown
-                        {...dropdownParameters}
-                        onChange={(value: string | number) =>
-                            console.log(value) + " 6"
-                        }
-                        optionValues={["one", "two", "three"]}
-                        alignOptions='right'
-                        zIndex={10}
-                    />
+                    {values.isNew ? (
+                        <Input
+                            {...inputParameters}
+                            type='text'
+                            label='New Agent Name'
+                            placeholder='Letters, numbers, or underscore, max 12 symbols'
+                            initialValue={values.name}
+                            onChange={(value: string | number) =>
+                                updateValues({ name: value as string })
+                            }
+                        />
+                    ) : (
+                        <Dropdown
+                            {...inputParameters}
+                            label='Existing Agent Name'
+                            optionValues={[]}
+                            onChange={(value: string | number) =>
+                                updateValues({ name: value as string })
+                            }
+                            zIndex={30}
+                        />
+                    )}
+                    <section>
+                        <Dropdown
+                            {...inputParameters}
+                            label='Signature N'
+                            optionValues={[2, 3, 4]}
+                            alignOptions='right'
+                            initialValue={values.N}
+                            onChange={(value: string | number) =>
+                                updateValues({ N: value as number })
+                            }
+                            zIndex={20}
+                        />
+                        <Input
+                            {...inputParameters}
+                            type='number'
+                            label='Learning Rate (Alpha)'
+                            min={0.01}
+                            max={0.25}
+                            step={0.01}
+                            initialValue={values.alpha}
+                            onChange={(value: string | number) =>
+                                console.log(value + " 2")
+                            }
+                            placeholder='0.01 <= &#945; <= 0.25'
+                        />
+                    </section>
+                    <section>
+                        <Input
+                            {...inputParameters}
+                            type='number'
+                            label='Alpha decay rate'
+                            min={0.5}
+                            max={1.0}
+                            step={0.01}
+                            initialValue={values.decay}
+                            onChange={(value: string | number) =>
+                                updateValues({ decay: value as number })
+                            }
+                            placeholder='Set at 1 if no decay'
+                        />
+                        <Input
+                            {...inputParameters}
+                            type='number'
+                            label='Decay step, in episodes'
+                            min={1000}
+                            max={10000}
+                            step={1000}
+                            initialValue={values.step}
+                            onChange={(value: string | number) =>
+                                updateValues({ step: value as number })
+                            }
+                        />
+                    </section>
+                    <section>
+                        <Input
+                            {...inputParameters}
+                            type='number'
+                            label='Minimal Alpha'
+                            min={0}
+                            max={0.05}
+                            step={0.001}
+                            initialValue={values.min_alpha}
+                            onChange={(value: string | number) =>
+                                updateValues({ min_alpha: value as number })
+                            }
+                            placeholder='No decay below this value'
+                        />
+                        <Input
+                            {...inputParameters}
+                            type='number'
+                            label='Training episodes'
+                            min={10000}
+                            max={100000}
+                            step={5000}
+                            initialValue={values.episodes}
+                            onChange={(value: string | number) =>
+                                updateValues({ episodes: value as number })
+                            }
+                        />
+                    </section>
                 </main>
             </ModalBody>
             <ModalFooter>

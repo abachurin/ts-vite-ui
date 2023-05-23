@@ -39,9 +39,12 @@ export type User = {
     animationSpeed: number;
     legends: boolean;
     paletteName: string;
+    agents: string[];
+    logs: string[];
+    job: "none" | "train" | "test";
 };
 
-export type LoginUser = {
+export type UserLogin = {
     name: string;
     pwd: string;
     action: "login" | "register";
@@ -101,15 +104,16 @@ export type AlertColors = "success" | "error" | "warning" | "info";
 
 // Agent types
 export interface Agent {
-    name: string;
-    N: number;
-    alpha: number;
-    decay: number;
-    step: number;
-    min_alpha: number;
+    user: string;
+    name: string | undefined;
+    N: number | undefined;
+    alpha: number | undefined;
+    decay: number | undefined;
+    step: number | undefined;
+    min_alpha: number | undefined;
 }
 export interface TrainingJob extends Agent {
-    episodes: number;
+    episodes: number | undefined;
     isNew: boolean;
 }
 export interface AgentWatching {
