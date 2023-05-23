@@ -55,6 +55,10 @@ const makeEmotion = (
         appearance: none;
         outline: none;
     }
+    & > input::placeholder {
+        font-size: ${fontSize * labelRatio}rem;
+        opacity: 0.7;
+    }
 `;
 
 interface InputProps {
@@ -68,6 +72,8 @@ interface InputProps {
     color?: string;
     label?: string;
     type?: InputType;
+    min?: number;
+    max?: number;
     step?: number;
     placeholder?: string;
     initialValue?: string | number;
@@ -87,6 +93,8 @@ const Input = ({
     color = "inherit",
     label = "Input value:",
     type = "text",
+    min,
+    max,
     step,
     placeholder = "",
     initialValue,
@@ -144,6 +152,8 @@ const Input = ({
                 </header>
                 <input
                     type={type}
+                    min={min}
+                    max={max}
                     step={step}
                     placeholder={placeholder}
                     value={value}

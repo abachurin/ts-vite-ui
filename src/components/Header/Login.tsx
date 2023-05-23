@@ -9,7 +9,7 @@ import {
 } from "../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { connectAPI } from "../../api/utils";
-import { Alignment, User, LoginUser } from "../../types";
+import { Alignment, User, UserLogin } from "../../types";
 import { GLOBAL, SvgPaths, checkRe } from "../../utils";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
@@ -57,8 +57,8 @@ const Login = ({ align = "left" }: LoginProps) => {
     const [message, createMessage] = useAlertMessage(initialMessage);
 
     const loginMutation = useMutation(
-        (data: LoginUser) =>
-            connectAPI<LoginUser, User>({
+        (data: UserLogin) =>
+            connectAPI<UserLogin, User>({
                 method: "post",
                 endpoint: "/users/login",
                 data: data,

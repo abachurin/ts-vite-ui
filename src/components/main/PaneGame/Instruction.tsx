@@ -36,8 +36,8 @@ const Instruction = () => {
                 play 2048, better to use the official App.
             </main>
             <footer>
-                p.s. This instruction can be permanently switched off buy
-                turning off Verbose option in User Settings.
+                p.s. This instruction can be permanently switched off by turning
+                off Verbose option in User Settings.
             </footer>
         </div>
     );

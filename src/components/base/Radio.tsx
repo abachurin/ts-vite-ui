@@ -1,8 +1,9 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useState, useEffect } from "react";
-import { ReactNode, useMemo } from "react";
-import { GLOBAL } from "../../utils";
+import { useUser } from "../../contexts/UserProvider/UserContext";
+import { ReactNode, useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
+import { GLOBAL, makeSound } from "../../utils";
+import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
 const makeEmotion = (
@@ -24,7 +25,6 @@ const makeEmotion = (
     background: white;
     color: ${textColor};
     font-size: ${fontSize}rem;
-    border: 1px solid ${controlColor};
     &:hover {
         box-shadow: ${GLOBAL.middleShadow};
     }
@@ -52,6 +52,7 @@ const makeEmotion = (
 `;
 
 const makeControl = (
+    backGroundColor: string,
     controlColor: string,
     textColor: string,
     fontSize: number
@@ -59,40 +60,44 @@ const makeControl = (
     padding-block: ${GLOBAL.padding};
     display: flex;
     align-items: center;
-    & > input {
-        position: relative;
-        appearance: none;
+    :hover,
+    :hover * {
         cursor: pointer;
-        width: ${fontSize * 0.8}rem;
+    }
+    :hover label {
+        font-weight: 500;
+    }
+    :hover input {
+        box-shadow: 0 0 0.5em 0.1em ${controlColor};
+    }
+    & label {
+        padding-left: ${fontSize * 0.3}rem;
+        color: ${textColor};
+    }
+    & input {
+        position: relative;
+        margin: 0;
+        appearance: none;
+        width: ${fontSize * 1.2}rem;
         aspect-ratio: 1;
         border-radius: 50%;
         border: 1px solid ${controlColor};
-        background-color: red;
+        background-color: ${backGroundColor};
     }
-    & > div {
+    & input::before {
         content: "";
         position: absolute;
-        display: block;
-        width: ${fontSize * 1.2}rem;
-        aspect-ratio: 1;
-        left: 50%;
         top: 50%;
+        left: 50%;
         transform: translate(-50%, -50%);
-        appearance: none;
-        cursor: pointer;
+        width: ${fontSize * 0.6}rem;
+        height: ${fontSize * 0.6}rem;
         border-radius: 50%;
         background-color: ${controlColor};
+        opacity: 0;
     }
-    & > input:checked {
-        background-color: ${controlColor};
-    }
-    & > div input:checked {
-        background-color: red;
-    }
-
-    & > aside {
-        margin-left: ${GLOBAL.padding};
-        color: ${textColor};
+    & input:checked::before {
+        opacity: 1;
     }
 `;
 
@@ -100,6 +105,7 @@ type RadioProps = {
     width?: string;
     fontSize?: number;
     labelRatio?: number;
+    backgroundColor?: string;
     controlColor?: string;
     color1?: string;
     color2?: string;
@@ -113,6 +119,7 @@ const Radio = ({
     width = "auto",
     fontSize = 1,
     labelRatio = 0.8,
+    backgroundColor = "white",
     controlColor = "rgb(50, 50, 224)",
     color1 = "inherit",
     color2 = "inherit",
@@ -122,15 +129,17 @@ const Radio = ({
     options,
     onChange,
 }: RadioProps) => {
-    const [value, setValue] = useState(initialValue ?? options[0]);
+    const user = useUser();
+    const startValue = initialValue ?? options[0];
+    const [currentValue, setCurrentValue] = useState(startValue);
     useEffect(() => {
-        setValue(initialValue ?? options[0]);
-    }, [initialValue, options]);
+        setCurrentValue(startValue);
+    }, [startValue]);
 
     const handleChoice = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrentValue(e.target.value);
+        makeSound(clickSound, user);
         onChange(e.target.value);
-        setValue(e.target.value);
-        console.log(e.target.value);
     };
 
     const emotion = useMemo(
@@ -147,8 +156,8 @@ const Radio = ({
         [width, fontSize, labelRatio, controlColor, color1, color2, textColor]
     );
     const control = useMemo(
-        () => makeControl(controlColor, textColor, fontSize),
-        [controlColor, textColor, fontSize]
+        () => makeControl(backgroundColor, controlColor, textColor, fontSize),
+        [backgroundColor, controlColor, textColor, fontSize]
     );
 
     const renderOption = (option: string): ReactNode => {
@@ -162,10 +171,9 @@ const Radio = ({
                     name='radio'
                     value={option}
                     onChange={handleChoice}
-                ></input>
-                <label css={label} htmlFor={id}>
-                    {option}
-                </label>
+                    checked={option === currentValue}
+                />
+                <label htmlFor={id}>{option}</label>
             </div>
         );
     };

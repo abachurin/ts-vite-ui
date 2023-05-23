@@ -113,13 +113,13 @@ interface DropdownProps {
     controlColor?: string;
     color?: string;
     label?: string;
-    optionValues: string[];
-    initialValue?: string;
+    optionValues: (string | number)[];
+    initialValue?: string | number;
     alignOptions?: Alignment;
     standAlone?: boolean;
     disabled?: boolean;
     zIndex?: number | "auto";
-    onChange: (value: string) => void;
+    onChange: (value: string | number) => void;
 }
 const Dropdown = ({
     width = "auto",
@@ -139,8 +139,9 @@ const Dropdown = ({
     zIndex = "auto",
     onChange,
 }: DropdownProps) => {
-    const [optionsOpen, setOptionsOpen] = useState(0);
-    const ref = useOutsideClick(() => setOptionsOpen(0));
+    const disabledTrue = disabled || optionValues.length === 0;
+    const [optionsOpen, setOptionsOpen] = useState(false);
+    const ref = useOutsideClick(() => setOptionsOpen(false));
 
     const [value, setValue] = useState(initialValue || optionValues[0]);
     useEffect(() => {
@@ -169,7 +170,7 @@ const Dropdown = ({
                 labelColor2,
                 controlColor,
                 standAlone,
-                disabled
+                disabledTrue
             ),
         [
             fontSize,
@@ -179,7 +180,7 @@ const Dropdown = ({
             labelColor2,
             controlColor,
             standAlone,
-            disabled,
+            disabledTrue,
         ]
     );
 
@@ -196,7 +197,7 @@ const Dropdown = ({
                   right: 0;
               `;
 
-    const showOptions = optionsOpen && !disabled;
+    const showOptions = optionsOpen && !disabledTrue;
     const optionsBox = css`
         ${optionsBoxBase}
         ${optionsBoxAlignment}
@@ -210,7 +211,7 @@ const Dropdown = ({
                 <header>
                     <div>{label}</div>
                 </header>
-                <section onClick={() => setOptionsOpen(1 - optionsOpen)}>
+                <section onClick={() => setOptionsOpen((prev) => !prev)}>
                     <div>{value}</div>
                     <aside>
                         <Icon
@@ -219,6 +220,7 @@ const Dropdown = ({
                                     ? SvgPaths.rightArrow
                                     : SvgPaths.leftArrow
                             }
+                            rescaleFactor={0.8}
                             color={controlColor}
                         />
                     </aside>
