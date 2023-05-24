@@ -41,13 +41,13 @@ export type User = {
     paletteName: string;
     agents: string[];
     logs: string[];
-    job: "none" | "train" | "test";
+    job: "none" | "train" | "test" | "watch";
 };
-
+export type UserLoginAction = "login" | "register" | "delete" | "logout";
 export type UserLogin = {
     name: string;
     pwd: string;
-    action: "login" | "register";
+    action: UserLoginAction;
 };
 
 // Palette styles
@@ -63,6 +63,7 @@ export interface Palette {
     one: RGB;
     two: RGB;
     three: RGB;
+    four: RGB;
     success: RGB;
     error: RGB;
     warning: RGB;
@@ -103,7 +104,7 @@ export type PositionType = "fixed" | "absolute";
 export type AlertColors = "success" | "error" | "warning" | "info";
 
 // Agent types
-export interface Agent {
+export interface AgentMainParams {
     user: string;
     name: string | undefined;
     N: number | undefined;
@@ -112,7 +113,13 @@ export interface Agent {
     step: number | undefined;
     min_alpha: number | undefined;
 }
-export interface TrainingJob extends Agent {
+export interface Agent extends AgentMainParams {
+    bestScore: number;
+    maxTile: number;
+    lastTrainingEpisode: number;
+    history: number[];
+}
+export interface TrainingJob extends AgentMainParams {
     episodes: number | undefined;
     isNew: boolean;
 }

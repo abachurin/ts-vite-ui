@@ -9,7 +9,7 @@ import {
 } from "../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { connectAPI } from "../../api/utils";
-import { Alignment, User, UserLogin } from "../../types";
+import { Alignment, User, UserLogin, UserLoginAction } from "../../types";
 import { GLOBAL, SvgPaths, checkRe } from "../../utils";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
@@ -19,6 +19,7 @@ import ButtonGroup from "../base/Button/ButtonGroup";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 import Input from "../base/Input";
+import ConfirmDialog from "../base/ConfirmDialog";
 
 // Emotion styles
 const emotion = css`
@@ -50,6 +51,7 @@ const Login = ({ align = "left" }: LoginProps) => {
     const user = useUser();
     const palette = usePalette();
     const updateUser = useUserUpdate();
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     const [name, setName] = useState<string | undefined>();
     const [pwd, setPwd] = useState<string | undefined>();
@@ -77,18 +79,15 @@ const Login = ({ align = "left" }: LoginProps) => {
 
     const handleSubmit = (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-        action: "login" | "register" | "logout"
+        action: UserLoginAction
     ) => {
         e.preventDefault();
         if (action === "logout") {
             updateUser(defaultUser);
         } else if (name === undefined || pwd === undefined) {
-            createMessage("Fields should be filled", "error");
-        } else if (!checkRe(name) || !checkRe(pwd)) {
-            createMessage(
-                "Only letters, numerals, - and _ are allowed",
-                "error"
-            );
+            createMessage("Both fields should be filled", "error");
+        } else if (action == "register" && (!checkRe(name) || !checkRe(pwd))) {
+            createMessage("Letters, numerals, dash, underscore", "error");
         } else {
             loginMutation.mutate({ name, pwd, action });
         }
@@ -172,6 +171,18 @@ const Login = ({ align = "left" }: LoginProps) => {
                         </Button>
                         <Button
                             type='clickPress'
+                            background={palette.four}
+                            color={palette.background}
+                            // disabled={user.name === "Login"}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setConfirmDelete(true);
+                            }}
+                        >
+                            Delete me
+                        </Button>
+                        <Button
+                            type='clickPress'
                             align='right'
                             background={palette.three}
                             color={palette.background}
@@ -188,6 +199,15 @@ const Login = ({ align = "left" }: LoginProps) => {
             <ModalFooter>
                 {loginMutation.isLoading ? "Authorization ..." : message}
             </ModalFooter>
+            <ConfirmDialog
+                isOpen={confirmDelete}
+                message={`Are you sure you want to delete ${name}?`}
+                onConfirm={(e) => {
+                    setConfirmDelete(false);
+                    handleSubmit(e, "delete");
+                }}
+                onCancel={() => setConfirmDelete(false)}
+            />
         </Modal>
     );
 };

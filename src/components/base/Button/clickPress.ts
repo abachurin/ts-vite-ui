@@ -3,7 +3,7 @@ import clickSound from "../../../assets/sounds/mixkit-gate-latch-click-1924.wav"
 import { ButtonExtraStyle, ButtonEffects } from "../../../types";
 import { GLOBAL, makeSound } from "../../../utils";
 
-export const clickPressEmotion: ButtonExtraStyle = (borderRadius) => css`
+export const clickPressEmotion: ButtonExtraStyle = () => css`
     border: 0;
     :hover:enabled {
         box-shadow: ${GLOBAL.insetShadow("white", 0.1)};
