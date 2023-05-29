@@ -1,10 +1,12 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import { useOutsideClick } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
-import { GLOBAL, SvgPaths } from "../../utils";
+import { GLOBAL, SvgPaths, makeSound } from "../../utils";
 import Icon from "./Icon/Icon";
+import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
 const makeContainer = (
@@ -113,13 +115,13 @@ interface DropdownProps {
     controlColor?: string;
     color?: string;
     label?: string;
-    optionValues: (string | number)[];
+    optionValues: string[] | number[];
     initialValue?: string | number;
     alignOptions?: Alignment;
     standAlone?: boolean;
     disabled?: boolean;
     zIndex?: number | "auto";
-    onChange: (value: string | number) => void;
+    onChange: (value: string) => void;
 }
 const Dropdown = ({
     width = "auto",
@@ -139,6 +141,7 @@ const Dropdown = ({
     zIndex = "auto",
     onChange,
 }: DropdownProps) => {
+    const user = useUser();
     const disabledTrue = disabled || optionValues.length === 0;
     const [optionsOpen, setOptionsOpen] = useState(false);
     const ref = useOutsideClick(() => setOptionsOpen(false));
@@ -151,6 +154,7 @@ const Dropdown = ({
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
         const currentValue = e.currentTarget.innerText;
         if (currentValue !== value) {
+            makeSound(clickSound, user);
             setValue(currentValue);
             onChange(currentValue);
         }

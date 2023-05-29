@@ -1,7 +1,6 @@
 import { css, keyframes, SerializedStyles } from "@emotion/react";
 import ReactDOM from "react-dom";
-import { useCallback, useMemo } from "react";
-import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
+import { useCallback, useMemo, useEffect } from "react";
 import {
     useModal,
     useModalUpdate,
@@ -9,6 +8,7 @@ import {
 import { useUser, useAnimate } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
 import { GLOBAL, makeSound } from "../../utils";
+import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
 const baseContainer = css`
@@ -147,6 +147,23 @@ const ModalWindow = ({
         makeSound(clickSound, user);
         updateIsOpen(false);
     }, [updateIsOpen, user]);
+
+    const escapeHandler = useCallback(
+        (e: KeyboardEvent) => {
+            if (e.key === "Escape" && isOpen === true) {
+                makeSound(clickSound, user);
+                closeModal();
+            }
+        },
+        [closeModal, isOpen, user]
+    );
+
+    useEffect(() => {
+        document.addEventListener("keydown", escapeHandler);
+        return () => {
+            document.removeEventListener("keydown", escapeHandler);
+        };
+    }, [escapeHandler]);
 
     if (isOpen === "none") return null;
 

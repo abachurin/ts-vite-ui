@@ -30,7 +30,6 @@ const makeEmotion = (
     border-radius: ${GLOBAL.borderRadius};
     border: 2px solid ${borderColor};
     box-shadow: ${GLOBAL.littleShadow};
-    z-index: 1500;
     opacity: ${isOpen ? 1 : 0};
     transform: ${isOpen ? "scale(1)" : "scale(0)"};
     transition: all 0.25s ease-in-out;
@@ -43,6 +42,12 @@ const makeEmotion = (
         justify-content: space-evenly;
         align-items: center;
     }
+`;
+const makeWrapper = (isOpen: boolean): SerializedStyles => css`
+    position: fixed;
+    top: 25%;
+    left: 50%;
+    transform: ${isOpen ? "scale(1)" : "scale(0)"};
 `;
 
 interface ConfirmDialogProps {
@@ -100,16 +105,20 @@ const StaticConfirmDialog = ({
 
 const DraggableConfirmDialog = dragMe(
     StaticConfirmDialog,
-    { x: "50%", y: "0%" },
+    { x: "0", y: "0" },
     "fixed"
 );
 
 const ConfirmDialog = (props: ConfirmDialogProps) => {
     const block = makeBlock(props.isOpen);
+    const wrapper = makeWrapper(props.isOpen);
+
     return (
         <>
             <div css={block} />
-            <DraggableConfirmDialog {...props} />
+            <div css={wrapper}>
+                <DraggableConfirmDialog {...props} />
+            </div>
         </>
     );
 };

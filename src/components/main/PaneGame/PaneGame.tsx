@@ -6,6 +6,7 @@ import {
 } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useAlert from "../../../hooks/useAlert";
+import { smoothScroll } from "../../../utils";
 import Pane from "../Pane";
 import PaneHeader from "../PaneHeader";
 import PaneBody from "../PaneBody";
@@ -36,6 +37,9 @@ const PaneGame = () => {
         if (mode.game === "none") newGame();
         modeUpdate({ game: "play" });
         openInstruction();
+        setTimeout(() => {
+            smoothScroll("#game-pane");
+        }, 50);
     };
 
     return (

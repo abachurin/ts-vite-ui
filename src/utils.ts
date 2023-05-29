@@ -1,5 +1,6 @@
-import { RGB, RGBA } from "./types";
+import { RGB, RGBA, TrainingJob } from "./types";
 import { User } from "./types";
+import { forEach } from "lodash-es";
 
 // GLOBAL parameters
 export const GLOBAL = {
@@ -25,6 +26,7 @@ export const GLOBAL = {
     gameCellPadding: "3px",
     contactButtonWidth: "12rem",
     messageDuration: 5000,
+    maxNameLength: 12,
     userLevel: {
         guest: 0,
         user: 1,
@@ -159,7 +161,12 @@ export function makeSound(sound: string, volumeSource: number | User): void {
  */
 export function checkRe(text: string | undefined): boolean {
     const re = /^[0-9A-Za-z-_]+$/;
-    return text !== undefined && re.test(text);
+    return (
+        text !== undefined &&
+        re.test(text) &&
+        text.length <= GLOBAL.maxNameLength &&
+        text.length > 0
+    );
 }
 
 /**
@@ -176,3 +183,78 @@ export function deepCopy<T>(obj: T): T {
 export function deepEqual<T>(a: T, b: T): boolean {
     return JSON.stringify(a) === JSON.stringify(b);
 }
+
+/**
+ * Checks if an object has at least one property with a value of undefined.
+ */
+export function hasUndefinedValues(obj: Record<string, unknown>): boolean {
+    return Object.values(obj).some((value) => value === undefined);
+}
+
+/**
+ *  default Training params and the functions to validate them
+ */
+export const defaultTrainingParams = {
+    N: 4,
+    alpha: undefined,
+    decay: undefined,
+    step: undefined,
+    minAlpha: undefined,
+    episodes: undefined,
+    name: undefined,
+    isNew: true,
+};
+export const validateTrainingParams = (
+    values: Partial<TrainingJob>
+): [Partial<TrainingJob>, boolean] => {
+    const validated = { ...values };
+    forEach(values, (_, key) => {
+        switch (key) {
+            case "name":
+                if (!checkRe(values.name)) {
+                    validated.name = undefined;
+                }
+                break;
+            case "alpha":
+                if (
+                    values.alpha === undefined ||
+                    values.alpha > 0.25 ||
+                    values.alpha < 0.01
+                ) {
+                    validated.alpha = undefined;
+                }
+                break;
+            case "decay":
+                if (
+                    values.decay === undefined ||
+                    values.decay > 1 ||
+                    values.decay < 0.5
+                ) {
+                    validated.decay = undefined;
+                }
+                break;
+            case "step":
+                if (
+                    values.step === undefined ||
+                    (values.step > 1 && values.step < 0.5)
+                ) {
+                    validated.step = undefined;
+                }
+                break;
+            case "min_alpha":
+                if (
+                    values.minAlpha === undefined ||
+                    (values.minAlpha > 1 && values.minAlpha < 0.5)
+                ) {
+                    validated.minAlpha = undefined;
+                }
+                break;
+            default:
+                break;
+        }
+    });
+    return [
+        validated,
+        !deepEqual(validated, values) || hasUndefinedValues(validated),
+    ];
+};

@@ -5,6 +5,9 @@ function useArrowKeys(): number {
 
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
+            const modalIsOpen =
+                document.getElementById("modal")?.innerHTML !== "";
+            if (modalIsOpen) return;
             const { key } = event;
             switch (key) {
                 case "ArrowLeft":

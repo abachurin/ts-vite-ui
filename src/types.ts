@@ -41,13 +41,16 @@ export type User = {
     paletteName: string;
     agents: string[];
     logs: string[];
-    job: "none" | "train" | "test" | "watch";
+    job: "none" | "train" | "test";
 };
 export type UserLoginAction = "login" | "register" | "delete" | "logout";
 export type UserLogin = {
     name: string;
     pwd: string;
-    action: UserLoginAction;
+};
+export type LoginResponse = {
+    status: string;
+    content: User | undefined;
 };
 
 // Palette styles
@@ -111,7 +114,7 @@ export interface AgentMainParams {
     alpha: number | undefined;
     decay: number | undefined;
     step: number | undefined;
-    min_alpha: number | undefined;
+    minAlpha: number | undefined;
 }
 export interface Agent extends AgentMainParams {
     bestScore: number;

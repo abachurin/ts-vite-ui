@@ -5,6 +5,9 @@ import {
     usePalette,
     useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
+import { useMutation } from "@tanstack/react-query";
+import { connectAPI } from "../../api/utils";
+import useAlertMessage from "../../hooks/useAlertMessage";
 import { palettes } from "../../contexts/palette";
 import { GLOBAL, changeBrightness } from "../../utils";
 import { AlignProps, Alignment, User } from "../../types";
@@ -49,6 +52,9 @@ const getUserValues = (user: User) => {
 };
 
 type ValuesType = ReturnType<typeof getUserValues>;
+type UpdateUserValues = {
+    name: string;
+} & ValuesType;
 
 /**
  * Returns a Modal component with a button that displays a settings section.
@@ -58,6 +64,7 @@ const SettingsModal = ({ align }: AlignProps) => {
     const user = useUser();
     const palette = usePalette();
     const updateUser = useUserUpdate();
+    const [message, createMessage] = useAlertMessage("");
 
     // const [currentValues, setCurrentValues] = useInitialValue(userValues);
 
@@ -75,6 +82,25 @@ const SettingsModal = ({ align }: AlignProps) => {
         user.name === "Login"
             ? "Guest settings"
             : `${user.name} personal settings`;
+
+    const saveUserValues = useMutation(
+        (values: UpdateUserValues) =>
+            connectAPI<UpdateUserValues, void>({
+                method: "put",
+                endpoint: "/users/settings",
+                data: values,
+            }),
+        {
+            onSuccess: ({ error }) => {
+                if (error) {
+                    createMessage(error, "error", 3000);
+                } else {
+                    createMessage("Settings updated!", "success", 3000);
+                }
+            },
+        }
+    );
+
     const saveButton =
         user.name !== "Login" ? (
             <Button
@@ -82,7 +108,13 @@ const SettingsModal = ({ align }: AlignProps) => {
                 align='center'
                 background={palette.two}
                 color='white'
-                onClick={() => console.log("saving user settings")}
+                disabled={saveUserValues.isLoading}
+                onClick={() =>
+                    saveUserValues.mutate({
+                        name: user.name,
+                        ...currentValues,
+                    })
+                }
             >
                 Save
             </Button>
@@ -166,7 +198,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                             optionValues={Object.keys(palettes)}
                             initialValue={currentValues.paletteName}
                             onChange={(value) =>
-                                updateValues({ paletteName: value })
+                                updateValues({ paletteName: value as string })
                             }
                         />
                     </section>
@@ -219,6 +251,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                 </Button>
                 {saveButton}
             </ModalFooter>
+            {message ? <ModalFooter>{message}</ModalFooter> : null}
         </Modal>
     );
 };

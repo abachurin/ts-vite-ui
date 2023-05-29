@@ -1,5 +1,6 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
+import usePersistence from "../../hooks/usePersistence";
 import { InputType } from "../../types";
 import { GLOBAL } from "../../utils";
 
@@ -76,11 +77,12 @@ interface InputProps {
     max?: number;
     step?: number;
     placeholder?: string;
-    initialValue?: string | number;
+    initialValue?: string | number | undefined;
     standAlone?: boolean;
     disabled?: boolean;
+    name?: string;
     zIndex?: number | "auto";
-    onChange: (value: string | number) => void;
+    onChange: (value: string) => void;
 }
 const Input = ({
     width = "auto",
@@ -100,17 +102,22 @@ const Input = ({
     initialValue,
     standAlone = false,
     disabled = false,
+    name = "",
     zIndex = "auto",
     onChange,
 }: InputProps) => {
-    const [value, setValue] = useState(initialValue || "");
+    const [persistedValue, setPersistedValue] = usePersistence(
+        name,
+        String(initialValue)
+    );
+    const [value, setValue] = useState(initialValue);
 
-    useEffect(() => {
-        setValue(initialValue || "");
-    }, [initialValue]);
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-        setValue(e.target.value);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (name) {
+            setPersistedValue(e.target.value);
+        } else {
+            setValue(e.target.value);
+        }
         onChange(e.target.value);
     };
 
@@ -156,7 +163,7 @@ const Input = ({
                     max={max}
                     step={step}
                     placeholder={placeholder}
-                    value={value}
+                    value={name ? persistedValue : value}
                     disabled={disabled}
                     onChange={handleChange}
                 />

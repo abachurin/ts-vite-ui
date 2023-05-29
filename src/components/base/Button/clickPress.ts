@@ -1,12 +1,12 @@
 import { css } from "@emotion/react";
-import clickSound from "../../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 import { ButtonExtraStyle, ButtonEffects } from "../../../types";
 import { GLOBAL, makeSound } from "../../../utils";
+import clickSound from "../../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 export const clickPressEmotion: ButtonExtraStyle = () => css`
     border: 0;
     :hover:enabled {
-        box-shadow: ${GLOBAL.insetShadow("white", 0.1)};
+        box-shadow: ${GLOBAL.middleShadow};
         opacity: 0.85;
     }
 `;

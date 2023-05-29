@@ -9,7 +9,13 @@ import {
 } from "../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { connectAPI } from "../../api/utils";
-import { Alignment, User, UserLogin, UserLoginAction } from "../../types";
+import {
+    Alignment,
+    User,
+    UserLogin,
+    UserLoginAction,
+    LoginResponse,
+} from "../../types";
 import { GLOBAL, SvgPaths, checkRe } from "../../utils";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
@@ -58,24 +64,64 @@ const Login = ({ align = "left" }: LoginProps) => {
 
     const [message, createMessage] = useAlertMessage(initialMessage);
 
-    const loginMutation = useMutation(
-        (data: UserLogin) =>
-            connectAPI<UserLogin, User>({
-                method: "post",
-                endpoint: "/users/login",
-                data: data,
-            }),
-        {
-            onSuccess: ({ result, error }) => {
-                if (result !== undefined) {
-                    createMessage(`Welcome, ${result.name}`, "success");
-                    updateUser(result);
-                } else {
-                    createMessage(error ?? "Unknown error", "error");
-                }
-            },
-        }
-    );
+    const finalizeLogin = (update: User): void => {
+        updateUser(update);
+        setName(undefined);
+        setPwd(undefined);
+    };
+
+    const useLoginMutation = (action: UserLoginAction) => {
+        const successMessage = (userName: string): string =>
+            action === "login"
+                ? `Welcome back, ${userName}!`
+                : action === "register"
+                ? `Welcome ${userName}!`
+                : `${userName} deleted`;
+
+        return useMutation(
+            (data: UserLogin) =>
+                connectAPI<UserLogin, LoginResponse>({
+                    method: action === "delete" ? "delete" : "post",
+                    endpoint: `/users/${action}`,
+                    data,
+                }),
+            {
+                onSuccess: ({ result, error }) => {
+                    if (result !== undefined) {
+                        if (result.status !== "ok") {
+                            createMessage(result.status, "error");
+                        } else {
+                            const newUser =
+                                action === "delete"
+                                    ? defaultUser
+                                    : (result.content as User);
+                            createMessage(
+                                successMessage(
+                                    action === "delete"
+                                        ? (name as string)
+                                        : newUser.name
+                                ),
+                                "success"
+                            );
+                            finalizeLogin(newUser);
+                        }
+                    } else {
+                        createMessage(error ?? "Unknown error", "error");
+                    }
+                },
+            }
+        );
+    };
+
+    const loginMutation = {
+        login: useLoginMutation("login"),
+        register: useLoginMutation("register"),
+        delete: useLoginMutation("delete"),
+    };
+    const loading =
+        loginMutation.login.isLoading ||
+        loginMutation.register.isLoading ||
+        loginMutation.delete.isLoading;
 
     const handleSubmit = (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -87,12 +133,13 @@ const Login = ({ align = "left" }: LoginProps) => {
         } else if (name === undefined || pwd === undefined) {
             createMessage("Both fields should be filled", "error");
         } else if (action == "register" && (!checkRe(name) || !checkRe(pwd))) {
-            createMessage("Letters, numerals, dash, underscore", "error");
+            createMessage(
+                `Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`,
+                "error"
+            );
         } else {
-            loginMutation.mutate({ name, pwd, action });
+            loginMutation[action].mutate({ name, pwd });
         }
-        setName(undefined);
-        setPwd(undefined);
     };
 
     const headerStyle = css`
@@ -138,14 +185,14 @@ const Login = ({ align = "left" }: LoginProps) => {
                         {...inputParameters}
                         type='text'
                         label='Name'
-                        initialValue={name}
+                        name='login-name'
                         onChange={(value) => setName(value as string)}
                     />
                     <Input
                         {...inputParameters}
                         type='text'
                         label='Password'
-                        initialValue={pwd}
+                        name='login-pwd'
                         onChange={(value) => setPwd(value as string)}
                     />
                     <ButtonGroup height='2rem'>
@@ -153,6 +200,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                             type='clickPress'
                             background={palette.one}
                             color={palette.background}
+                            disabled={loading}
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                                 handleSubmit(e, "login")
                             }
@@ -163,6 +211,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                             type='clickPress'
                             background={palette.two}
                             color={palette.background}
+                            disabled={loading}
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                                 handleSubmit(e, "register")
                             }
@@ -173,7 +222,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                             type='clickPress'
                             background={palette.four}
                             color={palette.background}
-                            // disabled={user.name === "Login"}
+                            disabled={loading || user.name === "Login"}
                             onClick={(e) => {
                                 e.preventDefault();
                                 setConfirmDelete(true);
@@ -186,7 +235,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                             align='right'
                             background={palette.three}
                             color={palette.background}
-                            disabled={user.name === "Login"}
+                            disabled={loading || user.name === "Login"}
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
                                 handleSubmit(e, "logout")
                             }
@@ -196,9 +245,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                     </ButtonGroup>
                 </form>
             </ModalBody>
-            <ModalFooter>
-                {loginMutation.isLoading ? "Authorization ..." : message}
-            </ModalFooter>
+            <ModalFooter>{loading ? "Authorization ..." : message}</ModalFooter>
             <ConfirmDialog
                 isOpen={confirmDelete}
                 message={`Are you sure you want to delete ${name}?`}

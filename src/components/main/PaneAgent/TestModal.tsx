@@ -1,5 +1,6 @@
 import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import { useUser } from "../../../contexts/UserProvider/UserContext";
 import Modal from "../../modal/Modal";
 
 /**
@@ -9,6 +10,7 @@ import Modal from "../../modal/Modal";
 const TestModal = () => {
     const modeUpdate = useModeUpdate();
     const palette = usePalette();
+    const user = useUser();
 
     return (
         <Modal
@@ -19,6 +21,7 @@ const TestModal = () => {
                 onClick: () => {
                     modeUpdate({ agent: "test" });
                 },
+                disabled: user.job !== "none",
             }}
             modal={{
                 width: "200px",

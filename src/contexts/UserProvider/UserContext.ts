@@ -6,7 +6,7 @@ import { palettes } from "../palette";
 
 export const defaultUser: User = {
     name: "Login",
-    level: GLOBAL.userLevel.admin,
+    level: GLOBAL.userLevel.guest,
     soundLevel: 1,
     sound: true,
     animationSpeed: 6,

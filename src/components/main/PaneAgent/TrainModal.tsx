@@ -1,12 +1,20 @@
 import { css } from "@emotion/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useMutation } from "@tanstack/react-query";
+import { connectAPI } from "../../../api/utils";
 import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import {
     usePalette,
     useUser,
+    useUserUpdate,
 } from "../../../contexts/UserProvider/UserContext";
+import useAlertMessage from "../../../hooks/useAlertMessage";
 import { User, TrainingJob } from "../../../types";
-import { GLOBAL } from "../../../utils";
+import {
+    GLOBAL,
+    defaultTrainingParams,
+    validateTrainingParams,
+} from "../../../utils";
 import Modal from "../../modal/Modal";
 import ModalHeader from "../../modal/ModalHeader";
 import ModalBody from "../../modal/ModalBody";
@@ -43,19 +51,9 @@ const emotion = css`
 `;
 
 // Helper functions
-const defaultParams = {
-    N: undefined,
-    alpha: undefined,
-    decay: undefined,
-    step: undefined,
-    min_alpha: undefined,
-    episodes: undefined,
-    name: undefined,
-    isNew: true,
-};
 const setDefaultValues = (user: User): TrainingJob => {
     return {
-        ...defaultParams,
+        ...defaultTrainingParams,
         user: user.name,
     };
 };
@@ -68,20 +66,72 @@ const TrainModal = () => {
     const modeUpdate = useModeUpdate();
     const palette = usePalette();
     const user = useUser();
+    const userUpdate = useUserUpdate();
+    const [message, createMessage] = useAlertMessage("");
 
     const [values, setValues] = useState<TrainingJob>(setDefaultValues(user));
     useEffect(() => {
         setValues(setDefaultValues(user));
     }, [user]);
 
-    const updateValues = (values: Partial<TrainingJob>) =>
-        setValues((prevValues) => ({ ...prevValues, ...values }));
+    const updateValues = useCallback((update: Partial<TrainingJob>) => {
+        setValues((prevValues) => ({ ...prevValues, ...update }));
+    }, []);
 
     const inputParameters = {
         backgroundColor: "white",
         labelColor1: palette.two,
         labelColor2: palette.one,
         controlColor: palette.three,
+    };
+
+    const agentMutation = useMutation(
+        (values: TrainingJob) =>
+            connectAPI<TrainingJob, string>({
+                method: "post",
+                endpoint: `/jobs/train`,
+                data: values,
+            }),
+        {
+            onSuccess: ({ result, error }) => {
+                if (error) {
+                    createMessage(error, "error");
+                } else {
+                    if (result !== "ok") {
+                        createMessage(result, "error");
+                    } else {
+                        const message = values.isNew
+                            ? `Agent created${
+                                  (values.episodes as number) > 0
+                                      ? ", training commenced, follow the logs"
+                                      : ""
+                              }`
+                            : "Training resumed, follow the logs";
+                        createMessage(message, "success");
+                        modeUpdate({ agent: "train" });
+                        userUpdate({
+                            job: "train",
+                        });
+                    }
+                }
+            },
+        }
+    );
+
+    const finalMessage = agentMutation.isLoading ? "Loading..." : message;
+
+    const handleTrain = () => {
+        const [validated, change] = validateTrainingParams(values);
+        setValues((prevValues) => ({ ...prevValues, ...validated }));
+        if (change) {
+            createMessage(
+                "Some parameters are invalid or undefined. Please follow the instructions.",
+                "error"
+            );
+        } else {
+            console.log(values);
+            agentMutation.mutate(values);
+        }
     };
 
     return (
@@ -94,6 +144,7 @@ const TrainModal = () => {
                 onClick: () => {
                     modeUpdate({ agent: "train" });
                 },
+                disabled: user.job !== "none",
             }}
             modal={{
                 width: "26rem",
@@ -113,7 +164,7 @@ const TrainModal = () => {
                         color2={palette.one}
                         label={"Train new / keep training existing Agent"}
                         options={["New", "Existing"]}
-                        initialValue={values.isNew ? "New" : "Existing"}
+                        initialValue={"New"}
                         onChange={(value: string) =>
                             updateValues({ isNew: value === "New" })
                         }
@@ -123,10 +174,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='text'
                             label='New Agent Name'
-                            placeholder='Letters, numbers, or underscore, max 12 symbols'
-                            initialValue={values.name}
-                            onChange={(value: string | number) =>
-                                updateValues({ name: value as string })
+                            placeholder={`Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`}
+                            initialValue={defaultTrainingParams.name}
+                            onChange={(value) =>
+                                updateValues({ name: String(value) })
                             }
                         />
                     ) : (
@@ -134,8 +185,8 @@ const TrainModal = () => {
                             {...inputParameters}
                             label='Existing Agent Name'
                             optionValues={[]}
-                            onChange={(value: string | number) =>
-                                updateValues({ name: value as string })
+                            onChange={(value) =>
+                                updateValues({ name: String(value) })
                             }
                             zIndex={30}
                         />
@@ -145,10 +196,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             label='Signature N'
                             optionValues={[2, 3, 4]}
-                            alignOptions='right'
                             initialValue={values.N}
-                            onChange={(value: string | number) =>
-                                updateValues({ N: value as number })
+                            alignOptions='right'
+                            onChange={(value) =>
+                                updateValues({ N: Number(value) })
                             }
                             zIndex={20}
                         />
@@ -159,9 +210,11 @@ const TrainModal = () => {
                             min={0.01}
                             max={0.25}
                             step={0.01}
-                            initialValue={values.alpha}
-                            onChange={(value: string | number) =>
-                                console.log(value + " 2")
+                            initialValue={defaultTrainingParams.alpha}
+                            onChange={(value) =>
+                                updateValues({
+                                    alpha: Number(value),
+                                })
                             }
                             placeholder='0.01 <= &#945; <= 0.25'
                         />
@@ -174,9 +227,9 @@ const TrainModal = () => {
                             min={0.5}
                             max={1.0}
                             step={0.01}
-                            initialValue={values.decay}
-                            onChange={(value: string | number) =>
-                                updateValues({ decay: value as number })
+                            initialValue={defaultTrainingParams.decay}
+                            onChange={(value) =>
+                                updateValues({ decay: Number(value) })
                             }
                             placeholder='Set at 1 if no decay'
                         />
@@ -187,10 +240,11 @@ const TrainModal = () => {
                             min={1000}
                             max={10000}
                             step={1000}
-                            initialValue={values.step}
-                            onChange={(value: string | number) =>
-                                updateValues({ step: value as number })
+                            initialValue={defaultTrainingParams.step}
+                            onChange={(value) =>
+                                updateValues({ step: Number(value) })
                             }
+                            placeholder='1000 <= step <= 10000'
                         />
                     </section>
                     <section>
@@ -201,23 +255,24 @@ const TrainModal = () => {
                             min={0}
                             max={0.05}
                             step={0.001}
-                            initialValue={values.min_alpha}
-                            onChange={(value: string | number) =>
-                                updateValues({ min_alpha: value as number })
+                            initialValue={defaultTrainingParams.minAlpha}
+                            onChange={(value) =>
+                                updateValues({ minAlpha: Number(value) })
                             }
-                            placeholder='No decay below this value'
+                            placeholder='min &#945; <= 0.05'
                         />
                         <Input
                             {...inputParameters}
                             type='number'
                             label='Training episodes'
-                            min={10000}
+                            min={values.isNew ? 0 : 5000}
                             max={100000}
                             step={5000}
-                            initialValue={values.episodes}
-                            onChange={(value: string | number) =>
-                                updateValues({ episodes: value as number })
+                            initialValue={defaultTrainingParams.episodes}
+                            onChange={(value) =>
+                                updateValues({ episodes: Number(value) })
                             }
+                            placeholder='0 to just create an Agent'
                         />
                     </section>
                 </main>
@@ -229,12 +284,13 @@ const TrainModal = () => {
                         width='10rem'
                         background={palette.three}
                         color={palette.background}
-                        onClick={() => console.log("GO!")}
+                        onClick={handleTrain}
                     >
                         GO!
                     </Button>
                 </div>
             </ModalFooter>
+            {finalMessage ? <ModalFooter>{finalMessage}</ModalFooter> : null}
         </Modal>
     );
 };

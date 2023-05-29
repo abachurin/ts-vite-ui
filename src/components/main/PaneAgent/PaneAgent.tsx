@@ -1,5 +1,6 @@
 import Pane from "../Pane";
 import PaneHeader from "../PaneHeader";
+import PaneBody from "../PaneBody";
 import TrainModal from "./TrainModal";
 import TestModal from "./TestModal";
 import ManageModal from "./ManageModal";
@@ -15,6 +16,7 @@ const PaneAgent = () => {
                 <TestModal />
                 <ManageModal />
             </PaneHeader>
+            <PaneBody></PaneBody>
         </Pane>
     );
 };
