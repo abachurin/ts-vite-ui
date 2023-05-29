@@ -1,18 +1,19 @@
 import { useState, useEffect } from "react";
+import { GLOBAL } from "../utils";
 
 const usePersistence = (
-    name = "dummy-storage",
-    initialValue = ""
+    name = "dummy-storage"
 ): [string, (update: string) => void] => {
-    const [value, setValue] = useState(initialValue || "");
+    const fullName = name + "__2048";
+    const [value, setValue] = useState(GLOBAL.filler);
 
     useEffect(() => {
-        const persistedValue = localStorage.getItem(name) || "";
+        const persistedValue = localStorage.getItem(fullName) ?? GLOBAL.filler;
         setValue(persistedValue);
-    }, [name]);
+    }, [fullName]);
 
     const changeValue = (update: string) => {
-        localStorage.setItem(name, update);
+        localStorage.setItem(fullName, update);
         setValue(update);
     };
 

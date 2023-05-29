@@ -174,8 +174,8 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='text'
                             label='New Agent Name'
+                            name='train-new-name'
                             placeholder={`Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`}
-                            initialValue={defaultTrainingParams.name}
                             onChange={(value) =>
                                 updateValues({ name: String(value) })
                             }
@@ -185,6 +185,7 @@ const TrainModal = () => {
                             {...inputParameters}
                             label='Existing Agent Name'
                             optionValues={[]}
+                            name='train-existing-name'
                             onChange={(value) =>
                                 updateValues({ name: String(value) })
                             }
@@ -195,8 +196,9 @@ const TrainModal = () => {
                         <Dropdown
                             {...inputParameters}
                             label='Signature N'
+                            name='train-N'
                             optionValues={[2, 3, 4]}
-                            initialValue={values.N}
+                            initialValue={2}
                             alignOptions='right'
                             onChange={(value) =>
                                 updateValues({ N: Number(value) })
@@ -207,10 +209,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Learning Rate (Alpha)'
+                            name='train-alpha'
                             min={0.01}
                             max={0.25}
                             step={0.01}
-                            initialValue={defaultTrainingParams.alpha}
                             onChange={(value) =>
                                 updateValues({
                                     alpha: Number(value),
@@ -224,10 +226,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Alpha decay rate'
+                            name='train-decay'
                             min={0.5}
                             max={1.0}
                             step={0.01}
-                            initialValue={defaultTrainingParams.decay}
                             onChange={(value) =>
                                 updateValues({ decay: Number(value) })
                             }
@@ -237,10 +239,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Decay step, in episodes'
+                            name='train-step'
                             min={1000}
                             max={10000}
                             step={1000}
-                            initialValue={defaultTrainingParams.step}
                             onChange={(value) =>
                                 updateValues({ step: Number(value) })
                             }
@@ -252,10 +254,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Minimal Alpha'
+                            name='train-minAlpha'
                             min={0}
                             max={0.05}
                             step={0.001}
-                            initialValue={defaultTrainingParams.minAlpha}
                             onChange={(value) =>
                                 updateValues({ minAlpha: Number(value) })
                             }
@@ -265,10 +267,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Training episodes'
+                            name='train-episodes'
                             min={values.isNew ? 0 : 5000}
                             max={100000}
                             step={5000}
-                            initialValue={defaultTrainingParams.episodes}
                             onChange={(value) =>
                                 updateValues({ episodes: Number(value) })
                             }

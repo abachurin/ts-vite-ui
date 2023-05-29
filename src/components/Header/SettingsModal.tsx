@@ -109,14 +109,15 @@ const SettingsModal = ({ align }: AlignProps) => {
                 background={palette.two}
                 color='white'
                 disabled={saveUserValues.isLoading}
-                onClick={() =>
+                onClick={() => {
+                    updateUser(currentValues);
                     saveUserValues.mutate({
                         name: user.name,
                         ...currentValues,
-                    })
-                }
+                    });
+                }}
             >
-                Save
+                Apply and Save
             </Button>
         ) : null;
 
@@ -168,7 +169,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                         <Checkbox
                             {...checkboxParameters}
                             label='Animation'
-                            checked={currentValues.animate}
+                            checked={user.animate}
                             onChange={(checked) =>
                                 updateValues({ animate: checked })
                             }
@@ -176,7 +177,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                         <Checkbox
                             {...checkboxParameters}
                             label='Sound'
-                            checked={currentValues.sound}
+                            checked={user.sound}
                             onChange={(checked) =>
                                 updateValues({ sound: checked })
                             }
@@ -184,7 +185,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                         <Checkbox
                             {...checkboxParameters}
                             label='Verbose'
-                            checked={currentValues.legends}
+                            checked={user.legends}
                             onChange={(checked) =>
                                 updateValues({ legends: checked })
                             }
@@ -196,7 +197,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                             width='100%'
                             label='Palette'
                             optionValues={Object.keys(palettes)}
-                            initialValue={currentValues.paletteName}
+                            initialValue={user.paletteName}
                             onChange={(value) =>
                                 updateValues({ paletteName: value as string })
                             }
@@ -208,7 +209,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                             start={1}
                             end={10}
                             step={0.5}
-                            initialValue={currentValues.animationSpeed}
+                            initialValue={user.animationSpeed}
                             label='Falcon speed'
                             onChange={(value) =>
                                 updateValues({ animationSpeed: value })
@@ -221,7 +222,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                             start={0}
                             end={1}
                             step={0.1}
-                            initialValue={currentValues.soundLevel}
+                            initialValue={user.soundLevel}
                             label='Sound level'
                             onChange={(value) =>
                                 updateValues({ soundLevel: value })

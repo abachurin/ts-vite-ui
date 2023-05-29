@@ -106,11 +106,20 @@ const Input = ({
     zIndex = "auto",
     onChange,
 }: InputProps) => {
-    const [persistedValue, setPersistedValue] = usePersistence(
-        name,
-        String(initialValue)
-    );
+    const [persistedValue, setPersistedValue] = usePersistence(name);
+    useEffect(() => {
+        if (persistedValue) {
+            onChange(persistedValue);
+        }
+    }, [persistedValue]);
+
     const [value, setValue] = useState(initialValue);
+
+    const displayValue = name
+        ? persistedValue === GLOBAL.filler
+            ? initialValue ?? ""
+            : persistedValue
+        : value;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (name) {
@@ -163,7 +172,7 @@ const Input = ({
                     max={max}
                     step={step}
                     placeholder={placeholder}
-                    value={name ? persistedValue : value}
+                    value={displayValue}
                     disabled={disabled}
                     onChange={handleChange}
                 />

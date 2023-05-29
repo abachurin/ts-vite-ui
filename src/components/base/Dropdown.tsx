@@ -2,6 +2,7 @@ import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
 import { useUser } from "../../contexts/UserProvider/UserContext";
+import usePersistence from "../../hooks/usePersistence";
 import { useOutsideClick } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
 import { GLOBAL, SvgPaths, makeSound } from "../../utils";
@@ -120,6 +121,7 @@ interface DropdownProps {
     alignOptions?: Alignment;
     standAlone?: boolean;
     disabled?: boolean;
+    name?: string;
     zIndex?: number | "auto";
     onChange: (value: string) => void;
 }
@@ -138,6 +140,7 @@ const Dropdown = ({
     alignOptions = "left",
     standAlone = false,
     disabled = false,
+    name = "",
     zIndex = "auto",
     onChange,
 }: DropdownProps) => {
@@ -146,16 +149,31 @@ const Dropdown = ({
     const [optionsOpen, setOptionsOpen] = useState(false);
     const ref = useOutsideClick(() => setOptionsOpen(false));
 
-    const [value, setValue] = useState(initialValue || optionValues[0]);
+    const startName = initialValue || optionValues[0];
+    const [value, setValue] = useState(startName);
+
+    const [persistedValue, setPersistedValue] = usePersistence(name);
     useEffect(() => {
-        setValue(initialValue || optionValues[0]);
-    }, [initialValue, optionValues]);
+        if (persistedValue) {
+            onChange(persistedValue);
+        }
+    }, [persistedValue]);
+
+    const displayValue = name
+        ? persistedValue === GLOBAL.filler
+            ? initialValue ?? ""
+            : persistedValue
+        : value;
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
         const currentValue = e.currentTarget.innerText;
         if (currentValue !== value) {
             makeSound(clickSound, user);
-            setValue(currentValue);
+            if (name) {
+                setPersistedValue(currentValue);
+            } else {
+                setValue(currentValue);
+            }
             onChange(currentValue);
         }
     };
@@ -216,7 +234,7 @@ const Dropdown = ({
                     <div>{label}</div>
                 </header>
                 <section onClick={() => setOptionsOpen((prev) => !prev)}>
-                    <div>{value}</div>
+                    <div>{displayValue}</div>
                     <aside>
                         <Icon
                             svg={
@@ -235,7 +253,7 @@ const Dropdown = ({
                     <div
                         key={uniqueId()}
                         css={
-                            v === value
+                            v === displayValue
                                 ? css`
                                       ${optionStyle}
                                       font-weight: 500;

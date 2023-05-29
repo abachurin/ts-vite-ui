@@ -2,7 +2,6 @@ import { css, SerializedStyles } from "@emotion/react";
 import { ReactNode, useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
 import { useUser } from "../../contexts/UserProvider/UserContext";
-import usePersistence from "../../hooks/usePersistence";
 import { GLOBAL, makeSound } from "../../utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
