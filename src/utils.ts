@@ -27,6 +27,7 @@ export const GLOBAL = {
     contactButtonWidth: "12rem",
     messageDuration: 5000,
     maxNameLength: 12,
+    filler: "f!JJHKLb22",
     userLevel: {
         guest: 0,
         user: 1,
