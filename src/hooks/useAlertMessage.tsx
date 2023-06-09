@@ -27,6 +27,7 @@ const useAlertMessage = (
                     color: ${type === "success"
                         ? palette.success
                         : palette.error};
+                    font-weight: 500;
                 `}
             >
                 {text}

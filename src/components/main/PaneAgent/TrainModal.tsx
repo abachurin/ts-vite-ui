@@ -1,19 +1,20 @@
 import { css } from "@emotion/react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { connectAPI } from "../../../api/utils";
 import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import {
     usePalette,
     useUser,
-    useUserUpdate,
 } from "../../../contexts/UserProvider/UserContext";
+import useJobDescription from "../../../hooks/useJobDescription";
 import useAlertMessage from "../../../hooks/useAlertMessage";
-import { User, TrainingJob } from "../../../types";
+import { AgentTraining } from "../../../types";
 import {
     GLOBAL,
     defaultTrainingParams,
     validateTrainingParams,
+    simulateCloseModalClick,
 } from "../../../utils";
 import Modal from "../../modal/Modal";
 import ModalHeader from "../../modal/ModalHeader";
@@ -50,14 +51,6 @@ const emotion = css`
     }
 `;
 
-// Helper functions
-const setDefaultValues = (user: User): TrainingJob => {
-    return {
-        ...defaultTrainingParams,
-        user: user.name,
-    };
-};
-
 /**
  * Returns a React Modal component containing the Admin section.
  * @param align - The alignment parameter of the button, which opens the modal
@@ -66,15 +59,12 @@ const TrainModal = () => {
     const modeUpdate = useModeUpdate();
     const palette = usePalette();
     const user = useUser();
-    const userUpdate = useUserUpdate();
+    const job = useJobDescription(user.name);
     const [message, createMessage] = useAlertMessage("");
 
-    const [values, setValues] = useState<TrainingJob>(setDefaultValues(user));
-    useEffect(() => {
-        setValues(setDefaultValues(user));
-    }, [user]);
+    const [values, setValues] = useState<AgentTraining>(defaultTrainingParams);
 
-    const updateValues = useCallback((update: Partial<TrainingJob>) => {
+    const updateValues = useCallback((update: Partial<AgentTraining>) => {
         setValues((prevValues) => ({ ...prevValues, ...update }));
     }, []);
 
@@ -86,11 +76,11 @@ const TrainModal = () => {
     };
 
     const agentMutation = useMutation(
-        (values: TrainingJob) =>
-            connectAPI<TrainingJob, string>({
+        (values: AgentTraining) =>
+            connectAPI<AgentTraining, string>({
                 method: "post",
                 endpoint: `/jobs/train`,
-                data: values,
+                data: { ...values, user: user.name },
             }),
         {
             onSuccess: ({ result, error }) => {
@@ -109,9 +99,9 @@ const TrainModal = () => {
                             : "Training resumed, follow the logs";
                         createMessage(message, "success");
                         modeUpdate({ agent: "train" });
-                        userUpdate({
-                            job: "train",
-                        });
+                        setTimeout(() => {
+                            simulateCloseModalClick();
+                        }, 3000);
                     }
                 }
             },
@@ -129,7 +119,6 @@ const TrainModal = () => {
                 "error"
             );
         } else {
-            console.log(values);
             agentMutation.mutate(values);
         }
     };
@@ -139,12 +128,9 @@ const TrainModal = () => {
             button={{
                 background: palette.two,
                 children: "Train",
-                legend: "Register to unlock",
+                legend: "Only for registered users",
                 level: GLOBAL.userLevel.user,
-                onClick: () => {
-                    modeUpdate({ agent: "train" });
-                },
-                disabled: user.job !== "none",
+                disabled: !job || user.name !== "Login",
             }}
             modal={{
                 width: "26rem",
@@ -208,9 +194,9 @@ const TrainModal = () => {
                         <Input
                             {...inputParameters}
                             type='number'
-                            label='Learning Rate (Alpha)'
+                            label='Initial Learning Rate (&#945;)'
                             name='train-alpha'
-                            min={0.01}
+                            min={0.1}
                             max={0.25}
                             step={0.01}
                             onChange={(value) =>
@@ -218,14 +204,14 @@ const TrainModal = () => {
                                     alpha: Number(value),
                                 })
                             }
-                            placeholder='0.01 <= &#945; <= 0.25'
+                            placeholder='0.10 <= &#945; <= 0.25'
                         />
                     </section>
                     <section>
                         <Input
                             {...inputParameters}
                             type='number'
-                            label='Alpha decay rate'
+                            label='&#945; decay rate'
                             name='train-decay'
                             min={0.5}
                             max={1.0}
@@ -253,7 +239,7 @@ const TrainModal = () => {
                         <Input
                             {...inputParameters}
                             type='number'
-                            label='Minimal Alpha'
+                            label='Minimal &#945;'
                             name='train-minAlpha'
                             min={0}
                             max={0.05}

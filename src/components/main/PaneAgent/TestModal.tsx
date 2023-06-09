@@ -1,6 +1,7 @@
 import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
+import useJobDescription from "../../../hooks/useJobDescription";
 import Modal from "../../modal/Modal";
 
 /**
@@ -11,6 +12,7 @@ const TestModal = () => {
     const modeUpdate = useModeUpdate();
     const palette = usePalette();
     const user = useUser();
+    const job = useJobDescription(user.name);
 
     return (
         <Modal
@@ -21,7 +23,7 @@ const TestModal = () => {
                 onClick: () => {
                     modeUpdate({ agent: "test" });
                 },
-                disabled: user.job !== "none",
+                disabled: !job || user.name !== "Login",
             }}
             modal={{
                 width: "200px",

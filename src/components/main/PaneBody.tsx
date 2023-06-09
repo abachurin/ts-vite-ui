@@ -4,15 +4,15 @@ import { GLOBAL } from "../../utils";
 
 // Emotion styles
 const emotion = css`
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    // align-items: center;
-    padding-inline: calc(${GLOBAL.padding} * 2);
+    gap: ${GLOBAL.padding};
     padding-block: ${GLOBAL.padding};
     font-size: 0.85rem;
+    overflow: auto;
     & > * {
-        margin: auto;
+        margin-inline: auto;
     }
 `;
 

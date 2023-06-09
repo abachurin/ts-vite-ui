@@ -12,8 +12,9 @@ const makeEmotion = (
     flex: 1;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow: auto;
     min-width: ${GLOBAL.minPaneWidth}px;
-    min-height: 30em;
     background-color: ${backgroundColor};
     color: ${color};
     border-radius: ${GLOBAL.borderRadius};

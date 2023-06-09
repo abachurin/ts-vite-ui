@@ -4,6 +4,8 @@ import PaneBody from "../PaneBody";
 import TrainModal from "./TrainModal";
 import TestModal from "./TestModal";
 import ManageModal from "./ManageModal";
+import CurrentJobDescription from "./CurrentJobDescription";
+import LogWindow from "./LogWindow";
 
 /**
  * Renders the Agent Pane component on the left, goes top on small screen.
@@ -16,7 +18,10 @@ const PaneAgent = () => {
                 <TestModal />
                 <ManageModal />
             </PaneHeader>
-            <PaneBody></PaneBody>
+            <PaneBody>
+                <CurrentJobDescription />
+                <LogWindow />
+            </PaneBody>
         </Pane>
     );
 };

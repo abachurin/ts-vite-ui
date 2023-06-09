@@ -15,7 +15,6 @@ export const defaultUser: User = {
     paletteName: "One",
     agents: [],
     logs: [],
-    job: "none",
 };
 
 export const UserContext = createContext<User>(defaultUser);

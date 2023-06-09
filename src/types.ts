@@ -22,6 +22,9 @@ export type InputType =
     | "url";
 
 // Common Prop types
+export interface UserName {
+    userName: string;
+}
 export interface ChildrenProps {
     children?: React.ReactNode;
 }
@@ -41,7 +44,6 @@ export type User = {
     paletteName: string;
     agents: string[];
     logs: string[];
-    job: "none" | "train" | "test";
 };
 export type UserLoginAction = "login" | "register" | "delete" | "logout";
 export type UserLogin = {
@@ -71,6 +73,7 @@ export interface Palette {
     error: RGB;
     warning: RGB;
     info: RGB;
+    logs: RGB;
 }
 
 export type Palettes = {
@@ -106,9 +109,9 @@ export type PositionType = "fixed" | "absolute";
 // Alert types
 export type AlertColors = "success" | "error" | "warning" | "info";
 
-// Agent types
+// Agent and Agent Job types
 export interface AgentMainParams {
-    user: string;
+    user?: string;
     name: string | undefined;
     N: number | undefined;
     alpha: number | undefined;
@@ -122,11 +125,12 @@ export interface Agent extends AgentMainParams {
     lastTrainingEpisode: number;
     history: number[];
 }
-export interface TrainingJob extends AgentMainParams {
+export interface AgentTraining extends AgentMainParams {
     episodes: number | undefined;
     isNew: boolean;
 }
 export interface AgentWatching {
+    user?: string;
     name: string;
     depth: number;
     width: number;
@@ -135,3 +139,40 @@ export interface AgentWatching {
 export interface AgentTesting extends AgentWatching {
     episodes: number;
 }
+
+// Job Description types
+export interface Job {
+    description: string;
+    type: "train" | "test";
+    status: "";
+    name: string;
+    episodes: number;
+    start: string;
+    timeElapsed: string;
+    remainingTimeEstimate: string;
+}
+
+export interface TrainJobDescription extends Job {
+    currentAlpha: number;
+}
+
+export interface TestJobDescription extends Job {
+    depth: number;
+    width: number;
+    trigger: number;
+}
+
+export type JobDescription = TrainJobDescription | TestJobDescription | null;
+
+export type JobDescriptionResponse = {
+    status?: string;
+    job?: JobDescription;
+};
+
+// Logs types
+export type Logs = string[];
+
+export type LogsResponse = {
+    status: string;
+    logs: Logs;
+};

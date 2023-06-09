@@ -224,7 +224,11 @@ const ModalWindow = ({
         <>
             <div css={block}></div>
             <div css={containerStyle}>
-                <div onClick={closeModal} css={backgroundStyle} />
+                <div
+                    onClick={closeModal}
+                    id='modal-close'
+                    css={backgroundStyle}
+                />
                 <div css={modalStyle}>{children}</div>
             </div>
         </>,

@@ -16,7 +16,12 @@ import {
     UserLoginAction,
     LoginResponse,
 } from "../../types";
-import { GLOBAL, SvgPaths, checkRe } from "../../utils";
+import {
+    GLOBAL,
+    SvgPaths,
+    checkRe,
+    simulateCloseModalClick,
+} from "../../utils";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";
@@ -68,6 +73,9 @@ const Login = ({ align = "left" }: LoginProps) => {
         updateUser(update);
         setName(undefined);
         setPwd(undefined);
+        setTimeout(() => {
+            simulateCloseModalClick();
+        }, 2000);
     };
 
     const useLoginMutation = (action: UserLoginAction) => {
@@ -158,7 +166,13 @@ const Login = ({ align = "left" }: LoginProps) => {
         user.name === "Login" ? (
             <Icon svg={SvgPaths.login} rescaleFactor={1.2} />
         ) : (
-            user.name
+            <div
+                css={css`
+                    text-transform: none;
+                `}
+            >
+                {user.name}
+            </div>
         );
 
     return (

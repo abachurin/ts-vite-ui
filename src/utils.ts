@@ -1,4 +1,4 @@
-import { RGB, RGBA, TrainingJob } from "./types";
+import { RGB, RGBA, AgentTraining } from "./types";
 import { User } from "./types";
 import { forEach } from "lodash-es";
 
@@ -28,6 +28,7 @@ export const GLOBAL = {
     messageDuration: 5000,
     maxNameLength: 12,
     filler: "f!JJHKLb22",
+    maxLogs: 10,
     userLevel: {
         guest: 0,
         user: 1,
@@ -72,6 +73,18 @@ export const boardColors: Record<number, string> = {
     13: "hsl(255, 100%, 45%)",
     14: "hsl(0, 100%, 30%)",
     15: "hsl(0, 0%, 20%)",
+};
+
+export const JobDescriptionLabels = {
+    name: "Agent name:",
+    currentAlpha: "Current learning rate:",
+    start: "Started at:",
+    timeElapsed: "Elapsed time:",
+    remainingTimeEstimate: "Remaining time estimate:",
+    depth: "Look ahead (depth):",
+    width: "Branching (width):",
+    trigger: "Empty cells (trigger):",
+    episodes: "Episodes:",
 };
 
 /**
@@ -206,8 +219,8 @@ export const defaultTrainingParams = {
     isNew: true,
 };
 export const validateTrainingParams = (
-    values: Partial<TrainingJob>
-): [Partial<TrainingJob>, boolean] => {
+    values: Partial<AgentTraining>
+): [Partial<AgentTraining>, boolean] => {
     const validated = { ...values };
     forEach(values, (_, key) => {
         switch (key) {
@@ -258,4 +271,13 @@ export const validateTrainingParams = (
         validated,
         !deepEqual(validated, values) || hasUndefinedValues(validated),
     ];
+};
+
+/**
+ * Simulates a click event on the element with ID "modal-close" to close a modal.
+ * The ID should be assigned to Modal Background div.
+ */
+export const simulateCloseModalClick = (): void => {
+    const toClick = document.querySelector("#modal-close") as HTMLElement;
+    toClick && toClick.click();
 };

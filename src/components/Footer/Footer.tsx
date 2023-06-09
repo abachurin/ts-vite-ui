@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { RGBA, RGB } from "../../types";
-import { GLOBAL, setTransparency } from "../../utils";
+import { GLOBAL, setTransparency, smoothScroll } from "../../utils";
 
 // Emotion styles
 const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
@@ -29,7 +29,11 @@ const Footer = () => {
         [palette]
     );
 
-    return <div css={emotion}>Footer</div>;
+    return (
+        <div css={emotion} onClick={() => smoothScroll("#game-pane")}>
+            Footer
+        </div>
+    );
 };
 
 export default Footer;

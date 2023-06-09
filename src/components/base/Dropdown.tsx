@@ -154,7 +154,7 @@ const Dropdown = ({
 
     const [persistedValue, setPersistedValue] = usePersistence(name);
     useEffect(() => {
-        if (persistedValue) {
+        if (name && persistedValue) {
             onChange(persistedValue);
         }
     }, [persistedValue]);
@@ -167,6 +167,7 @@ const Dropdown = ({
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
         const currentValue = e.currentTarget.innerText;
+        console.log(currentValue);
         if (currentValue !== value) {
             makeSound(clickSound, user);
             if (name) {

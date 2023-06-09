@@ -71,15 +71,17 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
                 background-color: white;
                 color: black;
                 font-size: 0.85em;
+                text-transform: none;
                 padding: ${GLOBAL.padding};
                 border-radius: ${GLOBAL.borderRadius};
+                box-shadow: ${GLOBAL.insetShadow("black", 0.1)};
                 content: attr(data-legend);
                 white-space: wrap;
                 text-align: left;
                 transform: scale(0);
-                transition: transform 0.25s;
+                transition: transform 0.25s 1s;
             }
-            &:hover:disabled::before {
+            &:hover::before {
                 transform: scale(1);
             }
             ${

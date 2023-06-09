@@ -28,7 +28,6 @@ const makeEmotion = (
     css`
         display: flex;
         justify-content: center;
-        // align-items: center;
         gap: ${GLOBAL.padding};
         padding: ${GLOBAL.padding};
         padding-left: calc(${GLOBAL.padding} * 2);
