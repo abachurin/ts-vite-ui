@@ -125,6 +125,10 @@ export interface Agent extends AgentMainParams {
     lastTrainingEpisode: number;
     history: number[];
 }
+export type GetAgentResponse = {
+    status?: string;
+    agents?: Agent[];
+};
 export interface AgentTraining extends AgentMainParams {
     episodes: number | undefined;
     isNew: boolean;
@@ -143,8 +147,7 @@ export interface AgentTesting extends AgentWatching {
 // Job Description types
 export interface Job {
     description: string;
-    type: "train" | "test";
-    status: "";
+    type: number;
     name: string;
     episodes: number;
     start: string;
