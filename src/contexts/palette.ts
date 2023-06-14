@@ -15,10 +15,10 @@ export const palettes: Palettes = {
         three: "rgb(50, 50, 224)",
         four: "rgb(77, 39, 77)",
         success: "rgb(4, 96, 64)",
-        error: "rgb(200, 48, 11)",
+        error: "rgb(255, 0, 102)",
         warning: "rgb(255, 153, 51)",
         info: "rgb(0, 153, 204)",
-        logs: "rgb(246, 129, 0)",
+        logs: "rgb(255, 140, 26)",
     },
     Two: {
         name: "Two",

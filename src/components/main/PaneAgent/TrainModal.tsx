@@ -130,7 +130,7 @@ const TrainModal = () => {
                 children: "Train",
                 legend: "Only for registered users",
                 level: GLOBAL.userLevel.user,
-                disabled: !job || user.name !== "Login",
+                disabled: job !== null || user.name === "Login",
             }}
             modal={{
                 width: "26rem",
@@ -150,7 +150,7 @@ const TrainModal = () => {
                         color2={palette.one}
                         label={"Train new / keep training existing Agent"}
                         options={["New", "Existing"]}
-                        initialValue={"New"}
+                        initialValue={values.isNew ? "New" : "Existing"}
                         onChange={(value: string) =>
                             updateValues({ isNew: value === "New" })
                         }
@@ -185,6 +185,7 @@ const TrainModal = () => {
                             name='train-N'
                             optionValues={[2, 3, 4]}
                             initialValue={2}
+                            disabled={!values.isNew}
                             alignOptions='right'
                             onChange={(value) =>
                                 updateValues({ N: Number(value) })
@@ -199,12 +200,13 @@ const TrainModal = () => {
                             min={0.1}
                             max={0.25}
                             step={0.01}
+                            placeholder='0.10 <= &#945; <= 0.25'
+                            disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({
                                     alpha: Number(value),
                                 })
                             }
-                            placeholder='0.10 <= &#945; <= 0.25'
                         />
                     </section>
                     <section>
@@ -216,10 +218,11 @@ const TrainModal = () => {
                             min={0.5}
                             max={1.0}
                             step={0.01}
+                            placeholder='Set at 1 if no decay'
+                            disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({ decay: Number(value) })
                             }
-                            placeholder='Set at 1 if no decay'
                         />
                         <Input
                             {...inputParameters}
@@ -229,10 +232,11 @@ const TrainModal = () => {
                             min={1000}
                             max={10000}
                             step={1000}
+                            placeholder='1000 <= step <= 10000'
+                            disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({ step: Number(value) })
                             }
-                            placeholder='1000 <= step <= 10000'
                         />
                     </section>
                     <section>
@@ -244,10 +248,11 @@ const TrainModal = () => {
                             min={0}
                             max={0.05}
                             step={0.001}
+                            placeholder='min &#945; <= 0.05'
+                            disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({ minAlpha: Number(value) })
                             }
-                            placeholder='min &#945; <= 0.05'
                         />
                         <Input
                             {...inputParameters}
@@ -257,10 +262,11 @@ const TrainModal = () => {
                             min={values.isNew ? 0 : 5000}
                             max={100000}
                             step={5000}
+                            disabled={!values.isNew}
+                            placeholder='0 to just create an Agent'
                             onChange={(value) =>
                                 updateValues({ episodes: Number(value) })
                             }
-                            placeholder='0 to just create an Agent'
                         />
                     </section>
                 </main>

@@ -26,9 +26,9 @@ export const GLOBAL = {
     gameCellPadding: "3px",
     contactButtonWidth: "12rem",
     messageDuration: 5000,
-    maxNameLength: 12,
+    maxNameLength: 500,
     filler: "f!JJHKLb22",
-    maxLogs: 10,
+    maxLogs: 500,
     userLevel: {
         guest: 0,
         user: 1,

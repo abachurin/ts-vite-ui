@@ -167,7 +167,6 @@ const Dropdown = ({
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
         const currentValue = e.currentTarget.innerText;
-        console.log(currentValue);
         if (currentValue !== value) {
             makeSound(clickSound, user);
             if (name) {

@@ -20,10 +20,11 @@ const TestModal = () => {
                 background: palette.two,
                 align: "left",
                 children: "Test",
+                legend: "Only for registered users",
                 onClick: () => {
                     modeUpdate({ agent: "test" });
                 },
-                disabled: !job || user.name !== "Login",
+                disabled: job !== null || user.name === "Login",
             }}
             modal={{
                 width: "200px",

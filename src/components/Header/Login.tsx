@@ -71,8 +71,6 @@ const Login = ({ align = "left" }: LoginProps) => {
 
     const finalizeLogin = (update: User): void => {
         updateUser(update);
-        setName(undefined);
-        setPwd(undefined);
         setTimeout(() => {
             simulateCloseModalClick();
         }, 2000);
