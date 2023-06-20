@@ -1,4 +1,7 @@
-import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import {
+    usePalette,
+    useNoUser,
+} from "../../../contexts/UserProvider/UserContext";
 import Modal from "../../modal/Modal";
 
 /**
@@ -7,6 +10,7 @@ import Modal from "../../modal/Modal";
  */
 const ManageModal = () => {
     const palette = usePalette();
+    const noUser = useNoUser();
 
     return (
         <Modal
@@ -14,6 +18,8 @@ const ManageModal = () => {
                 background: palette.two,
                 align: "left",
                 children: "Manage",
+                legend: "Only for registered users",
+                disabled: noUser,
             }}
             modal={{
                 width: "20rem",

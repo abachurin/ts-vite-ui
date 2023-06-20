@@ -1,5 +1,6 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
+import { useUser } from "../../contexts/UserProvider/UserContext";
 import usePersistence from "../../hooks/usePersistence";
 import { InputType } from "../../types";
 import { GLOBAL } from "../../utils";
@@ -80,7 +81,7 @@ interface InputProps {
     initialValue?: string | number | undefined;
     standAlone?: boolean;
     disabled?: boolean;
-    name?: string;
+    persistAs?: string;
     zIndex?: number | "auto";
     onChange: (value: string) => void;
 }
@@ -102,11 +103,15 @@ const Input = ({
     initialValue,
     standAlone = false,
     disabled = false,
-    name = "",
+    persistAs = "",
     zIndex = "auto",
     onChange,
 }: InputProps) => {
-    const [persistedValue, setPersistedValue] = usePersistence(name);
+    const user = useUser();
+    const [persistedValue, setPersistedValue] = usePersistence(
+        user.name,
+        persistAs
+    );
     useEffect(() => {
         if (persistedValue) {
             onChange(persistedValue);
@@ -114,15 +119,19 @@ const Input = ({
     }, [persistedValue]);
 
     const [value, setValue] = useState(initialValue);
+    useEffect(() => {
+        setValue(initialValue);
+        onChange(String(initialValue));
+    }, [initialValue]);
 
-    const displayValue = name
+    const displayValue = persistAs
         ? persistedValue === GLOBAL.filler
             ? initialValue ?? ""
             : persistedValue
         : value;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (name) {
+        if (persistAs) {
             setPersistedValue(e.target.value);
         } else {
             setValue(e.target.value);

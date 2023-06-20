@@ -202,7 +202,9 @@ export function deepEqual<T>(a: T, b: T): boolean {
  * Checks if an object has at least one property with a value of undefined.
  */
 export function hasUndefinedValues(obj: Record<string, unknown>): boolean {
-    return Object.values(obj).some((value) => value === undefined);
+    return Object.values(obj).some(
+        (value) => value === undefined || value === null || Number.isNaN(value)
+    );
 }
 
 /**

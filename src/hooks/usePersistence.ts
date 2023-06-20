@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { GLOBAL } from "../utils";
 
 const usePersistence = (
-    name = "dummy-storage"
+    userName = "dummy-user",
+    persistAs = "dummy-storage"
 ): [string, (update: string) => void] => {
-    const fullName = name + "__2048";
+    const fullName = userName + persistAs + "__2048";
     const [value, setValue] = useState(GLOBAL.filler);
 
     useEffect(() => {

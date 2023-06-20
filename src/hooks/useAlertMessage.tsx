@@ -21,18 +21,19 @@ const useAlertMessage = (
         if (timeoutId.current) {
             clearTimeout(timeoutId.current);
         }
-        setMessage(
-            <div
-                css={css`
-                    color: ${type === "success"
-                        ? palette.success
-                        : palette.error};
-                    font-weight: 500;
-                `}
-            >
-                {text}
-            </div>
-        );
+        text &&
+            setMessage(
+                <div
+                    css={css`
+                        color: ${type === "success"
+                            ? palette.success
+                            : palette.error};
+                        font-weight: 500;
+                    `}
+                >
+                    {text}
+                </div>
+            );
         timeoutId.current = setTimeout(() => {
             setMessage(initialMessage);
         }, duration);

@@ -1,7 +1,11 @@
+import { useState } from "react";
+import { connectAPI } from "../../../api/utils";
 import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
-import useJobDescription from "../../../hooks/useJobDescription";
+import useAlertMessage from "../../../hooks/useAlertMessage";
+import useAnyRunningJob from "../../../hooks/useAnyJob";
+import { Agent, AgentListRequest, AgentListResponse } from "../../../types";
 import Modal from "../../modal/Modal";
 
 /**
@@ -12,7 +16,73 @@ const TestModal = () => {
     const modeUpdate = useModeUpdate();
     const palette = usePalette();
     const user = useUser();
-    const job = useJobDescription(user.name);
+    const anyJob = useAnyRunningJob();
+
+    const [message, createMessage] = useAlertMessage("");
+    const [loading, setLoading] = useState(false);
+
+    const [agents, setAgents] = useState<Agent[]>([]);
+
+    const onOpen = async () => {
+        const { result, error } = await connectAPI<
+            AgentListRequest,
+            AgentListResponse
+        >({
+            method: "post",
+            endpoint: "agents/list",
+            data: { userName: user.name, scope: "all" },
+        });
+        if (error) {
+            createMessage(error, "error");
+        } else {
+            if (result === undefined || result.status !== "ok") {
+                createMessage(result?.status ?? "Something is wrong!", "error");
+            } else setAgents(result?.agents ?? []);
+        }
+        setLoading(false);
+
+        modeUpdate({ agent: "test" });
+    };
+
+    // const handleTest = async () => {
+    // const [validated, change] = validateTrainingParams(values);
+    // setValues((prevValues) => ({ ...prevValues, ...validated }));
+    // if (change) {
+    //     createMessage(
+    //         "Some parameters are invalid or undefined. Please follow the instructions.",
+    //         "error"
+    //     );
+    // } else {
+    //     setLoading(true);
+    //     createMessage("Processing Job ...");
+    //     const { result, error } = await connectAPI<AgentTraining, string>({
+    //         method: "post",
+    //         endpoint: `/jobs/train`,
+    //         data: { ...values, user: user.name },
+    //     });
+    //     if (error) {
+    //         createMessage(error, "error");
+    //     } else {
+    //         if (result !== "ok") {
+    //             createMessage(result, "error");
+    //         } else {
+    //             const message = values.isNew
+    //                 ? `Agent created${
+    //                       (values.episodes as number) > 0
+    //                           ? ", training commenced, follow the logs"
+    //                           : ""
+    //                   }`
+    //                 : "Training resumed, follow the logs";
+    //             createMessage(message, "success");
+    //             modeUpdate({ agent: "train" });
+    //             setTimeout(() => {
+    //                 simulateCloseModalClick();
+    //             }, 3000);
+    //         }
+    //     }
+    //     setLoading(false);
+    // }
+    // };
 
     return (
         <Modal
@@ -20,11 +90,9 @@ const TestModal = () => {
                 background: palette.two,
                 align: "left",
                 children: "Test",
-                legend: "Only for registered users",
-                onClick: () => {
-                    modeUpdate({ agent: "test" });
-                },
-                disabled: job !== null || user.name === "Login",
+                legend: "Only for registered users, and when no Job is running",
+                onClick: onOpen,
+                disabled: anyJob,
             }}
             modal={{
                 width: "200px",

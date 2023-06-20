@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import {
     useUser,
     usePalette,
@@ -47,6 +46,13 @@ const emotion = css`
         margin-left: auto;
     }
 `;
+
+const successMessage = (action: UserLoginAction, userName: string): string =>
+    action === "login"
+        ? `Welcome back, ${userName}!`
+        : action === "register"
+        ? `Welcome ${userName}!`
+        : `${userName} deleted`;
 const initialMessage = "Enter Name and Password";
 
 /**
@@ -68,6 +74,7 @@ const Login = ({ align = "left" }: LoginProps) => {
     const [pwd, setPwd] = useState<string | undefined>();
 
     const [message, createMessage] = useAlertMessage(initialMessage);
+    const [loading, setLoading] = useState(false);
 
     const finalizeLogin = (update: User): void => {
         updateUser(update);
@@ -76,60 +83,7 @@ const Login = ({ align = "left" }: LoginProps) => {
         }, 2000);
     };
 
-    const useLoginMutation = (action: UserLoginAction) => {
-        const successMessage = (userName: string): string =>
-            action === "login"
-                ? `Welcome back, ${userName}!`
-                : action === "register"
-                ? `Welcome ${userName}!`
-                : `${userName} deleted`;
-
-        return useMutation(
-            (data: UserLogin) =>
-                connectAPI<UserLogin, LoginResponse>({
-                    method: action === "delete" ? "delete" : "post",
-                    endpoint: `/users/${action}`,
-                    data,
-                }),
-            {
-                onSuccess: ({ result, error }) => {
-                    if (result !== undefined) {
-                        if (result.status !== "ok") {
-                            createMessage(result.status, "error");
-                        } else {
-                            const newUser =
-                                action === "delete"
-                                    ? defaultUser
-                                    : (result.content as User);
-                            createMessage(
-                                successMessage(
-                                    action === "delete"
-                                        ? (name as string)
-                                        : newUser.name
-                                ),
-                                "success"
-                            );
-                            finalizeLogin(newUser);
-                        }
-                    } else {
-                        createMessage(error ?? "Unknown error", "error");
-                    }
-                },
-            }
-        );
-    };
-
-    const loginMutation = {
-        login: useLoginMutation("login"),
-        register: useLoginMutation("register"),
-        delete: useLoginMutation("delete"),
-    };
-    const loading =
-        loginMutation.login.isLoading ||
-        loginMutation.register.isLoading ||
-        loginMutation.delete.isLoading;
-
-    const handleSubmit = (
+    const handleSubmit = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
         action: UserLoginAction
     ) => {
@@ -144,7 +98,39 @@ const Login = ({ align = "left" }: LoginProps) => {
                 "error"
             );
         } else {
-            loginMutation[action].mutate({ name, pwd });
+            setLoading(true);
+            createMessage("Authorization ...", "success");
+            const { result, error } = await connectAPI<
+                UserLogin,
+                LoginResponse
+            >({
+                method: action === "delete" ? "delete" : "post",
+                endpoint: `/users/${action}`,
+                data: { name, pwd },
+            });
+            if (result !== undefined) {
+                if (result.status !== "ok") {
+                    createMessage(result.status, "error");
+                } else {
+                    const newUser =
+                        action === "delete"
+                            ? defaultUser
+                            : (result.content as User);
+                    createMessage(
+                        successMessage(
+                            action,
+                            action === "delete"
+                                ? (name as string)
+                                : newUser.name
+                        ),
+                        "success"
+                    );
+                    finalizeLogin(newUser);
+                }
+            } else {
+                createMessage(error ?? "Unknown error", "error");
+            }
+            setLoading(false);
         }
     };
 
@@ -197,14 +183,14 @@ const Login = ({ align = "left" }: LoginProps) => {
                         {...inputParameters}
                         type='text'
                         label='Name'
-                        name='login-name'
+                        persistAs='login-name'
                         onChange={(value) => setName(value as string)}
                     />
                     <Input
                         {...inputParameters}
                         type='text'
                         label='Password'
-                        name='login-pwd'
+                        persistAs='login-pwd'
                         onChange={(value) => setPwd(value as string)}
                     />
                     <ButtonGroup height='2rem'>
@@ -257,7 +243,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                     </ButtonGroup>
                 </form>
             </ModalBody>
-            <ModalFooter>{loading ? "Authorization ..." : message}</ModalFooter>
+            <ModalFooter>{message}</ModalFooter>
             <ConfirmDialog
                 isOpen={confirmDelete}
                 message={`Are you sure you want to delete ${name}?`}

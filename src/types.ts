@@ -123,11 +123,18 @@ export interface Agent extends AgentMainParams {
     bestScore: number;
     maxTile: number;
     lastTrainingEpisode: number;
-    history: number[];
 }
-export type GetAgentResponse = {
+
+export type AgentListRequestType = "all" | "user";
+
+export interface AgentListRequest extends UserName {
+    scope: AgentListRequestType;
+}
+
+export type AgentDict = Record<string, Agent>;
+export type AgentListResponse = {
     status?: string;
-    agents?: Agent[];
+    agents?: AgentDict;
 };
 export interface AgentTraining extends AgentMainParams {
     episodes: number | undefined;

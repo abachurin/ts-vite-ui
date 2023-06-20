@@ -116,12 +116,12 @@ interface DropdownProps {
     controlColor?: string;
     color?: string;
     label?: string;
-    optionValues: string[] | number[];
+    optionValues: (string | number)[];
     initialValue?: string | number;
     alignOptions?: Alignment;
     standAlone?: boolean;
     disabled?: boolean;
-    name?: string;
+    persistAs?: string;
     zIndex?: number | "auto";
     onChange: (value: string) => void;
 }
@@ -140,7 +140,7 @@ const Dropdown = ({
     alignOptions = "left",
     standAlone = false,
     disabled = false,
-    name = "",
+    persistAs = "",
     zIndex = "auto",
     onChange,
 }: DropdownProps) => {
@@ -151,15 +151,22 @@ const Dropdown = ({
 
     const startName = initialValue || optionValues[0];
     const [value, setValue] = useState(startName);
-
-    const [persistedValue, setPersistedValue] = usePersistence(name);
     useEffect(() => {
-        if (name && persistedValue) {
+        setValue(startName);
+        onChange(String(startName));
+    }, [startName]);
+
+    const [persistedValue, setPersistedValue] = usePersistence(
+        user.name,
+        persistAs
+    );
+    useEffect(() => {
+        if (persistAs && persistedValue) {
             onChange(persistedValue);
         }
     }, [persistedValue]);
 
-    const displayValue = name
+    const displayValue = persistAs
         ? persistedValue === GLOBAL.filler
             ? initialValue ?? ""
             : persistedValue
@@ -169,7 +176,7 @@ const Dropdown = ({
         const currentValue = e.currentTarget.innerText;
         if (currentValue !== value) {
             makeSound(clickSound, user);
-            if (name) {
+            if (persistAs) {
                 setPersistedValue(currentValue);
             } else {
                 setValue(currentValue);

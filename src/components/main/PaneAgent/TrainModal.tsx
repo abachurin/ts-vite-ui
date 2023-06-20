@@ -1,29 +1,28 @@
 import { css } from "@emotion/react";
-import { useState, useCallback } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { connectAPI } from "../../../api/utils";
+import { useCallback, useEffect, useState } from "react";
+import { connectAPI, getAgents } from "../../../api/utils";
 import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import {
     usePalette,
     useUser,
 } from "../../../contexts/UserProvider/UserContext";
-import useJobDescription from "../../../hooks/useJobDescription";
 import useAlertMessage from "../../../hooks/useAlertMessage";
-import { AgentTraining } from "../../../types";
+import useAnyRunningJob from "../../../hooks/useAnyJob";
+import { AgentDict, AgentTraining } from "../../../types";
 import {
     GLOBAL,
     defaultTrainingParams,
-    validateTrainingParams,
     simulateCloseModalClick,
+    validateTrainingParams,
 } from "../../../utils";
+import Button from "../../base/Button/Button";
+import Dropdown from "../../base/Dropdown";
+import Input from "../../base/Input";
+import Radio from "../../base/Radio";
 import Modal from "../../modal/Modal";
-import ModalHeader from "../../modal/ModalHeader";
 import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
-import Input from "../../base/Input";
-import Dropdown from "../../base/Dropdown";
-import Radio from "../../base/Radio";
-import Button from "../../base/Button/Button";
+import ModalHeader from "../../modal/ModalHeader";
 
 // Emotion styles
 const footerWrapper = css`
@@ -59,14 +58,28 @@ const TrainModal = () => {
     const modeUpdate = useModeUpdate();
     const palette = usePalette();
     const user = useUser();
-    const job = useJobDescription(user.name);
+    const anyJob = useAnyRunningJob();
+
     const [message, createMessage] = useAlertMessage("");
+    const [loading, setLoading] = useState(false);
 
     const [values, setValues] = useState<AgentTraining>(defaultTrainingParams);
-
     const updateValues = useCallback((update: Partial<AgentTraining>) => {
         setValues((prevValues) => ({ ...prevValues, ...update }));
     }, []);
+
+    const [agents, setAgents] = useState<AgentDict>({});
+    const getUserAgents = async () => {
+        const { agents, message } = await getAgents(user.name, "user");
+        createMessage(message, "error");
+        setAgents(agents);
+    };
+    useEffect(() => {
+        getUserAgents();
+    }, [user]);
+    const agentList = Object.keys(agents);
+
+    const currentAgent = values?.name ? agents[values.name] : undefined;
 
     const inputParameters = {
         backgroundColor: "white",
@@ -75,42 +88,7 @@ const TrainModal = () => {
         controlColor: palette.three,
     };
 
-    const agentMutation = useMutation(
-        (values: AgentTraining) =>
-            connectAPI<AgentTraining, string>({
-                method: "post",
-                endpoint: `/jobs/train`,
-                data: { ...values, user: user.name },
-            }),
-        {
-            onSuccess: ({ result, error }) => {
-                if (error) {
-                    createMessage(error, "error");
-                } else {
-                    if (result !== "ok") {
-                        createMessage(result, "error");
-                    } else {
-                        const message = values.isNew
-                            ? `Agent created${
-                                  (values.episodes as number) > 0
-                                      ? ", training commenced, follow the logs"
-                                      : ""
-                              }`
-                            : "Training resumed, follow the logs";
-                        createMessage(message, "success");
-                        modeUpdate({ agent: "train" });
-                        setTimeout(() => {
-                            simulateCloseModalClick();
-                        }, 3000);
-                    }
-                }
-            },
-        }
-    );
-
-    const finalMessage = agentMutation.isLoading ? "Loading..." : message;
-
-    const handleTrain = () => {
+    const handleTrain = async () => {
         const [validated, change] = validateTrainingParams(values);
         setValues((prevValues) => ({ ...prevValues, ...validated }));
         if (change) {
@@ -119,7 +97,34 @@ const TrainModal = () => {
                 "error"
             );
         } else {
-            agentMutation.mutate(values);
+            setLoading(true);
+            createMessage("Processing Job ...");
+            const { result, error } = await connectAPI<AgentTraining, string>({
+                method: "post",
+                endpoint: "/jobs/train",
+                data: { ...values, user: user.name },
+            });
+            if (error) {
+                createMessage(error, "error");
+            } else {
+                if (result !== "ok") {
+                    createMessage(result, "error");
+                } else {
+                    const message = values.isNew
+                        ? `New Agent created${
+                              (values.episodes as number) > 0
+                                  ? ", training commenced, follow the logs"
+                                  : ""
+                          }`
+                        : "Training resumed, follow the logs";
+                    createMessage(message, "success");
+                    modeUpdate({ agent: "train" });
+                    setTimeout(() => {
+                        simulateCloseModalClick();
+                    }, 3000);
+                }
+            }
+            setLoading(false);
         }
     };
 
@@ -128,9 +133,9 @@ const TrainModal = () => {
             button={{
                 background: palette.two,
                 children: "Train",
-                legend: "Only for registered users",
+                legend: "Only for registered users, and when no Job is running",
                 level: GLOBAL.userLevel.user,
-                disabled: job !== null || user.name === "Login",
+                disabled: anyJob,
             }}
             modal={{
                 width: "26rem",
@@ -151,16 +156,21 @@ const TrainModal = () => {
                         label={"Train new / keep training existing Agent"}
                         options={["New", "Existing"]}
                         initialValue={values.isNew ? "New" : "Existing"}
-                        onChange={(value: string) =>
-                            updateValues({ isNew: value === "New" })
-                        }
+                        onChange={(value: string) => {
+                            updateValues({
+                                isNew: value == "New" ? true : false,
+                            });
+                            if (value == "Existing") {
+                                getUserAgents();
+                            }
+                        }}
                     />
                     {values.isNew ? (
                         <Input
                             {...inputParameters}
                             type='text'
                             label='New Agent Name'
-                            name='train-new-name'
+                            persistAs='train-new-name'
                             placeholder={`Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`}
                             onChange={(value) =>
                                 updateValues({ name: String(value) })
@@ -170,8 +180,8 @@ const TrainModal = () => {
                         <Dropdown
                             {...inputParameters}
                             label='Existing Agent Name'
-                            optionValues={[]}
-                            name='train-existing-name'
+                            optionValues={agentList}
+                            persistAs='train-existing-name'
                             onChange={(value) =>
                                 updateValues({ name: String(value) })
                             }
@@ -182,9 +192,11 @@ const TrainModal = () => {
                         <Dropdown
                             {...inputParameters}
                             label='Signature N'
-                            name='train-N'
                             optionValues={[2, 3, 4]}
-                            initialValue={2}
+                            initialValue={
+                                values.isNew ? "" : currentAgent?.N ?? ""
+                            }
+                            persistAs={values.isNew ? "train-N" : undefined}
                             disabled={!values.isNew}
                             alignOptions='right'
                             onChange={(value) =>
@@ -196,7 +208,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Initial Learning Rate (&#945;)'
-                            name='train-alpha'
+                            initialValue={
+                                values.isNew ? "" : currentAgent?.alpha ?? ""
+                            }
+                            persistAs={values.isNew ? "train-alpha" : undefined}
                             min={0.1}
                             max={0.25}
                             step={0.01}
@@ -214,7 +229,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='&#945; decay rate'
-                            name='train-decay'
+                            persistAs={values.isNew ? "train-decay" : undefined}
+                            initialValue={
+                                values.isNew ? "" : currentAgent?.decay ?? ""
+                            }
                             min={0.5}
                             max={1.0}
                             step={0.01}
@@ -228,7 +246,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Decay step, in episodes'
-                            name='train-step'
+                            persistAs={values.isNew ? "train-step" : undefined}
+                            initialValue={
+                                values.isNew ? "" : currentAgent?.step ?? ""
+                            }
                             min={1000}
                             max={10000}
                             step={1000}
@@ -244,7 +265,12 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Minimal &#945;'
-                            name='train-minAlpha'
+                            persistAs={
+                                values.isNew ? "train-minAlpha" : undefined
+                            }
+                            initialValue={
+                                values.isNew ? "" : currentAgent?.minAlpha ?? ""
+                            }
                             min={0}
                             max={0.05}
                             step={0.001}
@@ -258,11 +284,10 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Training episodes'
-                            name='train-episodes'
+                            initialValue={values.isNew ? "" : 10000}
                             min={values.isNew ? 0 : 5000}
                             max={100000}
                             step={5000}
-                            disabled={!values.isNew}
                             placeholder='0 to just create an Agent'
                             onChange={(value) =>
                                 updateValues({ episodes: Number(value) })
@@ -279,12 +304,13 @@ const TrainModal = () => {
                         background={palette.three}
                         color={palette.background}
                         onClick={handleTrain}
+                        disabled={loading}
                     >
                         GO!
                     </Button>
                 </div>
             </ModalFooter>
-            {finalMessage ? <ModalFooter>{finalMessage}</ModalFooter> : null}
+            {message ? <ModalFooter>{message}</ModalFooter> : null}
         </Modal>
     );
 };
