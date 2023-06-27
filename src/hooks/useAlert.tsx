@@ -21,7 +21,7 @@ const useAlert = ({
     positionType,
     duration = GLOBAL.messageDuration,
     children,
-}: AlertHookProps): [ReactNode, () => void] => {
+}: AlertHookProps): [ReactNode, () => void, () => void] => {
     const notYetClicked = useRef(true);
     const [showAlert, setShowAlert] = useState(false);
 
@@ -30,7 +30,8 @@ const useAlert = ({
         : StaticAlert;
 
     const openAlert = () => {
-        if (onlyOnce && notYetClicked.current) setShowAlert(true);
+        if ((onlyOnce && notYetClicked.current) || !onlyOnce)
+            setShowAlert(true);
         notYetClicked.current = false;
     };
 
@@ -58,7 +59,7 @@ const useAlert = ({
 
     const alert = showAlert ? <AlertComponent {...props} /> : null;
 
-    return [alert, openAlert];
+    return [alert, openAlert, closeAlert];
 };
 
 export default useAlert;

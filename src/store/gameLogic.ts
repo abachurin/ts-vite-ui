@@ -1,5 +1,5 @@
 import { uniqueId } from "lodash-es";
-import { Offset } from "../types";
+import { Offset, Game, GameTile } from "../types";
 import { deepCopy, deepEqual } from "../utils";
 
 export const gameMoves: Record<number, string> = {
@@ -9,29 +9,6 @@ export const gameMoves: Record<number, string> = {
     3: "DOWN",
 };
 
-export type GameTile = {
-    position: Offset;
-    value: number;
-};
-
-export type GamePointer = {
-    move: number;
-    tile: number;
-};
-
-export interface Game {
-    idx: string;
-    initial: number[][];
-    current: number[][];
-    score: number;
-    movesHistory: number[];
-    tilesHistory: GameTile[];
-    lastTile?: GameTile;
-    nextMove?: number;
-    pointer: GamePointer;
-    isOver: boolean;
-}
-
 /**
  * An collection of methods for changing state of Game object.
  * Some functions are written in functional style and are not pure, by design.
@@ -39,9 +16,9 @@ export interface Game {
 export abstract class GameLogic {
     public static restartGame(game: Game): Game {
         const newGame = deepCopy(game);
-        newGame.current = deepCopy(game.initial);
+        newGame.row = deepCopy(game.initial);
         newGame.lastTile = undefined;
-        newGame.nextMove = game.movesHistory?.[0];
+        newGame.nextMove = game.moves?.[0];
         newGame.pointer = { move: 0, tile: 0 };
         newGame.isOver = false;
         return newGame;
@@ -58,12 +35,12 @@ export abstract class GameLogic {
 
     public static emptyGame(): Game {
         return {
-            idx: "game_" + uniqueId(),
+            name: "game_" + uniqueId(),
             initial: this.emptyBoard(),
-            current: this.emptyBoard(),
+            row: this.emptyBoard(),
             score: 0,
-            movesHistory: [],
-            tilesHistory: [],
+            moves: [],
+            tiles: [],
             lastTile: undefined,
             nextMove: undefined,
             pointer: { move: 0, tile: 0 },
@@ -75,9 +52,9 @@ export abstract class GameLogic {
         const baseGame = this.emptyGame();
         const firstTile = this.newTile(baseGame);
         const game = this.newTile(firstTile);
-        game.initial = deepCopy(game.current);
+        game.initial = deepCopy(game.row);
         game.pointer.tile = 0;
-        game.tilesHistory = [];
+        game.tiles = [];
         game.lastTile = undefined;
         return game;
     }
@@ -86,7 +63,7 @@ export abstract class GameLogic {
         const positions: Offset[] = [];
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
-                if (game.current[i][j] === 0) {
+                if (game.row[i][j] === 0) {
                     positions.push({ x: i, y: j });
                 }
             }
@@ -95,7 +72,7 @@ export abstract class GameLogic {
     }
 
     private static gameOver(game: Game): boolean {
-        const row = game.current;
+        const row = game.row;
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 if (
@@ -112,9 +89,9 @@ export abstract class GameLogic {
 
     private static placeTile(game: Game, tile: GameTile): Game {
         const newGame = deepCopy(game);
-        newGame.current[tile.position.x][tile.position.y] = tile.value;
+        newGame.row[tile.position.x][tile.position.y] = tile.value;
         newGame.lastTile = tile;
-        newGame.tilesHistory[game.pointer.tile] = tile;
+        newGame.tiles[game.pointer.tile] = tile;
         newGame.pointer.tile++;
         if (this.gameOver(newGame)) {
             newGame.isOver = true;
@@ -172,11 +149,11 @@ export abstract class GameLogic {
     private static moveLeft(game: Game): [Game, boolean] {
         const newGame = deepCopy(game);
         for (let i = 0; i < 4; i++) {
-            const [newLine, score] = this.leftOneLine(game.current[i]);
-            newGame.current[i] = [...newLine];
+            const [newLine, score] = this.leftOneLine(game.row[i]);
+            newGame.row[i] = [...newLine];
             newGame.score += score;
         }
-        return [newGame, !deepEqual(game.current, newGame.current)];
+        return [newGame, !deepEqual(game.row, newGame.row)];
     }
 
     private static rotate(game: Game, move: number): Game {
@@ -184,7 +161,7 @@ export abstract class GameLogic {
         if (move === 0 || move === 4) {
             return newGame;
         }
-        const row = game.current;
+        const row = game.row;
         const newRow = this.emptyBoard();
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
@@ -203,7 +180,7 @@ export abstract class GameLogic {
                 }
             }
         }
-        newGame.current = newRow;
+        newGame.row = newRow;
         return newGame;
     }
 
@@ -215,9 +192,9 @@ export abstract class GameLogic {
         const [newGame, change] = this.moveLeft(rotatedGame);
         const result = this.rotate(newGame, 4 - move);
         if (change) {
-            result.movesHistory[result.pointer.move] = move;
+            result.moves[result.pointer.move] = move;
             result.pointer.move++;
-            result.nextMove = result.movesHistory[result.pointer.move];
+            result.nextMove = result.moves[result.pointer.move];
         }
         return [result, change];
     }

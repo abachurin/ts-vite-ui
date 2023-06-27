@@ -31,7 +31,7 @@ const Footer = () => {
 
     return (
         <div css={emotion} onClick={() => smoothScroll("#game-pane")}>
-            Footer
+            &#8595; Game Pane &#8595;
         </div>
     );
 };

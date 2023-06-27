@@ -1,5 +1,6 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
+import useAlert from "../../../hooks/useAlert";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useLogs, { useLogsStore } from "../../../store/logsStore";
@@ -36,10 +37,20 @@ const makeEmotion = (color: string): SerializedStyles => css`
 
 const LogWindow = () => {
     const user = useUser();
-    const logs = useLogs(user.name);
+    const [logs, alert] = useLogs(user.name);
     const palette = usePalette();
     const clearLogs = useLogsStore((state) => state.clearLogs);
     const downloadLogs = useLogsStore((state) => state.downloadLogs);
+    const [warning, openWarning, closeWarning] = useAlert({
+        type: "error",
+        duration: 100000,
+        children: "Network error. Backend doesn't respond!",
+    });
+
+    useEffect(() => {
+        if (alert) openWarning();
+        else closeWarning();
+    }, [alert]);
 
     const emotion = useMemo(() => makeEmotion(palette.logs), [palette]);
 
@@ -68,6 +79,7 @@ const LogWindow = () => {
                     </Button>
                 </ButtonGroup>
             </aside>
+            {warning}
         </div>
     );
 };

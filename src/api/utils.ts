@@ -1,11 +1,13 @@
 import axios, { Method, AxiosError } from "axios";
 import { BACK_URL } from "../config";
 import {
-    Agent,
-    AgentListRequest,
+    UserName,
+    ItemListRequest,
     AgentListResponse,
-    AgentListRequestType,
+    ItemListRequestType,
     AgentDict,
+    GameDict,
+    GameListResponse,
 } from "../types";
 
 export type APIConfig<T> = {
@@ -38,10 +40,10 @@ export const connectAPI = async <DataType, ResultType>({
 
 export const getAgents = async (
     userName: string,
-    scope: AgentListRequestType
+    scope: ItemListRequestType
 ): Promise<{ agents: AgentDict; message: string }> => {
     const { result, error } = await connectAPI<
-        AgentListRequest,
+        ItemListRequest,
         AgentListResponse
     >({
         method: "post",
@@ -56,6 +58,50 @@ export const getAgents = async (
                 agents: {},
                 message: result?.status ?? "Something is wrong!",
             };
-        } else return { agents: result?.agents ?? {}, message: "" };
+        } else return { agents: result?.list ?? {}, message: "" };
     }
 };
+
+export const getGames = async (
+    userName: string,
+    scope: ItemListRequestType
+): Promise<{ agents: GameDict; message: string }> => {
+    const { result, error } = await connectAPI<
+        ItemListRequest,
+        GameListResponse
+    >({
+        method: "post",
+        endpoint: "/games/list",
+        data: { userName: userName, scope: scope },
+    });
+    if (error) {
+        return { agents: {}, message: error };
+    } else {
+        if (result === undefined || result.status !== "ok") {
+            return {
+                agents: {},
+                message: result?.status ?? "Something is wrong!",
+            };
+        } else return { agents: result?.list ?? {}, message: "" };
+    }
+};
+
+// export const getJobs = async (
+//     userName: string
+// ): Promise<{ agents: JobDict; message: string }> => {
+//     const { result, error } = await connectAPI<UserName, JobListResponse>({
+//         method: "post",
+//         endpoint: "/agents/list",
+//         data: { userName: userName },
+//     });
+//     if (error) {
+//         return { agents: {}, message: error };
+//     } else {
+//         if (result === undefined || result.status !== "ok") {
+//             return {
+//                 agents: {},
+//                 message: result?.status ?? "Something is wrong!",
+//             };
+//         } else return { agents: result?.agents ?? {}, message: "" };
+//     }
+// };

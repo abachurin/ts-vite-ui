@@ -78,10 +78,10 @@ interface InputProps {
     max?: number;
     step?: number;
     placeholder?: string;
-    initialValue?: string | number | undefined;
+    initialValue?: string | number;
     standAlone?: boolean;
     disabled?: boolean;
-    persistAs?: string;
+    persistAs?: string | undefined;
     zIndex?: number | "auto";
     onChange: (value: string) => void;
 }
@@ -100,43 +100,31 @@ const Input = ({
     max,
     step,
     placeholder = "",
-    initialValue,
+    initialValue = "",
     standAlone = false,
     disabled = false,
-    persistAs = "",
+    persistAs,
     zIndex = "auto",
     onChange,
 }: InputProps) => {
     const user = useUser();
+
     const [persistedValue, setPersistedValue] = usePersistence(
         user.name,
         persistAs
     );
     useEffect(() => {
-        if (persistedValue) {
+        persistAs &&
+            persistedValue !== GLOBAL.filler &&
             onChange(persistedValue);
-        }
     }, [persistedValue]);
-
-    const [value, setValue] = useState(initialValue);
-    useEffect(() => {
-        setValue(initialValue);
-        onChange(String(initialValue));
-    }, [initialValue]);
-
-    const displayValue = persistAs
-        ? persistedValue === GLOBAL.filler
-            ? initialValue ?? ""
-            : persistedValue
-        : value;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (persistAs) {
             setPersistedValue(e.target.value);
         } else {
-            setValue(e.target.value);
+            onChange(e.target.value);
         }
-        onChange(e.target.value);
     };
 
     const emotion = useMemo(
@@ -181,7 +169,7 @@ const Input = ({
                     max={max}
                     step={step}
                     placeholder={placeholder}
-                    value={displayValue}
+                    value={initialValue}
                     disabled={disabled}
                     onChange={handleChange}
                 />

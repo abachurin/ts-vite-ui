@@ -79,7 +79,11 @@ const TrainModal = () => {
     }, [user]);
     const agentList = Object.keys(agents);
 
-    const currentAgent = values?.name ? agents[values.name] : undefined;
+    useEffect(() => {
+        if (!values.isNew && values.name) {
+            updateValues({ ...agents[values.name] });
+        }
+    }, [values.isNew, values.name]);
 
     const inputParameters = {
         backgroundColor: "white",
@@ -91,6 +95,7 @@ const TrainModal = () => {
     const handleTrain = async () => {
         const [validated, change] = validateTrainingParams(values);
         setValues((prevValues) => ({ ...prevValues, ...validated }));
+
         if (change) {
             createMessage(
                 "Some parameters are invalid or undefined. Please follow the instructions.",
@@ -121,7 +126,7 @@ const TrainModal = () => {
                     modeUpdate({ agent: "train" });
                     setTimeout(() => {
                         simulateCloseModalClick();
-                    }, 3000);
+                    }, 1500);
                 }
             }
             setLoading(false);
@@ -157,12 +162,12 @@ const TrainModal = () => {
                         options={["New", "Existing"]}
                         initialValue={values.isNew ? "New" : "Existing"}
                         onChange={(value: string) => {
-                            updateValues({
-                                isNew: value == "New" ? true : false,
-                            });
                             if (value == "Existing") {
                                 getUserAgents();
                             }
+                            updateValues({
+                                isNew: value == "New" ? true : false,
+                            });
                         }}
                     />
                     {values.isNew ? (
@@ -171,6 +176,7 @@ const TrainModal = () => {
                             type='text'
                             label='New Agent Name'
                             persistAs='train-new-name'
+                            initialValue={values.name}
                             placeholder={`Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`}
                             onChange={(value) =>
                                 updateValues({ name: String(value) })
@@ -182,6 +188,7 @@ const TrainModal = () => {
                             label='Existing Agent Name'
                             optionValues={agentList}
                             persistAs='train-existing-name'
+                            initialValue={values.name}
                             onChange={(value) =>
                                 updateValues({ name: String(value) })
                             }
@@ -192,11 +199,9 @@ const TrainModal = () => {
                         <Dropdown
                             {...inputParameters}
                             label='Signature N'
-                            optionValues={[2, 3, 4]}
-                            initialValue={
-                                values.isNew ? "" : currentAgent?.N ?? ""
-                            }
-                            persistAs={values.isNew ? "train-N" : undefined}
+                            optionValues={["2", "3", "4"]}
+                            initialValue={values.N}
+                            persistAs='train-N'
                             disabled={!values.isNew}
                             alignOptions='right'
                             onChange={(value) =>
@@ -208,10 +213,8 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Initial Learning Rate (&#945;)'
-                            initialValue={
-                                values.isNew ? "" : currentAgent?.alpha ?? ""
-                            }
-                            persistAs={values.isNew ? "train-alpha" : undefined}
+                            initialValue={values.alpha || undefined}
+                            persistAs='train-alpha'
                             min={0.1}
                             max={0.25}
                             step={0.01}
@@ -229,10 +232,8 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='&#945; decay rate'
-                            persistAs={values.isNew ? "train-decay" : undefined}
-                            initialValue={
-                                values.isNew ? "" : currentAgent?.decay ?? ""
-                            }
+                            initialValue={values.decay || undefined}
+                            persistAs='train-decay'
                             min={0.5}
                             max={1.0}
                             step={0.01}
@@ -246,10 +247,8 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Decay step, in episodes'
-                            persistAs={values.isNew ? "train-step" : undefined}
-                            initialValue={
-                                values.isNew ? "" : currentAgent?.step ?? ""
-                            }
+                            initialValue={values.step || undefined}
+                            persistAs='train-step'
                             min={1000}
                             max={10000}
                             step={1000}
@@ -265,12 +264,8 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Minimal &#945;'
-                            persistAs={
-                                values.isNew ? "train-minAlpha" : undefined
-                            }
-                            initialValue={
-                                values.isNew ? "" : currentAgent?.minAlpha ?? ""
-                            }
+                            initialValue={values.minAlpha || undefined}
+                            persistAs='train-minAlpha'
                             min={0}
                             max={0.05}
                             step={0.001}
@@ -284,11 +279,12 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label='Training episodes'
-                            initialValue={values.isNew ? "" : 10000}
+                            initialValue={values.episodes || undefined}
+                            persistAs='train-episodes'
                             min={values.isNew ? 0 : 5000}
                             max={100000}
                             step={5000}
-                            placeholder='0 to just create an Agent'
+                            placeholder='Blanc = just create Agent'
                             onChange={(value) =>
                                 updateValues({ episodes: Number(value) })
                             }

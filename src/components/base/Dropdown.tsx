@@ -116,12 +116,12 @@ interface DropdownProps {
     controlColor?: string;
     color?: string;
     label?: string;
-    optionValues: (string | number)[];
+    optionValues: string[];
     initialValue?: string | number;
     alignOptions?: Alignment;
     standAlone?: boolean;
     disabled?: boolean;
-    persistAs?: string;
+    persistAs?: string | undefined;
     zIndex?: number | "auto";
     onChange: (value: string) => void;
 }
@@ -140,7 +140,7 @@ const Dropdown = ({
     alignOptions = "left",
     standAlone = false,
     disabled = false,
-    persistAs = "",
+    persistAs,
     zIndex = "auto",
     onChange,
 }: DropdownProps) => {
@@ -149,39 +149,25 @@ const Dropdown = ({
     const [optionsOpen, setOptionsOpen] = useState(false);
     const ref = useOutsideClick(() => setOptionsOpen(false));
 
-    const startName = initialValue || optionValues[0];
-    const [value, setValue] = useState(startName);
-    useEffect(() => {
-        setValue(startName);
-        onChange(String(startName));
-    }, [startName]);
-
     const [persistedValue, setPersistedValue] = usePersistence(
         user.name,
-        persistAs
+        persistAs,
+        optionValues
     );
     useEffect(() => {
-        if (persistAs && persistedValue) {
-            onChange(persistedValue);
-        }
+        persistAs && onChange(persistedValue);
     }, [persistedValue]);
-
-    const displayValue = persistAs
-        ? persistedValue === GLOBAL.filler
-            ? initialValue ?? ""
-            : persistedValue
-        : value;
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
         const currentValue = e.currentTarget.innerText;
-        if (currentValue !== value) {
+        if (currentValue !== initialValue) {
             makeSound(clickSound, user);
             if (persistAs) {
                 setPersistedValue(currentValue);
             } else {
-                setValue(currentValue);
+                onChange(currentValue);
             }
-            onChange(currentValue);
+            setOptionsOpen(false);
         }
     };
 
@@ -241,7 +227,7 @@ const Dropdown = ({
                     <div>{label}</div>
                 </header>
                 <section onClick={() => setOptionsOpen((prev) => !prev)}>
-                    <div>{displayValue}</div>
+                    <div>{initialValue}</div>
                     <aside>
                         <Icon
                             svg={
@@ -260,7 +246,7 @@ const Dropdown = ({
                     <div
                         key={uniqueId()}
                         css={
-                            v === displayValue
+                            v === initialValue
                                 ? css`
                                       ${optionStyle}
                                       font-weight: 500;

@@ -1,5 +1,6 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
+import { useLogsStore } from "../../store/logsStore";
 import {
     useUser,
     usePalette,
@@ -66,6 +67,7 @@ type LoginProps = {
 
 const Login = ({ align = "left" }: LoginProps) => {
     const user = useUser();
+    const setLogs = useLogsStore((state) => state.setLogs);
     const palette = usePalette();
     const updateUser = useUserUpdate();
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -77,18 +79,20 @@ const Login = ({ align = "left" }: LoginProps) => {
     const [loading, setLoading] = useState(false);
 
     const finalizeLogin = (update: User): void => {
+        setLogs([]);
         updateUser(update);
         setTimeout(() => {
             simulateCloseModalClick();
-        }, 2000);
+        }, 1000);
     };
 
     const handleSubmit = async (
-        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        e: React.MouseEvent<HTMLButtonElement>,
         action: UserLoginAction
     ) => {
         e.preventDefault();
         if (action === "logout") {
+            setLogs([]);
             updateUser(defaultUser);
         } else if (name === undefined || pwd === undefined) {
             createMessage("Both fields should be filled", "error");
@@ -184,6 +188,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                         type='text'
                         label='Name'
                         persistAs='login-name'
+                        initialValue={name}
                         onChange={(value) => setName(value as string)}
                     />
                     <Input
@@ -191,6 +196,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                         type='text'
                         label='Password'
                         persistAs='login-pwd'
+                        initialValue={pwd}
                         onChange={(value) => setPwd(value as string)}
                     />
                     <ButtonGroup height='2rem'>
@@ -249,7 +255,10 @@ const Login = ({ align = "left" }: LoginProps) => {
                 message={`Are you sure you want to delete ${name}?`}
                 onConfirm={(e) => {
                     setConfirmDelete(false);
-                    handleSubmit(e, "delete");
+                    handleSubmit(
+                        e as React.MouseEvent<HTMLButtonElement>,
+                        "delete"
+                    );
                 }}
                 onCancel={() => setConfirmDelete(false)}
             />

@@ -125,16 +125,17 @@ export interface Agent extends AgentMainParams {
     lastTrainingEpisode: number;
 }
 
-export type AgentListRequestType = "all" | "user";
+export type ItemListRequestType = "all" | "user";
 
-export interface AgentListRequest extends UserName {
-    scope: AgentListRequestType;
+export interface ItemListRequest extends UserName {
+    scope: ItemListRequestType;
 }
 
 export type AgentDict = Record<string, Agent>;
+
 export type AgentListResponse = {
     status?: string;
-    agents?: AgentDict;
+    list?: AgentDict;
 };
 export interface AgentTraining extends AgentMainParams {
     episodes: number | undefined;
@@ -185,4 +186,52 @@ export type Logs = string[];
 export type LogsResponse = {
     status: string;
     logs: Logs;
+};
+
+// Game types
+export type GameTile = {
+    position: Offset;
+    value: number;
+};
+
+export type GamePointer = {
+    move: number;
+    tile: number;
+};
+
+export interface GameCore {
+    user?: string;
+    name: string;
+    row: number[][];
+    score: number;
+}
+
+export interface GameDescription extends GameCore {
+    numMoves: number;
+    maxTile: number;
+}
+
+export interface GameBackend extends GameCore {
+    initial: number[][];
+    moves: number[];
+    tiles: GameTile[];
+}
+export interface Game extends GameBackend {
+    isOver: boolean;
+    pointer: GamePointer;
+    lastTile?: GameTile;
+    nextMove?: number;
+}
+
+export type GameDict = Record<string, GameDescription>;
+
+export type GameListResponse = {
+    status?: string;
+    list?: GameDict;
+};
+
+// Delete item
+export type ItemDeleteRequest = {
+    name: string;
+    kind: string;
 };

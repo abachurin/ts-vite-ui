@@ -5,7 +5,7 @@ import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import useAnyRunningJob from "../../../hooks/useAnyJob";
-import { Agent, AgentListRequest, AgentListResponse } from "../../../types";
+import { Agent, ItemListRequest, AgentListResponse } from "../../../types";
 import Modal from "../../modal/Modal";
 
 /**
@@ -25,7 +25,7 @@ const TestModal = () => {
 
     const onOpen = async () => {
         const { result, error } = await connectAPI<
-            AgentListRequest,
+            ItemListRequest,
             AgentListResponse
         >({
             method: "post",

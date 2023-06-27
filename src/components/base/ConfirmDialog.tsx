@@ -1,19 +1,29 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo } from "react";
-import { usePalette } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL } from "../../utils";
+import { useMemo, useEffect, useCallback } from "react";
+import { usePalette, useUser } from "../../contexts/UserProvider/UserContext";
+import { GLOBAL, makeSound } from "../../utils";
 import Button from "./Button/Button";
 import dragMe from "../HOC/Draggable";
+import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
-const makeBlock = (isOpen: boolean): SerializedStyles => css`
-    position: fixed;
-    top: -100vh;
-    left: -100vw;
-    width: 300vw;
-    height: 300vh;
-    background-color: rgba(0, 0, 0, 0.01);
-    visibility: ${isOpen ? "visible" : "hidden"};
+const makeWrapper = (isOpen: boolean): SerializedStyles => css`
+    z-index: 10;
+    & > header {
+        position: fixed;
+        top: -100vh;
+        left: -100vw;
+        width: 300vw;
+        height: 300vh;
+        background-color: rgba(0, 0, 0, 0.01);
+        visibility: ${isOpen ? "visible" : "hidden"};
+    }
+    & > main {
+        position: fixed;
+        top: 25%;
+        left: 50%;
+        transform: ${isOpen ? "scale(1)" : "scale(0)"};
+    }
 `;
 const makeEmotion = (
     textColor: string,
@@ -43,18 +53,12 @@ const makeEmotion = (
         align-items: center;
     }
 `;
-const makeWrapper = (isOpen: boolean): SerializedStyles => css`
-    position: fixed;
-    top: 25%;
-    left: 50%;
-    transform: ${isOpen ? "scale(1)" : "scale(0)"};
-`;
 
 interface ConfirmDialogProps {
     isOpen: boolean;
     message: string;
-    onConfirm?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-    onCancel?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    onConfirm: (e: React.MouseEvent<HTMLButtonElement> | KeyboardEvent) => void;
+    onCancel: (e: React.MouseEvent<HTMLButtonElement> | KeyboardEvent) => void;
 }
 const StaticConfirmDialog = ({
     isOpen,
@@ -63,13 +67,24 @@ const StaticConfirmDialog = ({
     onCancel,
 }: ConfirmDialogProps) => {
     const palette = usePalette();
-    const handleConfirm = (e: React.MouseEvent<HTMLButtonElement>) => {
-        onConfirm !== undefined && onConfirm(e);
-    };
+    const user = useUser();
 
-    const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
-        onCancel !== undefined && onCancel(e);
-    };
+    const escapeHandler = useCallback(
+        (e: KeyboardEvent) => {
+            if (e.key === "Escape" && isOpen === true) {
+                makeSound(clickSound, user);
+                onCancel(e);
+            }
+        },
+        [onCancel, isOpen, user]
+    );
+
+    useEffect(() => {
+        document.addEventListener("keydown", escapeHandler);
+        return () => {
+            document.removeEventListener("keydown", escapeHandler);
+        };
+    }, [escapeHandler]);
 
     const emotion = useMemo(
         () => makeEmotion(palette.text, palette.text, isOpen),
@@ -85,7 +100,7 @@ const StaticConfirmDialog = ({
                     width='5em'
                     background={palette.three}
                     color={palette.background}
-                    onClick={handleConfirm}
+                    onClick={onConfirm}
                 >
                     Ok
                 </Button>
@@ -94,7 +109,7 @@ const StaticConfirmDialog = ({
                     width='5em'
                     background={palette.four}
                     color={palette.background}
-                    onClick={handleCancel}
+                    onClick={onCancel}
                 >
                     Cancel
                 </Button>
@@ -105,21 +120,20 @@ const StaticConfirmDialog = ({
 
 const DraggableConfirmDialog = dragMe(
     StaticConfirmDialog,
-    { x: "0", y: "0" },
+    { x: "0px", y: "-100px" },
     "fixed"
 );
 
 const ConfirmDialog = (props: ConfirmDialogProps) => {
-    const block = makeBlock(props.isOpen);
     const wrapper = makeWrapper(props.isOpen);
 
     return (
-        <>
-            <div css={block} />
-            <div css={wrapper}>
+        <div css={wrapper}>
+            <header />
+            <main>
                 <DraggableConfirmDialog {...props} />
-            </div>
-        </>
+            </main>
+        </div>
     );
 };
 

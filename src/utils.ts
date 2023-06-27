@@ -87,6 +87,29 @@ export const JobDescriptionLabels = {
     episodes: "Episodes:",
 };
 
+export const alphaSymbol = String.fromCharCode(945);
+export const MyObjectDescriptionLabels = {
+    Agents: {
+        user: "Owner:",
+        name: "Agent name:",
+        N: "Signature N:",
+        alpha: `Current ${alphaSymbol}`,
+        decay: `${alphaSymbol} decay rate`,
+        step: "Decay step",
+        minAlpha: `Minimal ${alphaSymbol}`,
+        bestScore: "Best score:",
+        maxTile: "Max tile reached:",
+        lastTrainingEpisode: "Training episodes:",
+    },
+    Games: {
+        user: "Owner:",
+        name: "Game name:",
+        score: "Score:",
+        numMoves: "Number of moves:",
+        maxTile: "Max tile reached:",
+    },
+};
+
 /**
  * Generate a random number between start and end (inclusive).
  * @param end - The maximum number to generate.
@@ -203,7 +226,10 @@ export function deepEqual<T>(a: T, b: T): boolean {
  */
 export function hasUndefinedValues(obj: Record<string, unknown>): boolean {
     return Object.values(obj).some(
-        (value) => value === undefined || value === null || Number.isNaN(value)
+        (value) =>
+            value === undefined ||
+            value === null ||
+            Number.isNaN(value || value === GLOBAL.filler)
     );
 }
 

@@ -7,11 +7,11 @@ import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useJobDescription from "../../../hooks/useJobDescription";
 import useAlertMessage from "../../../hooks/useAlertMessage";
-import { uniqueId } from "lodash-es";
 import { RGB } from "../../../types";
 import { GLOBAL, setTransparency, JobDescriptionLabels } from "../../../utils";
 import ButtonGroup from "../../base/Button/ButtonGroup";
 import Button from "../../base/Button/Button";
+import DescriptionTable from "../../base/DescriptionTable";
 
 // Emotion styles
 const makeEmotion = (
@@ -26,22 +26,12 @@ const makeEmotion = (
     border: 1px solid ${messageBackgroundColor};
     & > main {
         flex: 1;
-        display: flex;
-        flex-direction: column;
-        line-height: 1.4rem;
-        padding: calc(${GLOBAL.padding} * 2);
-    }
-    & > main > section {
-        display: flex;
     }
     & > main > footer {
         margin-top: ${GLOBAL.padding};
         padding: ${GLOBAL.padding};
         width: 100%;
         background-color: ${messageBackgroundColor};
-    }
-    & > main > section > * {
-        flex: 1;
     }
     & > aside {
         flex: 0;
@@ -98,20 +88,10 @@ const CurrentJobDescription = () => {
             {job && (
                 <div css={emotion}>
                     <main>
-                        {Object.entries(job).map(([label, value]) => {
-                            const labelName =
-                                JobDescriptionLabels[
-                                    label as keyof typeof JobDescriptionLabels
-                                ];
-                            return (
-                                labelName && (
-                                    <section key={uniqueId()}>
-                                        <label>{labelName}</label>
-                                        <div>{value}</div>
-                                    </section>
-                                )
-                            );
-                        })}
+                        <DescriptionTable
+                            collection={job}
+                            translation={JobDescriptionLabels}
+                        />
                         {message && <footer>{message}</footer>}
                     </main>
                     <aside>

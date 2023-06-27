@@ -12,6 +12,7 @@ const makeEmotion = (overflow: string): SerializedStyles => css`
     border-radius: ${GLOBAL.borderRadius};
     font-weight: 300;
     overflow: ${overflow};
+    z-index: 2;
 `;
 
 /**

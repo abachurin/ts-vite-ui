@@ -2,8 +2,8 @@ import { create } from "zustand";
 import { Game, GameLogic, GameTile } from "./gameLogic";
 
 const cutHistory = (game: Game): Game => {
-    game.movesHistory = game.movesHistory.slice(0, game.pointer.move);
-    game.tilesHistory = game.tilesHistory.slice(0, game.pointer.tile);
+    game.moves = game.moves.slice(0, game.pointer.move);
+    game.tiles = game.tiles.slice(0, game.pointer.tile);
     return game;
 };
 
@@ -12,14 +12,14 @@ const appendHistory = (
     newMoves: number[],
     newTiles: GameTile[]
 ): Game => {
-    game.movesHistory = { ...game.movesHistory, ...newMoves };
-    game.tilesHistory = { ...game.tilesHistory, ...newTiles };
+    game.moves = { ...game.moves, ...newMoves };
+    game.tiles = { ...game.tiles, ...newTiles };
     return game;
 };
 
 const fullMove = (game: Game, move?: number): Game => {
     const _move = move ?? game.nextMove;
-    const tile = game.tilesHistory[game.pointer.tile];
+    const tile = game.tiles[game.pointer.tile];
     const [afterMove, change] = GameLogic.makeMove(game, _move);
     if (change) return GameLogic.newTile(afterMove, tile);
     return afterMove;

@@ -5,6 +5,9 @@ import { connectAPI } from "../api/utils";
 const fetchJobDescription = async (
     userName: string
 ): Promise<JobDescriptionResponse> => {
+    if (userName === "Login") {
+        return Promise.resolve({ job: null });
+    }
     const { result, error } = await connectAPI<
         UserName,
         JobDescriptionResponse

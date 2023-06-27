@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { useQuery } from "@tanstack/react-query";
 import { connectAPI } from "../api/utils";
@@ -14,13 +14,15 @@ const addNewLogs = (currentLogs: Logs, newLogs: Logs): Logs => {
 };
 
 const fetchLogs = async (userName: string): Promise<LogsResponse> => {
+    if (userName === "Login") {
+        return Promise.resolve({ status: "ok", logs: [] });
+    }
     const { result, error } = await connectAPI<UserName, LogsResponse>({
         method: "POST",
         endpoint: "/logs/update",
         data: { userName: userName },
     });
     if (error) {
-        console.log(error);
         return { status: error, logs: [] };
     }
     if (result?.status !== "ok") {
@@ -79,9 +81,10 @@ export const useLogsStore = create<LogsStore>((set, get) => ({
     },
 }));
 
-const useLogs = (userName: string): Logs => {
+const useLogs = (userName: string): [Logs, boolean] => {
     const setLogs = useLogsStore((state) => state.setLogs);
     const addLogs = useLogsStore((state) => state.addLogs);
+    const [alert, setAlert] = useState(false);
 
     const { data } = useQuery<LogsResponse>(
         ["Logs", userName],
@@ -94,14 +97,15 @@ const useLogs = (userName: string): Logs => {
     useEffect(() => {
         if (data) {
             if (data.status !== "ok") {
-                setLogs([]);
+                setAlert(true);
             } else if (data.logs) {
                 addLogs(data.logs);
+                setAlert(false);
             }
         }
     }, [data, setLogs, addLogs]);
 
-    return useLogsStore((state) => state.logs);
+    return [useLogsStore((state) => state.logs), alert];
 };
 
 export default useLogs;

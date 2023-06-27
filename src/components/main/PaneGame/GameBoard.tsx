@@ -65,14 +65,14 @@ const GameBoard = () => {
     );
 
     const values = [
-        ...game.current[0],
-        ...game.current[1],
-        ...game.current[2],
-        ...game.current[3],
+        ...game.row[0],
+        ...game.row[1],
+        ...game.row[2],
+        ...game.row[3],
     ];
     const lastTilePosition =
-        (game.lastTile?.position.x || 0) * 4 +
-        (game.lastTile?.position.y || -1);
+        (game.lastTile?.position.x ?? 0) * 4 +
+        (game.lastTile?.position.y ?? -1);
 
     return (
         <div id='game-board' css={emotion}>
