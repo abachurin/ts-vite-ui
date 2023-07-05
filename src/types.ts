@@ -125,18 +125,8 @@ export interface Agent extends AgentMainParams {
     lastTrainingEpisode: number;
 }
 
-export type ItemListRequestType = "all" | "user";
-
-export interface ItemListRequest extends UserName {
-    scope: ItemListRequestType;
-}
-
 export type AgentDict = Record<string, Agent>;
 
-export type AgentListResponse = {
-    status?: string;
-    list?: AgentDict;
-};
 export interface AgentTraining extends AgentMainParams {
     episodes: number | undefined;
     isNew: boolean;
@@ -225,12 +215,19 @@ export interface Game extends GameBackend {
 
 export type GameDict = Record<string, GameDescription>;
 
-export type GameListResponse = {
+// Items (agents and games) types
+export type ItemListRequestType = "all" | "user";
+export type ItemType = "Agents" | "Games";
+
+export interface ItemListRequest extends UserName {
+    scope: ItemListRequestType;
+}
+
+export type ItemListResponse = {
     status?: string;
-    list?: GameDict;
+    list?: AgentDict | GameDict;
 };
 
-// Delete item
 export type ItemDeleteRequest = {
     name: string;
     kind: string;

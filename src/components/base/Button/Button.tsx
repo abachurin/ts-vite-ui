@@ -81,7 +81,7 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
                 transform: scale(0);
                 transition: transform 0.25s 1s;
             }
-            &:hover::before {
+            :disabled:hover::before {
                 transform: scale(1);
             }
             ${

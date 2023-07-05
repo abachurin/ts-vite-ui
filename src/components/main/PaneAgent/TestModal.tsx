@@ -5,7 +5,7 @@ import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import useAnyRunningJob from "../../../hooks/useAnyJob";
-import { Agent, ItemListRequest, AgentListResponse } from "../../../types";
+import { Agent, ItemListRequest, ItemListResponse } from "../../../types";
 import Modal from "../../modal/Modal";
 
 /**
@@ -23,26 +23,26 @@ const TestModal = () => {
 
     const [agents, setAgents] = useState<Agent[]>([]);
 
-    const onOpen = async () => {
-        const { result, error } = await connectAPI<
-            ItemListRequest,
-            AgentListResponse
-        >({
-            method: "post",
-            endpoint: "agents/list",
-            data: { userName: user.name, scope: "all" },
-        });
-        if (error) {
-            createMessage(error, "error");
-        } else {
-            if (result === undefined || result.status !== "ok") {
-                createMessage(result?.status ?? "Something is wrong!", "error");
-            } else setAgents(result?.agents ?? []);
-        }
-        setLoading(false);
+    // const onOpen = async () => {
+    //     const { result, error } = await connectAPI<
+    //         ItemListRequest,
+    //         AgentListResponse
+    //     >({
+    //         method: "post",
+    //         endpoint: "agents/list",
+    //         data: { userName: user.name, scope: "all" },
+    //     });
+    //     if (error) {
+    //         createMessage(error, "error");
+    //     } else {
+    //         if (result === undefined || result.status !== "ok") {
+    //             createMessage(result?.status ?? "Something is wrong!", "error");
+    //         } else setAgents([]);
+    //     }
+    //     setLoading(false);
 
-        modeUpdate({ agent: "test" });
-    };
+    //     modeUpdate({ agent: "test" });
+    // };
 
     // const handleTest = async () => {
     // const [validated, change] = validateTrainingParams(values);
@@ -91,7 +91,7 @@ const TestModal = () => {
                 align: "left",
                 children: "Test",
                 legend: "Only for registered users, and when no Job is running",
-                onClick: onOpen,
+                // onClick: onOpen,
                 disabled: anyJob,
             }}
             modal={{

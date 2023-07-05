@@ -66,19 +66,20 @@ const makeEmotion = (
     }
 `;
 const makeOptionsBox = (
+    controlWidthRatio: number,
     controlColor: string,
     backgroundColor: string,
     zIndex: number | "auto"
 ): SerializedStyles => css`
     position: absolute;
-    min-width: 80%;
+    min-width: ${controlWidthRatio}%;
     width: max-content;
     border: 1px solid ${controlColor};
     border-top: 1px dotted ${controlColor};
     border-radius: 0 0 ${GLOBAL.borderRadius} ${GLOBAL.borderRadius};
     background-color: ${backgroundColor};
     font-size: 0.8em;
-    line-height: 0.9em;
+    line-height: 1.5em;
     z-index: ${zIndex === "auto" ? "auto" : zIndex + 1};
     transform: scale(0);
     opacity: 0;
@@ -113,12 +114,14 @@ interface DropdownProps {
     backgroundColor?: string;
     labelColor1?: string;
     labelColor2?: string;
+    controlWidthRatio?: number;
     controlColor?: string;
     color?: string;
     label?: string;
     optionValues: string[];
     initialValue?: string | number;
     alignOptions?: Alignment;
+    alwaysOpen?: boolean;
     standAlone?: boolean;
     disabled?: boolean;
     persistAs?: string | undefined;
@@ -132,12 +135,14 @@ const Dropdown = ({
     backgroundColor = "inherit",
     labelColor1 = "black",
     labelColor2 = "black",
+    controlWidthRatio = 80,
     controlColor = "",
     color = "inherit",
     label = "Select:",
     optionValues = [],
     initialValue = undefined,
     alignOptions = "left",
+    alwaysOpen = false,
     standAlone = false,
     disabled = false,
     persistAs,
@@ -146,8 +151,10 @@ const Dropdown = ({
 }: DropdownProps) => {
     const user = useUser();
     const disabledTrue = disabled || optionValues.length === 0;
-    const [optionsOpen, setOptionsOpen] = useState(false);
-    const ref = useOutsideClick(() => setOptionsOpen(false));
+    const [optionsOpen, setOptionsOpen] = useState(alwaysOpen);
+    const ref = useOutsideClick(() => {
+        if (!optionsOpen) setOptionsOpen(false);
+    });
 
     const [persistedValue, setPersistedValue] = usePersistence(
         user.name,
@@ -155,7 +162,9 @@ const Dropdown = ({
         optionValues
     );
     useEffect(() => {
-        persistAs && onChange(persistedValue);
+        persistAs &&
+            persistedValue !== GLOBAL.filler &&
+            onChange(persistedValue);
     }, [persistedValue]);
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
@@ -167,7 +176,7 @@ const Dropdown = ({
             } else {
                 onChange(currentValue);
             }
-            setOptionsOpen(false);
+            if (!alwaysOpen) setOptionsOpen(false);
         }
     };
 
@@ -200,8 +209,14 @@ const Dropdown = ({
     );
 
     const optionsBoxBase = useMemo(
-        () => makeOptionsBox(controlColor, backgroundColor, zIndex),
-        [controlColor, backgroundColor, zIndex]
+        () =>
+            makeOptionsBox(
+                controlWidthRatio,
+                controlColor,
+                backgroundColor,
+                zIndex
+            ),
+        [controlWidthRatio, controlColor, backgroundColor, zIndex]
     );
     const optionsBoxAlignment =
         alignOptions === "left"
@@ -226,7 +241,11 @@ const Dropdown = ({
                 <header>
                     <div>{label}</div>
                 </header>
-                <section onClick={() => setOptionsOpen((prev) => !prev)}>
+                <section
+                    onClick={() => {
+                        if (!alwaysOpen) setOptionsOpen((prev) => !prev);
+                    }}
+                >
                     <div>{initialValue}</div>
                     <aside>
                         <Icon

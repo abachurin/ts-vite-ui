@@ -17,9 +17,11 @@ const makeEmotion = (textColor: string): SerializedStyles => css`
 
 const Main = () => {
     const palette = usePalette();
-    const textColor = palette.background;
 
-    const emotion = useMemo(() => makeEmotion(textColor), [textColor]);
+    const emotion = useMemo(
+        () => makeEmotion(palette.background),
+        [palette.background]
+    );
 
     return (
         <main css={emotion}>

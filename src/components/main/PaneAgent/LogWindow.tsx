@@ -54,6 +54,8 @@ const LogWindow = () => {
 
     const emotion = useMemo(() => makeEmotion(palette.logs), [palette]);
 
+    if (logs.length === 0) return null;
+
     return (
         <div css={emotion}>
             <main>{logs.join("\n")}</main>

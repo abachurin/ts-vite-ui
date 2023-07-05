@@ -1,18 +1,15 @@
 import { css } from "@emotion/react";
-import { useState, useMemo } from "react";
-import { connectAPI } from "../../../api/utils";
+import { useState, useMemo, useEffect } from "react";
+import { connectAPI, getItems } from "../../../api/utils";
 import {
     useUser,
     usePalette,
-    useNoUser,
 } from "../../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import {
-    ItemListRequest,
+    ItemType,
     AgentDict,
     GameDict,
-    AgentListResponse,
-    GameListResponse,
     ItemDeleteRequest,
 } from "../../../types";
 import {
@@ -21,7 +18,6 @@ import {
     MyObjectDescriptionLabels,
 } from "../../../utils";
 import Modal from "../../modal/Modal";
-import ModalHeader from "../../modal/ModalHeader";
 import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
 import Button from "../../base/Button/Button";
@@ -29,6 +25,7 @@ import Dropdown from "../../base/Dropdown";
 import Radio from "../../base/Radio";
 import ConfirmDialog from "../../base/ConfirmDialog";
 import DescriptionTable from "../../base/DescriptionTable";
+import CloseButton from "../../base/Button/CloseButton";
 
 // Emotion styles
 const footerWrapper = css`
@@ -40,7 +37,7 @@ const emotion = css`
     display: flex;
     flex-direction: column;
     gap: ${GLOBAL.padding};
-    padding-block: calc(${GLOBAL.padding} * 2);
+    padding-block: ${GLOBAL.padding};
     padding-inline: ${GLOBAL.padding};
     & > main {
         flex: 1;
@@ -55,46 +52,33 @@ const emotion = css`
  */
 const ManageModal = () => {
     const palette = usePalette();
-    const noUser = useNoUser();
     const user = useUser();
 
-    const [kind, setKind] = useState("");
+    const [kind, setKind] = useState<ItemType | "">("");
     const [item, setItem] = useState("");
     const [options, setOptions] = useState<AgentDict | GameDict>({});
     const [message, createMessage] = useAlertMessage("");
 
+    const owner = (options?.[item] ?? [])["user"];
+
+    useEffect(() => {
+        setKind("");
+        setItem("");
+        setOptions({});
+    }, [user]);
+
     const [confirmDelete, setConfirmDelete] = useState(false);
 
-    const getOptions = async (
-        type: string
-    ): Promise<AgentDict | GameDict | undefined> => {
-        const endpoint = type === "Agents" ? "/agents/list" : "/games/list";
-        const { result, error } = await connectAPI<
-            ItemListRequest,
-            AgentListResponse | GameListResponse
-        >({
-            method: "POST",
-            endpoint: endpoint,
-            data: { userName: user.name, scope: "user" },
-        });
-        if (result !== undefined) {
-            if (result.status === "ok") {
-                return result.list ?? {};
-            } else {
-                createMessage(result.status, "error");
-            }
-        } else {
-            createMessage(error ?? "Unknown error", "error");
+    const handleKindChange = async (newKindLabel: string) => {
+        const newKind = newKindLabel === "Agents" ? "Agents" : "Games";
+        const { list, message } = await getItems(newKind, user.name, "all");
+        if (message) {
+            createMessage(message, "error");
+            return;
         }
-        return undefined;
-    };
-
-    const handleKindChange = async (newKind: string) => {
-        const newOptions = await getOptions(newKind);
-        if (newOptions === undefined) return;
         setKind(newKind);
-        setOptions(newOptions);
-        setItem(Object.keys(newOptions)[0] ?? "");
+        setOptions(list);
+        setItem(Object.keys(list)[0] ?? "");
     };
 
     const deleteItem = async () => {
@@ -115,17 +99,15 @@ const ManageModal = () => {
             ),
         [kind, palette]
     );
-    const description =
-        MyObjectDescriptionLabels[kind === "Agents" ? "Agents" : "Games"];
+    const description = MyObjectDescriptionLabels[kind];
 
     return (
         <Modal
             button={{
                 background: palette.two,
                 align: "left",
-                children: "Objects",
+                children: "Available Items",
                 legend: "Only for registered users",
-                disabled: noUser,
             }}
             modal={{
                 width: "24rem",
@@ -133,9 +115,6 @@ const ManageModal = () => {
                 color: palette.text,
             }}
         >
-            <ModalHeader>
-                <h2>My Objects</h2>
-            </ModalHeader>
             <ModalBody overflow='visible'>
                 <div css={emotion}>
                     <Radio
@@ -182,11 +161,16 @@ const ManageModal = () => {
                             e.preventDefault();
                             setConfirmDelete(true);
                         }}
-                        disabled={item === "" || item === GLOBAL.filler}
+                        disabled={
+                            item === "" ||
+                            item === GLOBAL.filler ||
+                            owner !== user.name
+                        }
                     >
                         Delete
                     </Button>
                 </footer>
+                <CloseButton />
             </ModalFooter>
             {message ? <ModalFooter>{message}</ModalFooter> : null}
             <ConfirmDialog

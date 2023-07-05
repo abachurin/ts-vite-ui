@@ -1,13 +1,12 @@
 import axios, { Method, AxiosError } from "axios";
 import { BACK_URL } from "../config";
 import {
-    UserName,
     ItemListRequest,
-    AgentListResponse,
     ItemListRequestType,
+    ItemType,
+    ItemListResponse,
     AgentDict,
     GameDict,
-    GameListResponse,
 } from "../types";
 
 export type APIConfig<T> = {
@@ -38,70 +37,27 @@ export const connectAPI = async <DataType, ResultType>({
     }
 };
 
-export const getAgents = async (
+export const getItems = async (
+    kind: ItemType,
     userName: string,
     scope: ItemListRequestType
-): Promise<{ agents: AgentDict; message: string }> => {
+): Promise<{ list: AgentDict | GameDict; message: string }> => {
     const { result, error } = await connectAPI<
         ItemListRequest,
-        AgentListResponse
+        ItemListResponse
     >({
         method: "post",
-        endpoint: "/agents/list",
+        endpoint: `/${kind.toLowerCase()}/list`,
         data: { userName: userName, scope: scope },
     });
     if (error) {
-        return { agents: {}, message: error };
+        return { list: {}, message: error };
     } else {
         if (result === undefined || result.status !== "ok") {
             return {
-                agents: {},
+                list: {},
                 message: result?.status ?? "Something is wrong!",
             };
-        } else return { agents: result?.list ?? {}, message: "" };
+        } else return { list: result?.list ?? {}, message: "" };
     }
 };
-
-export const getGames = async (
-    userName: string,
-    scope: ItemListRequestType
-): Promise<{ agents: GameDict; message: string }> => {
-    const { result, error } = await connectAPI<
-        ItemListRequest,
-        GameListResponse
-    >({
-        method: "post",
-        endpoint: "/games/list",
-        data: { userName: userName, scope: scope },
-    });
-    if (error) {
-        return { agents: {}, message: error };
-    } else {
-        if (result === undefined || result.status !== "ok") {
-            return {
-                agents: {},
-                message: result?.status ?? "Something is wrong!",
-            };
-        } else return { agents: result?.list ?? {}, message: "" };
-    }
-};
-
-// export const getJobs = async (
-//     userName: string
-// ): Promise<{ agents: JobDict; message: string }> => {
-//     const { result, error } = await connectAPI<UserName, JobListResponse>({
-//         method: "post",
-//         endpoint: "/agents/list",
-//         data: { userName: userName },
-//     });
-//     if (error) {
-//         return { agents: {}, message: error };
-//     } else {
-//         if (result === undefined || result.status !== "ok") {
-//             return {
-//                 agents: {},
-//                 message: result?.status ?? "Something is wrong!",
-//             };
-//         } else return { agents: result?.agents ?? {}, message: "" };
-//     }
-// };

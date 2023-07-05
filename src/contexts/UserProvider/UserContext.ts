@@ -26,10 +26,6 @@ export const UserUpdateContext = createContext<(update: Partial<User>) => void>(
 
 export const useUser = () => useContext(UserContext);
 export const useUserUpdate = () => useContext(UserUpdateContext);
-export const useNoUser = () => {
-    const user = useUser();
-    return user.name === "Login";
-};
 
 export const usePalette = () => {
     const user = useUser();

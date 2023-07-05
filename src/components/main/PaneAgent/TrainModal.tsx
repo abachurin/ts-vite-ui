@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect, useState } from "react";
-import { connectAPI, getAgents } from "../../../api/utils";
+import { connectAPI, getItems } from "../../../api/utils";
 import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import {
     usePalette,
@@ -14,6 +14,7 @@ import {
     defaultTrainingParams,
     simulateCloseModalClick,
     validateTrainingParams,
+    alphaSymbol,
 } from "../../../utils";
 import Button from "../../base/Button/Button";
 import Dropdown from "../../base/Dropdown";
@@ -70,9 +71,9 @@ const TrainModal = () => {
 
     const [agents, setAgents] = useState<AgentDict>({});
     const getUserAgents = async () => {
-        const { agents, message } = await getAgents(user.name, "user");
+        const { list, message } = await getItems("Agents", user.name, "user");
         createMessage(message, "error");
-        setAgents(agents);
+        setAgents(list as AgentDict);
     };
     useEffect(() => {
         getUserAgents();
@@ -132,6 +133,11 @@ const TrainModal = () => {
             setLoading(false);
         }
     };
+
+    const alphaLabel =
+        (values.isNew ? "Initial" : "Current") +
+        " Learning Rate " +
+        alphaSymbol;
 
     return (
         <Modal
@@ -205,20 +211,22 @@ const TrainModal = () => {
                             disabled={!values.isNew}
                             alignOptions='right'
                             onChange={(value) =>
-                                updateValues({ N: Number(value) })
+                                updateValues({
+                                    N: Number(value),
+                                })
                             }
                             zIndex={20}
                         />
                         <Input
                             {...inputParameters}
                             type='number'
-                            label='Initial Learning Rate (&#945;)'
+                            label={alphaLabel}
                             initialValue={values.alpha || undefined}
                             persistAs='train-alpha'
-                            min={0.1}
+                            min={values.isNew ? 0.1 : 0}
                             max={0.25}
                             step={0.01}
-                            placeholder='0.10 <= &#945; <= 0.25'
+                            placeholder={"0.10 <= " + alphaSymbol + " <= 0.25"}
                             disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({
@@ -231,7 +239,7 @@ const TrainModal = () => {
                         <Input
                             {...inputParameters}
                             type='number'
-                            label='&#945; decay rate'
+                            label={alphaSymbol + " decay rate"}
                             initialValue={values.decay || undefined}
                             persistAs='train-decay'
                             min={0.5}
@@ -263,13 +271,13 @@ const TrainModal = () => {
                         <Input
                             {...inputParameters}
                             type='number'
-                            label='Minimal &#945;'
+                            label={"Minimal " + alphaSymbol}
                             initialValue={values.minAlpha || undefined}
                             persistAs='train-minAlpha'
                             min={0}
                             max={0.05}
                             step={0.001}
-                            placeholder='min &#945; <= 0.05'
+                            placeholder={"min " + alphaSymbol + " <= 0.05"}
                             disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({ minAlpha: Number(value) })

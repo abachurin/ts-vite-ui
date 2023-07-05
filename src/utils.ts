@@ -1,4 +1,4 @@
-import { RGB, RGBA, AgentTraining } from "./types";
+import { RGB, RGBA, AgentTraining, ItemType } from "./types";
 import { User } from "./types";
 import { forEach } from "lodash-es";
 
@@ -88,7 +88,10 @@ export const JobDescriptionLabels = {
 };
 
 export const alphaSymbol = String.fromCharCode(945);
-export const MyObjectDescriptionLabels = {
+export const MyObjectDescriptionLabels: Record<
+    ItemType | "",
+    Record<string, string>
+> = {
     Agents: {
         user: "Owner:",
         name: "Agent name:",
@@ -108,6 +111,7 @@ export const MyObjectDescriptionLabels = {
         numMoves: "Number of moves:",
         maxTile: "Max tile reached:",
     },
+    "": {},
 };
 
 /**
@@ -261,7 +265,7 @@ export const validateTrainingParams = (
                 if (
                     values.alpha === undefined ||
                     values.alpha > 0.25 ||
-                    values.alpha < 0.01
+                    (values.isNew && values.alpha < 0.1)
                 ) {
                     validated.alpha = undefined;
                 }

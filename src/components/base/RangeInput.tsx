@@ -119,13 +119,14 @@ interface RangeInputProps {
     initialValue?: number;
     width?: string;
     labelFontSize?: number;
-    controlSizeRatio?: 3;
+    controlSizeRatio?: number;
     label?: string;
     labelAbove?: boolean;
     backgroundColor?: string;
     color?: string;
     controlColor?: string;
     onChange: (value: number) => void;
+    debounceMs?: number;
 }
 const RangeInput = ({
     start,
@@ -141,16 +142,23 @@ const RangeInput = ({
     color = "inherit",
     controlColor = "rgb(50, 50, 224)",
     onChange,
+    debounceMs = GLOBAL.windowResizeDelay,
 }: RangeInputProps) => {
     const [value, setValue] = useState(initialValue ?? start);
     useEffect(() => {
         setValue(initialValue ?? start);
     }, [initialValue, start]);
 
+    const [timer, setTimer] = useState<NodeJS.Timeout>();
+
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = +e.target.value;
         setValue(value);
-        onChange(value);
+        if (timer) clearTimeout(timer);
+        const newTimer = setTimeout(() => {
+            onChange(value);
+        }, debounceMs);
+        setTimer(newTimer);
     };
 
     // styles depending only on props

@@ -90,7 +90,7 @@ const PlayFooter = () => {
                 fontSize='1rem'
                 onClick={() => newGame()}
             >
-                RESTART
+                NEW GAME
             </Button>
         </div>
     );
