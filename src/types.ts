@@ -123,6 +123,8 @@ export interface Agent extends AgentMainParams {
     bestScore: number;
     maxTile: number;
     lastTrainingEpisode: number;
+    history: number[];
+    collectStep: number;
 }
 
 export type AgentDict = Record<string, Agent>;
@@ -214,6 +216,11 @@ export interface Game extends GameBackend {
 }
 
 export type GameDict = Record<string, GameDescription>;
+
+export type FullGameResponse = {
+    status: string;
+    game?: GameBackend;
+};
 
 // Items (agents and games) types
 export type ItemListRequestType = "all" | "user";

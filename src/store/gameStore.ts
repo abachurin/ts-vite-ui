@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import GameLogic from "./gameLogic";
-import { Game, GameTile } from "../types";
+import { Game, GameTile, GameBackend } from "../types";
 import { deepCopy } from "../utils";
 
 const minInterval = 10;
@@ -11,6 +11,7 @@ const cutHistory = (game: Game): Game => {
     const newGame = deepCopy(game);
     newGame.moves = game.moves.slice(0, game.pointer.move);
     newGame.tiles = game.tiles.slice(0, game.pointer.tile);
+    newGame.nextMove = undefined;
     return newGame;
 };
 
@@ -27,6 +28,7 @@ const appendHistory = (
 
 const fullMove = (game: Game, move?: number): Game | null => {
     const _move = move ?? game.nextMove;
+    if (_move === undefined || _move === -1) return null;
     const tile = game.tiles[game.pointer.tile];
     const [afterMove, change] = GameLogic.makeMove(game, _move);
     if (change) return GameLogic.newTile(afterMove, tile);
@@ -42,7 +44,7 @@ interface GameStore {
     cutHistory: () => void;
     appendHistory: (newMoves: number[], newTiles: GameTile[]) => void;
     newGame: () => void;
-    assignGame: (game: Game) => void;
+    assignGame: (game: GameBackend) => void;
     setIntervalValue: (newInterval: number) => void;
     restartGame: () => void;
 }
@@ -74,7 +76,9 @@ const useGameStore = create<GameStore>()((set, get) => ({
 
     newGame: () => set(() => ({ game: GameLogic.newGame() })),
 
-    assignGame: (newGame: Game) => set(() => ({ game: newGame })),
+    assignGame: (newGame: GameBackend) => {
+        set(() => ({ game: GameLogic.fromBackend(newGame) }));
+    },
 
     restartGame: () =>
         set((state) => ({ game: GameLogic.restartGame(state.game) })),

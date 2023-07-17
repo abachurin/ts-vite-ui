@@ -5,10 +5,11 @@ import {
     usePalette,
     useUser,
 } from "../../../contexts/UserProvider/UserContext";
-import { connectAPI } from "../../../api/utils";
-import useAlertMessage from "../../../hooks/useAlertMessage";
-import { GameDict, ItemListRequest, AlignProps } from "../../../types";
+import useGameStore from "../../../store/gameStore";
+import { getItems, getFullGame } from "../../../api/utils";
+import { GameDict, AlignProps, GameBackend } from "../../../types";
 import { GLOBAL } from "../../../utils";
+import useAlertMessage from "../../../hooks/useAlertMessage";
 import Modal from "../../modal/Modal";
 import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
@@ -29,6 +30,7 @@ const makeEmotion = (lines: number): SerializedStyles => css`
  */
 const ReplayModal = ({ align }: AlignProps) => {
     const modeUpdate = useModeUpdate();
+    const assignGame = useGameStore((state) => state.assignGame);
     const user = useUser();
     const palette = usePalette();
 
@@ -36,29 +38,28 @@ const ReplayModal = ({ align }: AlignProps) => {
     const [options, setOptions] = useState<GameDict>({});
     const choiceOptions = ["My current game", ...Object.keys(options)];
 
-    const [message, createMessage] = useAlertMessage("");
+    const [msg, createMsg] = useAlertMessage("");
 
     const getGames = async () => {
-        const { result, error } = await connectAPI<
-            ItemListRequest,
-            GameListResponse
-        >({
-            method: "POST",
-            endpoint: "/games/list",
-            data: { userName: user.name, scope: "all" },
-        });
-        if (result !== undefined) {
-            if (result.status === "ok") {
-                setOptions(result.list ?? {});
-            } else {
-                createMessage(result.status, "error");
-            }
-        } else {
-            createMessage(error ?? "Unknown error", "error");
+        const { list, message } = await getItems("Games", user.name, "all");
+        if (message) {
+            createMsg(message, "error");
+            return;
         }
+        setOptions(list as GameDict);
     };
 
-    // modeUpdate({ game: "replay" })
+    const replay = async () => {
+        if (item !== "My current game") {
+            const { game, status } = await getFullGame(item);
+            if (status) {
+                createMsg(status, "error");
+                return;
+            }
+            assignGame(game as GameBackend);
+        }
+        modeUpdate({ game: "replay" });
+    };
 
     const emotion = makeEmotion(choiceOptions.length);
 
@@ -97,14 +98,14 @@ const ReplayModal = ({ align }: AlignProps) => {
                     background={palette.three}
                     color={palette.background}
                     type='clickPress'
-                    onClick={() => console.log(item)}
+                    onClick={replay}
                     toggleModal={false}
                 >
                     Replay
                 </Button>
                 <CloseButton />
             </ModalFooter>
-            {message ? <ModalFooter>{message}</ModalFooter> : null}
+            {msg ? <ModalFooter>{msg}</ModalFooter> : null}
         </Modal>
     );
 };

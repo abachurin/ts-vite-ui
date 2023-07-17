@@ -9,6 +9,7 @@ import useAlertMessage from "../../../hooks/useAlertMessage";
 import {
     ItemType,
     AgentDict,
+    Agent,
     GameDict,
     ItemDeleteRequest,
 } from "../../../types";
@@ -25,6 +26,7 @@ import Dropdown from "../../base/Dropdown";
 import Radio from "../../base/Radio";
 import ConfirmDialog from "../../base/ConfirmDialog";
 import DescriptionTable from "../../base/DescriptionTable";
+import Chart from "../../base/Chart";
 import CloseButton from "../../base/Button/CloseButton";
 
 // Emotion styles
@@ -43,6 +45,9 @@ const emotion = css`
         flex: 1;
         margin-top: ${GLOBAL.padding};
         font-size: 0.85rem;
+        display: flex;
+        flex-direction: column;
+        gap: ${GLOBAL.padding};
     }
 `;
 
@@ -106,11 +111,11 @@ const ManageModal = () => {
             button={{
                 background: palette.two,
                 align: "left",
-                children: "Available Items",
+                children: "Items Information",
                 legend: "Only for registered users",
             }}
             modal={{
-                width: "24rem",
+                width: "26rem",
                 backgroundColor: palette.background,
                 color: palette.text,
             }}
@@ -147,6 +152,12 @@ const ManageModal = () => {
                                 collection={options?.[item] ?? []}
                                 translation={description}
                             />
+                            {/* {kind === "Agents" ? (
+                                <Chart
+                                    history={(options[item] as Agent).history}
+                                    step={(options[item] as Agent).collectStep}
+                                />
+                            ) : null} */}
                         </main>
                     )}
                 </div>
@@ -169,8 +180,8 @@ const ManageModal = () => {
                     >
                         Delete
                     </Button>
+                    <CloseButton />
                 </footer>
-                <CloseButton />
             </ModalFooter>
             {message ? <ModalFooter>{message}</ModalFooter> : null}
             <ConfirmDialog

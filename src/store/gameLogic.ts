@@ -1,5 +1,5 @@
 import { uniqueId } from "lodash-es";
-import { Offset, Game, GameTile } from "../types";
+import { Offset, Game, GameTile, GameBackend } from "../types";
 import { deepCopy, deepEqual } from "../utils";
 
 export const gameMoves: Record<number, string> = {
@@ -17,11 +17,21 @@ export abstract class GameLogic {
     public static restartGame(game: Game): Game {
         const newGame = deepCopy(game);
         newGame.row = deepCopy(game.initial);
+        newGame.score = 0;
         newGame.lastTile = undefined;
         newGame.nextMove = game.moves?.[0];
         newGame.pointer = { move: 0, tile: 0 };
         newGame.isOver = false;
         return newGame;
+    }
+
+    public static fromBackend(game: GameBackend): Game {
+        const fullGame: Game = {
+            ...game,
+            isOver: false,
+            pointer: { move: 0, tile: 0 },
+        };
+        return this.restartGame(fullGame);
     }
 
     private static emptyBoard(): number[][] {

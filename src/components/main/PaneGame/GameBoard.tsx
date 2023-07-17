@@ -74,7 +74,7 @@ const GameBoard = () => {
             <header>
                 <div>Score: {game.score}</div>
                 <div>Moves: {game.pointer.move}</div>
-                {game.nextMove !== undefined ? (
+                {game.nextMove !== undefined && game.nextMove !== -1 ? (
                     <label>Next: {gameMoves[game.nextMove]}</label>
                 ) : null}
                 {game.isOver && <label>Game over!</label>}

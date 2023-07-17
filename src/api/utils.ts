@@ -7,6 +7,7 @@ import {
     ItemListResponse,
     AgentDict,
     GameDict,
+    FullGameResponse,
 } from "../types";
 
 export type APIConfig<T> = {
@@ -59,5 +60,23 @@ export const getItems = async (
                 message: result?.status ?? "Something is wrong!",
             };
         } else return { list: result?.list ?? {}, message: "" };
+    }
+};
+
+export const getFullGame = async (
+    gameName: string
+): Promise<FullGameResponse> => {
+    const { result, error } = await connectAPI<undefined, FullGameResponse>({
+        method: "get",
+        endpoint: `/games/${gameName}`,
+    });
+    if (error) {
+        return { status: error };
+    } else {
+        if (result === undefined || result.status !== "ok") {
+            return {
+                status: result?.status ?? "Something is wrong!",
+            };
+        } else return { game: result?.game, status: "" };
     }
 };
