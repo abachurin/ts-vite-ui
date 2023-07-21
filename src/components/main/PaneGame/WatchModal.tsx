@@ -1,114 +1,249 @@
-import { css, SerializedStyles } from "@emotion/react";
-import { useState } from "react";
+import { css } from "@emotion/react";
+import { useCallback, useEffect, useState } from "react";
+import { connectAPI, getJustNames } from "../../../api/utils";
 import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
 import {
     usePalette,
     useUser,
 } from "../../../contexts/UserProvider/UserContext";
-import useGameStore from "../../../store/gameStore";
-import { getItems, getFullGame } from "../../../api/utils";
-import { AgentDict, AlignProps, GameBackend } from "../../../types";
-import { GLOBAL } from "../../../utils";
 import useAlertMessage from "../../../hooks/useAlertMessage";
+import useAnyRunningJob from "../../../hooks/useAnyJob";
+import { AgentWatching } from "../../../types";
+import {
+    GLOBAL,
+    defaultTestingParams,
+    simulateCloseModalClick,
+    validateTestingParams,
+    specialAgents,
+} from "../../../utils";
+import Button from "../../base/Button/Button";
+import Dropdown from "../../base/Dropdown";
+import Input from "../../base/Input";
 import Modal from "../../modal/Modal";
 import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
-import Dropdown from "../../base/Dropdown";
-import Button from "../../base/Button/Button";
 import CloseButton from "../../base/Button/CloseButton";
 
 // Emotion styles
-const makeEmotion = (lines: number): SerializedStyles => css`
-    // height: calc(${lines} * 2.2rem + 3.7rem + ${GLOBAL.padding} * 2);
+const footerWrapper = css`
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+`;
+const emotion = css`
+    display: flex;
+    flex-direction: column;
     gap: ${GLOBAL.padding};
-    padding: ${GLOBAL.padding};
+    padding-block: calc(${GLOBAL.padding} * 2);
+    padding-inline: ${GLOBAL.padding};
+    & > * {
+        flex: 1;
+    }
+    & > section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: ${GLOBAL.padding};
+    }
+    & > section > * {
+        flex: 1;
+    }
 `;
 
 /**
  * Returns a React Modal component containing the Admin section.
  * @param align - The alignment parameter of the button, which opens the modal
  */
-const WatchModal = ({ align }: AlignProps) => {
+const WatchModal = () => {
     const modeUpdate = useModeUpdate();
-    const assignGame = useGameStore((state) => state.assignGame);
-    const user = useUser();
     const palette = usePalette();
+    const user = useUser();
 
-    const [item, setItem] = useState("My current game");
-    const [options, setOptions] = useState<AgentDict>({});
-    const choiceOptions = [
-        "Random Moves",
-        "Best Score",
-        ...Object.keys(options),
-    ];
+    const [message, createMessage] = useAlertMessage("");
+    const [loading, setLoading] = useState(false);
 
-    const [msg, createMsg] = useAlertMessage("");
+    const [values, setValues] = useState<AgentWatching>(defaultTestingParams);
+    const updateValues = useCallback((update: Partial<AgentWatching>) => {
+        setValues((prevValues) => ({ ...prevValues, ...update }));
+    }, []);
 
-    const getAgents = async () => {
-        const { list, message } = await getItems("Agents", user.name, "all");
-        if (message) {
-            createMsg(message, "error");
-            return;
-        }
-        setOptions(list as AgentDict);
+    const [agents, setAgents] = useState<string[]>([]);
+    const getAllAgentNames = async () => {
+        const { list, message } = await getJustNames(
+            "Agents",
+            user.name,
+            "all"
+        );
+        createMessage(message, "error");
+        setAgents(list);
+    };
+    useEffect(() => {
+        getAllAgentNames();
+    }, [user]);
+
+    useEffect(() => {
+        values.name && updateValues({ name: values.name });
+    }, [values.name]);
+
+    const inputParameters = {
+        backgroundColor: "white",
+        labelColor1: palette.two,
+        labelColor2: palette.one,
+        controlColor: palette.three,
     };
 
-    const watch = async () => {
-        const { game, status } = await getFullGame(item);
-        if (status) {
-            createMsg(status, "error");
-            return;
+    const handleWatch = async () => {
+        const [validated, change] = validateTestingParams(values);
+        setValues((prevValues) => ({ ...prevValues, ...validated }));
+        if (change) {
+            createMessage(
+                "Some parameters are invalid or undefined. Please follow the instructions.",
+                "error"
+            );
+        } else {
+            setLoading(true);
+            createMessage("Preparing Agent ...", "success", 100000);
+            const { result, error } = await connectAPI<AgentWatching, string>({
+                method: "post",
+                endpoint: "/jobs/watch",
+                data: { ...values, user: user.name },
+            });
+            if (error) {
+                createMessage(error, "error");
+            } else {
+                if (result !== "ok") {
+                    createMessage(result, "error");
+                } else {
+                    createMessage("");
+                    modeUpdate({ game: "watch" });
+                    simulateCloseModalClick();
+                }
+            }
+            setLoading(false);
         }
-        assignGame(game as GameBackend);
-
-        modeUpdate({ game: "replay" });
     };
 
-    const emotion = makeEmotion(choiceOptions.length);
+    const handleResetDefaults = () => {
+        const resetValues = { ...defaultTestingParams };
+        resetValues.name = values.name;
+        setValues(resetValues);
+    };
+
+    const allAgents = [...specialAgents, ...agents];
 
     return (
         <Modal
             button={{
                 background: palette.one,
-                align: align,
-                onClick: getAgents,
                 children: "Watch",
             }}
             modal={{
+                width: "26rem",
                 backgroundColor: palette.background,
                 color: palette.text,
-                width: "24rem",
             }}
         >
             <ModalBody overflow='visible'>
-                <div css={emotion}>
+                <main css={emotion}>
                     <Dropdown
+                        {...inputParameters}
                         label='Choose Agent to Watch'
-                        backgroundColor='white'
-                        labelColor1={palette.two}
-                        labelColor2={palette.one}
-                        alignOptions='right'
-                        controlColor={palette.three}
-                        optionValues={choiceOptions}
-                        initialValue={item}
-                        persistAs='replay-game'
-                        onChange={setItem}
+                        optionValues={allAgents}
+                        persistAs='train-existing-name'
+                        initialValue={values.name}
+                        onChange={(value) =>
+                            updateValues({ name: String(value) })
+                        }
+                        zIndex={30}
                     />
-                </div>
+
+                    <section>
+                        <Input
+                            {...inputParameters}
+                            type='number'
+                            label='Depth'
+                            initialValue={values.depth}
+                            persistAs='test-depth'
+                            min={0}
+                            max={2}
+                            step={1}
+                            placeholder='0 <= depth <= 2'
+                            onChange={(value) =>
+                                updateValues({
+                                    depth:
+                                        value === ""
+                                            ? undefined
+                                            : Number(value),
+                                })
+                            }
+                        />
+                        <Input
+                            {...inputParameters}
+                            type='number'
+                            label='Width'
+                            initialValue={values.width}
+                            persistAs='test-width'
+                            min={0}
+                            max={3}
+                            step={1}
+                            placeholder='0 <= width <= 3'
+                            onChange={(value) =>
+                                updateValues({
+                                    width:
+                                        value === ""
+                                            ? undefined
+                                            : Number(value),
+                                })
+                            }
+                        />
+                        <Input
+                            {...inputParameters}
+                            type='number'
+                            label='Trigger'
+                            initialValue={values.trigger}
+                            persistAs='test-trigger'
+                            min={0}
+                            max={6}
+                            step={1}
+                            placeholder='0 <= trigger <= 6'
+                            onChange={(value) =>
+                                updateValues({
+                                    trigger:
+                                        value === ""
+                                            ? undefined
+                                            : Number(value),
+                                })
+                            }
+                        />
+                    </section>
+                </main>
             </ModalBody>
             <ModalFooter>
-                <Button
-                    background={palette.three}
-                    color={palette.background}
-                    type='clickPress'
-                    onClick={watch}
-                    toggleModal={false}
-                >
-                    Watch Agent Play
-                </Button>
-                <CloseButton />
+                <div css={footerWrapper}>
+                    <Button
+                        type='clickPress'
+                        width='8rem'
+                        background={palette.three}
+                        color={palette.background}
+                        onClick={handleWatch}
+                        disabled={loading}
+                    >
+                        GO!
+                    </Button>
+                    <Button
+                        type='clickPress'
+                        width='8rem'
+                        background={palette.two}
+                        color={palette.background}
+                        onClick={handleResetDefaults}
+                        disabled={loading}
+                    >
+                        Reset Defaults
+                    </Button>
+                    <CloseButton />
+                </div>
             </ModalFooter>
-            {msg ? <ModalFooter>{msg}</ModalFooter> : null}
+            {message ? <ModalFooter>{message}</ModalFooter> : null}
         </Modal>
     );
 };

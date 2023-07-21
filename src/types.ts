@@ -135,13 +135,13 @@ export interface AgentTraining extends AgentMainParams {
 }
 export interface AgentWatching {
     user?: string;
-    name: string;
-    depth: number;
-    width: number;
-    trigger: number;
+    name: string | undefined;
+    depth: number | undefined;
+    width: number | undefined;
+    trigger: number | undefined;
 }
 export interface AgentTesting extends AgentWatching {
-    episodes: number;
+    episodes: number | undefined;
 }
 
 // Job Description types
@@ -238,4 +238,9 @@ export type ItemListResponse = {
 export type ItemDeleteRequest = {
     name: string;
     kind: string;
+};
+
+export type JustNamesResponse = {
+    status?: string;
+    list?: string[];
 };

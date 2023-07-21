@@ -1,4 +1,11 @@
-import { RGB, RGBA, AgentTraining, ItemType } from "./types";
+import {
+    RGB,
+    RGBA,
+    AgentTraining,
+    AgentWatching,
+    AgentTesting,
+    ItemType,
+} from "./types";
 import { User } from "./types";
 import { forEach } from "lodash-es";
 
@@ -238,7 +245,7 @@ export function hasUndefinedValues(obj: Record<string, unknown>): boolean {
 }
 
 /**
- *  default Training params and the functions to validate them
+ *  default Job params and the functions to validate them
  */
 export const defaultTrainingParams = {
     N: 4,
@@ -250,6 +257,19 @@ export const defaultTrainingParams = {
     name: undefined,
     isNew: true,
 };
+
+export const defaultWatchParams: AgentWatching = {
+    depth: 0,
+    width: 1,
+    trigger: 0,
+    name: undefined,
+};
+
+export const defaultTestingParams: AgentTesting = {
+    ...defaultWatchParams,
+    episodes: 1000,
+};
+
 export const validateTrainingParams = (
     values: Partial<AgentTraining>
 ): [Partial<AgentTraining>, boolean] => {
@@ -294,6 +314,67 @@ export const validateTrainingParams = (
                 ) {
                     validated.minAlpha = undefined;
                 }
+                break;
+            default:
+                break;
+        }
+    });
+    return [
+        validated,
+        !deepEqual(validated, values) || hasUndefinedValues(validated),
+    ];
+};
+
+const checkNumberVal = (
+    key: keyof typeof defaultTestingParams,
+    val: number | undefined,
+    minVal: number,
+    maxVal: number
+) => {
+    if (val === undefined) {
+        return defaultTestingParams[key] as number;
+    } else if (val > maxVal || val < minVal || !Number.isInteger(val)) {
+        return undefined;
+    } else return val;
+};
+
+export const specialAgents = ["Random Moves", "Best Score"];
+
+export const validateTestingParams = (
+    values: Partial<AgentTesting>
+): [Partial<AgentTesting>, boolean] => {
+    const validated = { ...values };
+    forEach(values, (_, key) => {
+        switch (key) {
+            case "name":
+                if (
+                    !checkRe(values.name) &&
+                    !specialAgents.includes(values.name ?? "x x x")
+                ) {
+                    validated.name = undefined;
+                }
+                break;
+            case "depth":
+                validated.depth = checkNumberVal("depth", values.depth, 0, 2);
+                break;
+            case "width":
+                validated.width = checkNumberVal("width", values.width, 0, 3);
+                break;
+            case "trigger":
+                validated.trigger = checkNumberVal(
+                    "trigger",
+                    values.trigger,
+                    0,
+                    6
+                );
+                break;
+            case "episodes":
+                validated.episodes = checkNumberVal(
+                    "episodes",
+                    values.episodes,
+                    100,
+                    10000
+                );
                 break;
             default:
                 break;

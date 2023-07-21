@@ -72,7 +72,7 @@ const CurrentJobDescription = () => {
                 if (error) {
                     createMessage(error, "error");
                 } else {
-                    createMessage(result, "success");
+                    createMessage(result, "success", 100000);
                 }
             },
         }

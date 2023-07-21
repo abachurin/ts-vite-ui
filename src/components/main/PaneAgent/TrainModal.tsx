@@ -286,7 +286,7 @@ const TrainModal = () => {
                         <Input
                             {...inputParameters}
                             type='number'
-                            label='Training episodes'
+                            label='Train episodes'
                             initialValue={values.episodes || undefined}
                             persistAs='train-episodes'
                             min={values.isNew ? 0 : 5000}

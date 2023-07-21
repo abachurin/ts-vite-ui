@@ -169,15 +169,13 @@ const Dropdown = ({
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
         const currentValue = e.currentTarget.innerText;
-        if (currentValue !== initialValue) {
-            makeSound(clickSound, user);
-            if (persistAs) {
-                setPersistedValue(currentValue);
-            } else {
-                onChange(currentValue);
-            }
-            if (!alwaysOpen) setOptionsOpen(false);
+        makeSound(clickSound, user);
+        if (persistAs) {
+            setPersistedValue(currentValue);
+        } else {
+            onChange(currentValue);
         }
+        if (!alwaysOpen) setOptionsOpen(false);
     };
 
     const container = useMemo(

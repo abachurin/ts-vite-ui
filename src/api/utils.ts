@@ -5,6 +5,7 @@ import {
     ItemListRequestType,
     ItemType,
     ItemListResponse,
+    JustNamesResponse,
     AgentDict,
     GameDict,
     FullGameResponse,
@@ -60,6 +61,31 @@ export const getItems = async (
                 message: result?.status ?? "Something is wrong!",
             };
         } else return { list: result?.list ?? {}, message: "" };
+    }
+};
+
+export const getJustNames = async (
+    kind: ItemType,
+    userName: string,
+    scope: ItemListRequestType
+): Promise<{ list: string[]; message: string }> => {
+    const { result, error } = await connectAPI<
+        ItemListRequest,
+        JustNamesResponse
+    >({
+        method: "post",
+        endpoint: `/${kind.toLowerCase()}/just_names`,
+        data: { userName: userName, scope: scope },
+    });
+    if (error) {
+        return { list: [], message: error };
+    } else {
+        if (result === undefined || result.status !== "ok") {
+            return {
+                list: [],
+                message: result?.status ?? "Something is wrong!",
+            };
+        } else return { list: result?.list ?? [], message: "" };
     }
 };
 
