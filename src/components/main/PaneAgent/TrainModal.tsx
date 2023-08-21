@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect, useState } from "react";
 import { connectAPI, getItems } from "../../../api/utils";
-import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
+import useModeStore from "../../../store/modeStore";
 import {
     usePalette,
     useUser,
@@ -56,18 +56,15 @@ const emotion = css`
  * @param align - The alignment parameter of the button, which opens the modal
  */
 const TrainModal = () => {
-    const modeUpdate = useModeUpdate();
     const palette = usePalette();
     const user = useUser();
     const anyJob = useAnyRunningJob();
 
+    const setAgentMode = useModeStore((state) => state.setAgentMode);
+    const setAgentName = useModeStore((state) => state.setAgentName);
+
     const [message, createMessage] = useAlertMessage("");
     const [loading, setLoading] = useState(false);
-
-    const [values, setValues] = useState<AgentTraining>(defaultTrainingParams);
-    const updateValues = useCallback((update: Partial<AgentTraining>) => {
-        setValues((prevValues) => ({ ...prevValues, ...update }));
-    }, []);
 
     const [agents, setAgents] = useState<AgentDict>({});
     const getUserAgents = async () => {
@@ -80,10 +77,18 @@ const TrainModal = () => {
     }, [user]);
     const agentList = Object.keys(agents);
 
-    useEffect(() => {
+    const [values, setValues] = useState<AgentTraining>(defaultTrainingParams);
+    const updateValues = useCallback((update: Partial<AgentTraining>) => {
+        setValues((prevValues) => ({ ...prevValues, ...update }));
+    }, []);
+    const updateOnOpen = () => {
         if (!values.isNew && values.name) {
             updateValues({ ...agents[values.name] });
         }
+    };
+
+    useEffect(() => {
+        updateOnOpen();
     }, [values.isNew, values.name]);
 
     const inputParameters = {
@@ -124,7 +129,8 @@ const TrainModal = () => {
                           }`
                         : "Training resumed, follow the logs";
                     createMessage(message, "success");
-                    modeUpdate({ agent: "train" });
+                    setAgentName(values.name);
+                    setAgentMode("train");
                     setTimeout(() => {
                         simulateCloseModalClick();
                     }, 1500);
@@ -147,6 +153,7 @@ const TrainModal = () => {
                 legend: "Only for registered users, and when no Job is running",
                 level: GLOBAL.userLevel.user,
                 disabled: anyJob,
+                onClick: () => setTimeout(() => updateOnOpen(), 100),
             }}
             modal={{
                 width: "26rem",
@@ -182,7 +189,7 @@ const TrainModal = () => {
                             type='text'
                             label='New Agent Name'
                             persistAs='train-new-name'
-                            initialValue={values.name}
+                            initialValue={values.name ?? ""}
                             placeholder={`Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`}
                             onChange={(value) =>
                                 updateValues({ name: String(value) })

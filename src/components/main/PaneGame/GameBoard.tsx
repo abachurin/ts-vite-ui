@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { uniqueId } from "lodash-es";
 import { gameMoves } from "../../../store/gameLogic";
 import useGameStore from "../../../store/gameStore";
+import useWatchGame from "../../../hooks/useWatchGame";
 import useNextMoveInterval from "../../../hooks/useNextMoveInterval";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../../../utils";
@@ -44,9 +45,11 @@ const makeEmotion = (
 `;
 
 const GameBoard = () => {
+    useWatchGame();
+    useNextMoveInterval();
+
     const palette = usePalette();
     const game = useGameStore((state) => state.game);
-    useNextMoveInterval();
 
     const emotion = useMemo(
         () =>
@@ -69,13 +72,16 @@ const GameBoard = () => {
         (game.lastTile?.position.x ?? 0) * 4 +
         (game.lastTile?.position.y ?? -1);
 
+    const showNextMove =
+        game.nextMove === undefined ? "..." : gameMoves[game.nextMove];
+
     return (
         <div id='game-board' css={emotion}>
             <header>
                 <div>Score: {game.score}</div>
                 <div>Moves: {game.pointer.move}</div>
-                {game.nextMove !== undefined && game.nextMove !== -1 ? (
-                    <label>Next: {gameMoves[game.nextMove]}</label>
+                {game.nextMove !== -1 ? (
+                    <label>Next: {showNextMove}</label>
                 ) : null}
                 {game.isOver && <label>Game over!</label>}
             </header>

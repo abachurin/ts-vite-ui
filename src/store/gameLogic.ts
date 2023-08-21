@@ -81,8 +81,8 @@ export abstract class GameLogic {
         return positions;
     }
 
-    private static gameOver(game: Game): boolean {
-        const row = game.row;
+    public static gameOver(game: Game | number[][]): boolean {
+        const row = Array.isArray(game) ? game : game.row;
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 4; j++) {
                 if (
@@ -101,7 +101,7 @@ export abstract class GameLogic {
         const newGame = deepCopy(game);
         newGame.row[tile.position.x][tile.position.y] = tile.value;
         newGame.lastTile = tile;
-        newGame.tiles[game.pointer.tile] = tile;
+        newGame.tiles[newGame.pointer.tile] = tile;
         newGame.pointer.tile++;
         if (this.gameOver(newGame)) {
             newGame.isOver = true;

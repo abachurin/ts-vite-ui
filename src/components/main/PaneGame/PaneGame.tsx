@@ -1,10 +1,8 @@
 import { css } from "@emotion/react";
+import { useEffect } from "react";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
+import useModeStore, { modeDescription } from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
-import {
-    useMode,
-    useModeUpdate,
-} from "../../../contexts/ModeProvider/ModeContext";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useAlert from "../../../hooks/useAlert";
 import { GLOBAL, smoothScroll } from "../../../utils";
@@ -35,19 +33,25 @@ const PaneGame = () => {
         duration: 100000,
         children: user.legends ? <Instruction /> : null,
     });
-
     const palette = usePalette();
-    const modeUpdate = useModeUpdate();
-    const mode = useMode();
 
+    const gameMode = useModeStore((state) => state.gameMode);
+    const gameName = useModeStore((state) => state.gameName);
+    const setGameMode = useModeStore((state) => state.setGameMode);
+
+    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
     const newGame = useGameStore((state) => state.newGame);
     const cutHistory = useGameStore((state) => state.cutHistory);
     const setPaused = useGameStore((state) => state.setPaused);
 
+    useEffect(() => {
+        setWatchingNow(gameMode === "watch");
+    }, [gameMode]);
+
     const playYourself = () => {
-        if (mode.game === "play") return;
-        if (mode.game === "none") newGame();
-        modeUpdate({ game: "play" });
+        if (gameMode === "play") return;
+        if (gameMode === "none") newGame();
+        setGameMode("play");
         setPaused(true);
         cutHistory();
         openInstruction();
@@ -58,7 +62,7 @@ const PaneGame = () => {
 
     return (
         <Pane id='game-pane'>
-            <PaneHeader type='game'>
+            <PaneHeader type='game' text={modeDescription(gameMode, gameName)}>
                 <WatchModal />
                 <ReplayModal />
                 <Button background={palette.one} onClick={playYourself}>
@@ -68,9 +72,9 @@ const PaneGame = () => {
             <PaneBody>
                 <GameBoard />
                 <div css={emotion}>
-                    {mode.game === "play" ? (
+                    {gameMode === "play" ? (
                         <PlayFooter />
-                    ) : mode.game === "watch" || mode.game === "replay" ? (
+                    ) : gameMode === "watch" || gameMode === "replay" ? (
                         <WatchFooter />
                     ) : null}
                 </div>

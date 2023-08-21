@@ -44,6 +44,7 @@ const makeEmotion = (
     }
     & > main {
         display: flex;
+        gap: ${GLOBAL.padding};
         justify-content: space-evenly;
         align-items: center;
         position: relative;

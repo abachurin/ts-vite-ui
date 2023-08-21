@@ -14,9 +14,6 @@ const addNewLogs = (currentLogs: Logs, newLogs: Logs): Logs => {
 };
 
 const fetchLogs = async (userName: string): Promise<LogsResponse> => {
-    if (userName === "Login") {
-        return Promise.resolve({ status: "ok", logs: [] });
-    }
     const { result, error } = await connectAPI<UserName, LogsResponse>({
         method: "POST",
         endpoint: "/logs/update",

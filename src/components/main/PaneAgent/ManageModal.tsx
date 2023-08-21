@@ -9,9 +9,10 @@ import useAlertMessage from "../../../hooks/useAlertMessage";
 import {
     ItemType,
     AgentDict,
-    Agent,
     GameDict,
+    ItemListRequestType,
     ItemDeleteRequest,
+    Agent,
 } from "../../../types";
 import {
     GLOBAL,
@@ -24,10 +25,11 @@ import ModalFooter from "../../modal/ModalFooter";
 import Button from "../../base/Button/Button";
 import Dropdown from "../../base/Dropdown";
 import Radio from "../../base/Radio";
+import Checkbox from "../../base/Checkbox";
 import ConfirmDialog from "../../base/ConfirmDialog";
 import DescriptionTable from "../../base/DescriptionTable";
-import Chart from "../../base/Chart";
 import CloseButton from "../../base/Button/CloseButton";
+import Chart from "../../base/Chart";
 
 // Emotion styles
 const footerWrapper = css`
@@ -41,6 +43,13 @@ const emotion = css`
     gap: ${GLOBAL.padding};
     padding-block: ${GLOBAL.padding};
     padding-inline: ${GLOBAL.padding};
+    & > section {
+        display: flex;
+        gap: ${GLOBAL.padding};
+    }
+    & > section > div:first-of-type {
+        flex: 1;
+    }
     & > main {
         flex: 1;
         margin-top: ${GLOBAL.padding};
@@ -59,29 +68,38 @@ const ManageModal = () => {
     const palette = usePalette();
     const user = useUser();
 
-    const [kind, setKind] = useState<ItemType | "">("");
+    const [kind, setKind] = useState<ItemType>("Agents");
     const [item, setItem] = useState("");
+    const [scope, setScope] = useState<ItemListRequestType>("all");
     const [options, setOptions] = useState<AgentDict | GameDict>({});
     const [message, createMessage] = useAlertMessage("");
 
     const owner = (options?.[item] ?? [])["user"];
 
     useEffect(() => {
-        setKind("");
+        setKind("Agents");
         setItem("");
         setOptions({});
     }, [user]);
 
     const [confirmDelete, setConfirmDelete] = useState(false);
 
-    const handleKindChange = async (newKindLabel: string) => {
-        const newKind = newKindLabel === "Agents" ? "Agents" : "Games";
-        const { list, message } = await getItems(newKind, user.name, "all");
+    const handleChange = async (newKindLabel?: string, checked?: boolean) => {
+        const newKind =
+            newKindLabel === undefined
+                ? kind
+                : newKindLabel === "Agents"
+                ? "Agents"
+                : "Games";
+        const newScope =
+            checked === undefined ? scope : checked ? "all" : "user";
+        const { list, message } = await getItems(newKind, user.name, newScope);
         if (message) {
             createMessage(message, "error");
             return;
         }
-        setKind(newKind);
+        newKindLabel && setKind(newKind);
+        checked && setScope(newScope);
         setOptions(list);
         setItem(Object.keys(list)[0] ?? "");
     };
@@ -104,6 +122,14 @@ const ManageModal = () => {
             ),
         [kind, palette]
     );
+    const brightOne = changeBrightness(palette.four, 1.5);
+    const checkboxParameters = {
+        color1: palette.background,
+        color2: palette.background,
+        color3: brightOne,
+        controlColor: palette.three,
+    };
+
     const description = MyObjectDescriptionLabels[kind];
 
     return (
@@ -113,6 +139,7 @@ const ManageModal = () => {
                 align: "left",
                 children: "Items Information",
                 legend: "Only for registered users",
+                onClick: () => handleChange(),
             }}
             modal={{
                 width: "26rem",
@@ -121,17 +148,31 @@ const ManageModal = () => {
             }}
         >
             <ModalBody overflow='visible'>
-                <div css={emotion}>
-                    <Radio
-                        backgroundColor={palette.background}
-                        controlColor={palette.three}
-                        color1={palette.two}
-                        color2={palette.one}
-                        label='Agents / Games'
-                        options={["Agents", "Games"]}
-                        initialValue={kind}
-                        onChange={handleKindChange}
-                    />
+                <header css={emotion}>
+                    <section>
+                        <div>
+                            <Radio
+                                backgroundColor={palette.background}
+                                controlColor={palette.three}
+                                color1={palette.two}
+                                color2={palette.one}
+                                label='Agents / Games'
+                                options={["Agents", "Games"]}
+                                initialValue={kind}
+                                onChange={(value) =>
+                                    handleChange(value, undefined)
+                                }
+                            />
+                        </div>
+                        <Checkbox
+                            {...checkboxParameters}
+                            label='All Users'
+                            checked={scope === "all"}
+                            onChange={(checked) =>
+                                handleChange(undefined, checked)
+                            }
+                        />
+                    </section>
                     <Dropdown
                         alignOptions='right'
                         backgroundColor='white'
@@ -152,15 +193,15 @@ const ManageModal = () => {
                                 collection={options?.[item] ?? []}
                                 translation={description}
                             />
-                            {/* {kind === "Agents" ? (
+                            {kind === "Agents" ? (
                                 <Chart
                                     history={(options[item] as Agent).history}
                                     step={(options[item] as Agent).collectStep}
                                 />
-                            ) : null} */}
+                            ) : null}
                         </main>
                     )}
-                </div>
+                </header>
             </ModalBody>
             <ModalFooter>
                 <footer css={footerWrapper}>

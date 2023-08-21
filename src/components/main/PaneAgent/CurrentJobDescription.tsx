@@ -2,7 +2,7 @@ import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { connectAPI } from "../../../api/utils";
-import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
+import useModeStore from "../../../store/modeStore";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useJobDescription from "../../../hooks/useJobDescription";
@@ -51,13 +51,15 @@ const CurrentJobDescription = () => {
     const palette = usePalette();
     const user = useUser();
     const job = useJobDescription(user.name);
-    const updateMode = useModeUpdate();
+    const setAgentMode = useModeStore((state) => state.setAgentMode);
+    const setAgentName = useModeStore((state) => state.setAgentName);
     const [message, createMessage] = useAlertMessage("");
 
     useEffect(() => {
         const type = job?.type;
         const jobType = type === 0 ? "train" : type === 1 ? "test" : "none";
-        updateMode({ agent: jobType });
+        setAgentMode(jobType);
+        setAgentName(job?.name);
     });
 
     const cancelJobMutation = useMutation(

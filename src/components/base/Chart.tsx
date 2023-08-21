@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { LineChart, Line, CartesianGrid, XAxis, YAxis } from "recharts";
+import Plot from "react-plotly.js";
 import { Offset } from "../../types";
 import { GLOBAL } from "../../utils";
 
@@ -25,19 +25,19 @@ const Chart = ({ history, step }: ChartProps) => {
 
     return (
         <div css={emotion}>
-            {/* <ResponsiveContainer width='100%' height='100%'> */}
-            <LineChart
-                width={450}
-                height={150}
-                margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
-                data={data}
-            >
-                <Line type='monotone' dataKey='y' stroke='#8884d8' />
-                <CartesianGrid stroke='blue' strokeDasharray='1 1' />
-                <XAxis dataKey='x' />
-                <YAxis />
-            </LineChart>
-            {/* </ResponsiveContainer> */}
+            <Plot
+                data={[
+                    {
+                        x: [1, 2, 3],
+                        y: [2, 6, 3],
+                        type: "scatter",
+                        mode: "lines+markers",
+                        marker: { color: "red" },
+                    },
+                    { type: "bar", x: [1, 2, 3], y: [2, 5, 3] },
+                ]}
+                layout={{ width: 320, height: 240, title: "A Fancy Plot" }}
+            />
         </div>
     );
 };

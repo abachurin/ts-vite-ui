@@ -89,12 +89,6 @@ export type ButtonEffects = (
     animate: boolean
 ) => void;
 
-// Mode types
-export type ModeOfAction = {
-    agent: "none" | "train" | "test";
-    game: "none" | "watch" | "replay" | "play";
-};
-
 // Draggable types
 export type Position = {
     x: string;
@@ -133,14 +127,20 @@ export interface AgentTraining extends AgentMainParams {
     episodes: number | undefined;
     isNew: boolean;
 }
-export interface AgentWatching {
+export interface AgentWatchingBase {
     user?: string;
     name: string | undefined;
     depth: number | undefined;
     width: number | undefined;
     trigger: number | undefined;
 }
-export interface AgentTesting extends AgentWatching {
+
+export interface AgentWatching extends AgentWatchingBase {
+    startGame: GameForWatch;
+    previous: string;
+}
+
+export interface AgentTesting extends AgentWatchingBase {
     episodes: number | undefined;
 }
 
@@ -189,6 +189,18 @@ export type GameTile = {
 export type GamePointer = {
     move: number;
     tile: number;
+};
+
+export type GameForWatch = {
+    name: string;
+    initial: number[][];
+    score: number;
+    numMoves: number;
+};
+
+export type GameWatchNew = {
+    user: string;
+    startGame: GameForWatch;
 };
 
 export interface GameCore {
@@ -243,4 +255,17 @@ export type ItemDeleteRequest = {
 export type JustNamesResponse = {
     status?: string;
     list?: string[];
+};
+
+// Watch Agent game retrieval types
+export interface NewMovesRequest extends UserName {
+    name: string;
+    numMoves: number;
+}
+
+export type NewMovesResponse = {
+    status?: string;
+    moves?: number[];
+    tiles?: GameTile[];
+    loadingWeights?: boolean;
 };

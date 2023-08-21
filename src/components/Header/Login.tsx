@@ -1,6 +1,8 @@
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useModeStore from "../../store/modeStore";
 import { useLogsStore } from "../../store/logsStore";
+import useGameStore from "../../store/gameStore";
 import {
     useUser,
     usePalette,
@@ -67,6 +69,11 @@ type LoginProps = {
 
 const Login = ({ align = "left" }: LoginProps) => {
     const user = useUser();
+    const defaultMode = useModeStore((state) => state.defaultMode);
+    const newGame = useGameStore((state) => state.newGame);
+    const setPaused = useGameStore((state) => state.setPaused);
+    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
+
     const setLogs = useLogsStore((state) => state.setLogs);
     const palette = usePalette();
     const updateUser = useUserUpdate();
@@ -78,9 +85,13 @@ const Login = ({ align = "left" }: LoginProps) => {
     const [message, createMessage] = useAlertMessage(initialMessage);
     const [loading, setLoading] = useState(false);
 
-    const finalizeLogin = (update: User): void => {
+    const finalizeLogin = (newUser: User): void => {
         setLogs([]);
-        updateUser(update);
+        defaultMode();
+        setWatchingNow(false);
+        setPaused(true);
+        newGame();
+        updateUser(newUser);
         setTimeout(() => {
             simulateCloseModalClick();
         }, 1000);
@@ -92,8 +103,7 @@ const Login = ({ align = "left" }: LoginProps) => {
     ) => {
         e.preventDefault();
         if (action === "logout") {
-            setLogs([]);
-            updateUser(defaultUser);
+            finalizeLogin(defaultUser);
         } else if (name === undefined || pwd === undefined) {
             createMessage("Both fields should be filled", "error");
         } else if (action == "register" && (!checkRe(name) || !checkRe(pwd))) {

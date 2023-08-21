@@ -21,8 +21,9 @@ const appendHistory = (
     newTiles: GameTile[]
 ): Game => {
     const newGame = deepCopy(game);
-    newGame.moves = { ...game.moves, ...newMoves };
-    newGame.tiles = { ...game.tiles, ...newTiles };
+    newGame.moves = [...game.moves, ...newMoves];
+    newGame.tiles = [...game.tiles, ...newTiles];
+    if (game.pointer.move === game.moves.length) newGame.nextMove = newMoves[0];
     return newGame;
 };
 
@@ -39,13 +40,21 @@ interface GameStore {
     game: Game;
     interval: number;
     paused: boolean;
+    watchUser: string;
+    watchGame: string;
+    watchingNow: boolean;
+    loadingWeights: boolean;
     setPaused: (newPaused: boolean) => void;
+    setIntervalValue: (newInterval: number) => void;
+    setWatchUser: (newWatchUser: string) => void;
+    setWatchGame: (newWatchGame: string) => void;
+    setWatchingNow: (watching: boolean) => void;
+    setLoadingWeights: (loading: boolean) => void;
     fullMove: (move?: number) => void;
     cutHistory: () => void;
     appendHistory: (newMoves: number[], newTiles: GameTile[]) => void;
-    newGame: () => void;
+    newGame: () => number[][];
     assignGame: (game: GameBackend) => void;
-    setIntervalValue: (newInterval: number) => void;
     restartGame: () => void;
 }
 
@@ -53,6 +62,10 @@ const useGameStore = create<GameStore>()((set, get) => ({
     game: GameLogic.emptyGame(),
     interval: 5,
     paused: true,
+    watchUser: "",
+    watchGame: "",
+    watchingNow: false,
+    loadingWeights: true,
 
     get delay() {
         const interval = get().interval;
@@ -61,6 +74,14 @@ const useGameStore = create<GameStore>()((set, get) => ({
 
     setPaused: (newPaused: boolean) => set(() => ({ paused: newPaused })),
     setIntervalValue: (newInterval) => set(() => ({ interval: newInterval })),
+    setWatchUser: (newWatchUser: string) =>
+        set(() => ({ watchUser: newWatchUser })),
+    setWatchGame: (newWatchGame: string) =>
+        set(() => ({ watchGame: newWatchGame })),
+    setWatchingNow: (watching: boolean) =>
+        set(() => ({ watchingNow: watching })),
+    setLoadingWeights: (loading: boolean) =>
+        set(() => ({ loadingWeights: loading })),
 
     fullMove: (move?: number) => {
         const newGame = fullMove(get().game, move);
@@ -74,7 +95,11 @@ const useGameStore = create<GameStore>()((set, get) => ({
             game: appendHistory(state.game, newMoves, newTiles),
         })),
 
-    newGame: () => set(() => ({ game: GameLogic.newGame() })),
+    newGame: () => {
+        const newBoard = GameLogic.newGame();
+        set(() => ({ game: newBoard }));
+        return newBoard.initial;
+    },
 
     assignGame: (newGame: GameBackend) => {
         set(() => ({ game: GameLogic.fromBackend(newGame) }));

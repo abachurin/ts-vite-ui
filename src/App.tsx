@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import ModeProvider from "./contexts/ModeProvider/ModeProvider";
 import UserProvider from "./contexts/UserProvider/UserProvider";
 import { GLOBAL } from "./utils";
 import StarField from "./components/background/StarField";
@@ -26,14 +25,12 @@ function App() {
     return (
         <>
             <UserProvider>
-                <ModeProvider>
-                    <StarField />
-                    <main css={emotion}>
-                        <Header />
-                        <Main />
-                        <Footer />
-                    </main>
-                </ModeProvider>
+                <StarField />
+                <main css={emotion}>
+                    <Header />
+                    <Main />
+                    <Footer />
+                </main>
             </UserProvider>
         </>
     );

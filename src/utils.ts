@@ -2,7 +2,7 @@ import {
     RGB,
     RGBA,
     AgentTraining,
-    AgentWatching,
+    AgentWatchingBase,
     AgentTesting,
     ItemType,
 } from "./types";
@@ -33,6 +33,7 @@ export const GLOBAL = {
     gameCellPadding: "3px",
     contactButtonWidth: "12rem",
     messageDuration: 5000,
+    watchInterval: 2000,
     maxNameLength: 500,
     filler: "f!JJHKLb22",
     maxLogs: 500,
@@ -258,7 +259,7 @@ export const defaultTrainingParams = {
     isNew: true,
 };
 
-export const defaultWatchParams: AgentWatching = {
+export const defaultWatchParams: AgentWatchingBase = {
     depth: 0,
     width: 1,
     trigger: 0,
@@ -394,3 +395,17 @@ export const simulateCloseModalClick = (): void => {
     const toClick = document.querySelector("#modal-close") as HTMLElement;
     toClick && toClick.click();
 };
+
+const characters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const lengthRandomName = 6;
+export function randomName(suffix: string): string {
+    return (
+        "*" +
+        suffix +
+        Array.from(
+            { length: lengthRandomName },
+            () => characters[Math.floor(Math.random() * characters.length)]
+        ).join("")
+    );
+}

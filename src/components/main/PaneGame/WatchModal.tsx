@@ -1,28 +1,28 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect, useState } from "react";
 import { connectAPI, getJustNames } from "../../../api/utils";
-import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
-import {
-    usePalette,
-    useUser,
-} from "../../../contexts/UserProvider/UserContext";
+import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import useModeStore from "../../../store/modeStore";
+import useGameStore from "../../../store/gameStore";
 import useAlertMessage from "../../../hooks/useAlertMessage";
-import useAnyRunningJob from "../../../hooks/useAnyJob";
-import { AgentWatching } from "../../../types";
+import { AgentWatching, AgentWatchingBase, GameForWatch } from "../../../types";
 import {
     GLOBAL,
-    defaultTestingParams,
+    defaultWatchParams,
     simulateCloseModalClick,
     validateTestingParams,
     specialAgents,
+    randomName,
 } from "../../../utils";
 import Button from "../../base/Button/Button";
 import Dropdown from "../../base/Dropdown";
 import Input from "../../base/Input";
+import Radio from "../../base/Radio";
 import Modal from "../../modal/Modal";
 import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
 import CloseButton from "../../base/Button/CloseButton";
+import GameLogic from "../../../store/gameLogic";
 
 // Emotion styles
 const footerWrapper = css`
@@ -50,36 +50,47 @@ const emotion = css`
     }
 `;
 
-/**
- * Returns a React Modal component containing the Admin section.
- * @param align - The alignment parameter of the button, which opens the modal
- */
 const WatchModal = () => {
-    const modeUpdate = useModeUpdate();
     const palette = usePalette();
-    const user = useUser();
+
+    const setGameMode = useModeStore((state) => state.setGameMode);
+    const setGameName = useModeStore((state) => state.setGameName);
+
+    const game = useGameStore((state) => state.game);
+    const startNewGame = useGameStore((state) => state.newGame);
+    const cutHistory = useGameStore((state) => state.cutHistory);
+    const setPaused = useGameStore((state) => state.setPaused);
+
+    const watchUser = useGameStore((state) => state.watchUser);
+    const setWatchUser = useGameStore((state) => state.setWatchUser);
+    const setWatchGame = useGameStore((state) => state.setWatchGame);
+    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
+
+    const loadingWeights = useGameStore((state) => state.loadingWeights);
+    const setLoadingWeights = useGameStore((state) => state.setLoadingWeights);
+
+    useEffect(() => {
+        if (loadingWeights === false) {
+            createMessage("", "success");
+            simulateCloseModalClick();
+        }
+    }, [loadingWeights]);
 
     const [message, createMessage] = useAlertMessage("");
     const [loading, setLoading] = useState(false);
 
-    const [values, setValues] = useState<AgentWatching>(defaultTestingParams);
-    const updateValues = useCallback((update: Partial<AgentWatching>) => {
-        setValues((prevValues) => ({ ...prevValues, ...update }));
-    }, []);
-
     const [agents, setAgents] = useState<string[]>([]);
     const getAllAgentNames = async () => {
-        const { list, message } = await getJustNames(
-            "Agents",
-            user.name,
-            "all"
-        );
+        const { list, message } = await getJustNames("Agents", "", "all");
         createMessage(message, "error");
         setAgents(list);
     };
-    useEffect(() => {
-        getAllAgentNames();
-    }, [user]);
+
+    const [values, setValues] = useState<AgentWatchingBase>(defaultWatchParams);
+    const [isNew, setIsNew] = useState(true);
+    const updateValues = useCallback((update: Partial<AgentWatching>) => {
+        setValues((prevValues) => ({ ...prevValues, ...update }));
+    }, []);
 
     useEffect(() => {
         values.name && updateValues({ name: values.name });
@@ -93,6 +104,13 @@ const WatchModal = () => {
     };
 
     const handleWatch = async () => {
+        if (!isNew && GameLogic.gameOver(game)) {
+            createMessage(
+                "The Game is already over, no way to continue.",
+                "error"
+            );
+            return;
+        }
         const [validated, change] = validateTestingParams(values);
         setValues((prevValues) => ({ ...prevValues, ...validated }));
         if (change) {
@@ -100,31 +118,68 @@ const WatchModal = () => {
                 "Some parameters are invalid or undefined. Please follow the instructions.",
                 "error"
             );
-        } else {
-            setLoading(true);
-            createMessage("Preparing Agent ...", "success", 100000);
-            const { result, error } = await connectAPI<AgentWatching, string>({
-                method: "post",
-                endpoint: "/jobs/watch",
-                data: { ...values, user: user.name },
-            });
-            if (error) {
-                createMessage(error, "error");
-            } else {
-                if (result !== "ok") {
-                    createMessage(result, "error");
-                } else {
-                    createMessage("");
-                    modeUpdate({ game: "watch" });
-                    simulateCloseModalClick();
-                }
-            }
-            setLoading(false);
+            return;
         }
+
+        const newWatchUser = randomName("agent");
+        const newWatchGame = randomName("game");
+        setWatchUser(newWatchUser);
+        setWatchGame(newWatchGame);
+        setWatchingNow(false);
+        setPaused(true);
+        setLoadingWeights(true);
+
+        const row = isNew ? startNewGame() : game.row;
+        if (!isNew) cutHistory();
+        const startGame: GameForWatch = isNew
+            ? {
+                  name: newWatchGame,
+                  initial: row,
+                  score: 0,
+                  numMoves: 0,
+              }
+            : {
+                  name: newWatchGame,
+                  initial: game.row,
+                  score: game.score,
+                  numMoves: game.pointer.move,
+              };
+
+        setLoading(true);
+        const { result, error } = await connectAPI<AgentWatching, string>({
+            method: "post",
+            endpoint: "/watch/new_agent",
+            data: {
+                ...values,
+                user: newWatchUser,
+                startGame: startGame,
+                previous: watchUser,
+            },
+        });
+        if (error) {
+            createMessage(error, "error");
+        } else {
+            if (result !== "ok") {
+                createMessage(result, "error");
+            } else {
+                createMessage(
+                    `Initializing ${values.name} ...`,
+                    "success",
+                    100000
+                );
+                setGameName(values.name);
+                setGameMode("watch");
+                setWatchingNow(true);
+                setPaused(false);
+            }
+        }
+        setTimeout(() => {
+            setLoading(false);
+        }, 2000);
     };
 
     const handleResetDefaults = () => {
-        const resetValues = { ...defaultTestingParams };
+        const resetValues = { ...defaultWatchParams };
         resetValues.name = values.name;
         setValues(resetValues);
     };
@@ -135,6 +190,7 @@ const WatchModal = () => {
         <Modal
             button={{
                 background: palette.one,
+                onClick: getAllAgentNames,
                 children: "Watch",
             }}
             modal={{
@@ -216,6 +272,18 @@ const WatchModal = () => {
                             }
                         />
                     </section>
+                    <Radio
+                        backgroundColor={palette.background}
+                        controlColor={palette.three}
+                        color1={palette.two}
+                        color2={palette.one}
+                        label={"Start new or continue current Game?"}
+                        options={["New", "Continue"]}
+                        initialValue={isNew ? "New" : "Continue"}
+                        onChange={(value: string) =>
+                            setIsNew(value == "New" ? true : false)
+                        }
+                    />
                 </main>
             </ModalBody>
             <ModalFooter>

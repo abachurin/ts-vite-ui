@@ -21,8 +21,8 @@ const useAlertMessage = (
         if (timeoutId.current) {
             clearTimeout(timeoutId.current);
         }
-        text &&
-            setMessage(
+        setMessage(
+            text ? (
                 <div
                     css={css`
                         color: ${type === "success"
@@ -33,7 +33,8 @@ const useAlertMessage = (
                 >
                     {text}
                 </div>
-            );
+            ) : null
+        );
         timeoutId.current = setTimeout(() => {
             setMessage(initialMessage);
         }, duration);

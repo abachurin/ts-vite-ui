@@ -1,3 +1,4 @@
+import useModeStore, { modeDescription } from "../../../store/modeStore";
 import Pane from "../Pane";
 import PaneHeader from "../PaneHeader";
 import PaneBody from "../PaneBody";
@@ -11,9 +12,15 @@ import LogWindow from "./LogWindow";
  * Renders the Agent Pane component on the left, goes top on small screen.
  */
 const PaneAgent = () => {
+    const agentMode = useModeStore((state) => state.agentMode);
+    const agentName = useModeStore((state) => state.agentName);
+
     return (
         <Pane id='agent-pane'>
-            <PaneHeader type='agent'>
+            <PaneHeader
+                type='agent'
+                text={modeDescription(agentMode, agentName)}
+            >
                 <TrainModal />
                 <TestModal />
                 <ManageModal />

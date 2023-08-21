@@ -1,9 +1,5 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo, useCallback } from "react";
-import {
-    useMode,
-    modeDescriptions,
-} from "../../contexts/ModeProvider/ModeContext";
+import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps, RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency, smoothScroll } from "../../utils";
@@ -43,9 +39,9 @@ const makeEmotion = (
  */
 interface PaneHeaderProps extends ChildrenProps {
     type: "agent" | "game";
+    text: string;
 }
-const PaneHeader = ({ type, children }: PaneHeaderProps) => {
-    const mode = useMode();
+const PaneHeader = ({ type, text, children }: PaneHeaderProps) => {
     const palette = usePalette();
     const backgroundColor = setTransparency(
         type === "agent" ? palette.one : palette.two,
@@ -54,18 +50,13 @@ const PaneHeader = ({ type, children }: PaneHeaderProps) => {
 
     const emotion = useMemo(
         () => makeEmotion(backgroundColor, palette.text, palette.background),
-        [backgroundColor, palette]
-    );
-
-    const scrollToPane = useCallback(
-        () => smoothScroll(`#${type}-pane`),
-        [type]
+        [palette]
     );
 
     return (
-        <header css={emotion} onClick={scrollToPane}>
+        <header css={emotion} onClick={() => smoothScroll(`#${type}-pane`)}>
             <nav>{children}</nav>
-            <aside>{modeDescriptions[mode[type]]}</aside>
+            <aside>{text}</aside>
         </header>
     );
 };

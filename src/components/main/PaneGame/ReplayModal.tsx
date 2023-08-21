@@ -1,6 +1,6 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useState } from "react";
-import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
+import useModeStore from "../../../store/modeStore";
 import {
     usePalette,
     useUser,
@@ -29,14 +29,19 @@ const makeEmotion = (lines: number): SerializedStyles => css`
  * @param align - The alignment parameter of the button, which opens the modal
  */
 const ReplayModal = ({ align }: AlignProps) => {
-    const modeUpdate = useModeUpdate();
-    const assignGame = useGameStore((state) => state.assignGame);
     const user = useUser();
     const palette = usePalette();
 
+    const assignGame = useGameStore((state) => state.assignGame);
+    const restartGame = useGameStore((state) => state.restartGame);
+    const setPaused = useGameStore((state) => state.setPaused);
+
+    const setGameMode = useModeStore((state) => state.setGameMode);
+    const setGameName = useModeStore((state) => state.setGameName);
+
     const [item, setItem] = useState("My current game");
     const [options, setOptions] = useState<GameDict>({});
-    const choiceOptions = ["My current game", ...Object.keys(options)];
+    const choiceOptions = ["Current game", ...Object.keys(options)];
 
     const [msg, createMsg] = useAlertMessage("");
 
@@ -50,15 +55,17 @@ const ReplayModal = ({ align }: AlignProps) => {
     };
 
     const replay = async () => {
-        if (item !== "My current game") {
+        if (item !== "Current game") {
             const { game, status } = await getFullGame(item);
             if (status) {
                 createMsg(status, "error");
                 return;
             }
             assignGame(game as GameBackend);
-        }
-        modeUpdate({ game: "replay" });
+        } else restartGame();
+        setPaused(false);
+        setGameName(item);
+        setGameMode("replay");
     };
 
     const emotion = makeEmotion(choiceOptions.length);

@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect, useState } from "react";
 import { connectAPI, getJustNames } from "../../../api/utils";
-import { useModeUpdate } from "../../../contexts/ModeProvider/ModeContext";
+import useModeStore from "../../../store/modeStore";
 import {
     usePalette,
     useUser,
@@ -55,10 +55,12 @@ const emotion = css`
  * @param align - The alignment parameter of the button, which opens the modal
  */
 const TestModal = () => {
-    const modeUpdate = useModeUpdate();
     const palette = usePalette();
     const user = useUser();
     const anyJob = useAnyRunningJob();
+
+    const setAgentMode = useModeStore((state) => state.setAgentMode);
+    const setAgentName = useModeStore((state) => state.setAgentName);
 
     const [message, createMessage] = useAlertMessage("");
     const [loading, setLoading] = useState(false);
@@ -116,7 +118,8 @@ const TestModal = () => {
                     createMessage(result, "error");
                 } else {
                     createMessage("Testing commenced, follow logs", "success");
-                    modeUpdate({ agent: "test" });
+                    setAgentName(values.name);
+                    setAgentMode("test");
                     setTimeout(() => {
                         simulateCloseModalClick();
                     }, 1500);
