@@ -121,6 +121,7 @@ export interface ModalWindowProps extends ChildrenProps {
     color?: string;
     width?: string;
     height?: string;
+    onClose?: () => void;
 }
 export interface ModalWindowRef {
     open: () => () => void;
@@ -132,6 +133,7 @@ const ModalWindow = ({
     width = "auto",
     height = "auto",
     children,
+    onClose,
 }: ModalWindowProps) => {
     const isOpen = useModal();
     const updateIsOpen = useModalUpdate();
@@ -144,6 +146,7 @@ const ModalWindow = ({
     );
 
     const closeModal = useCallback(() => {
+        onClose && onClose();
         makeSound(clickSound, user);
         updateIsOpen(false);
     }, [updateIsOpen, user]);

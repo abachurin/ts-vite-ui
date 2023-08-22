@@ -39,7 +39,7 @@ const createStarField = (
  * Renders a star field with a number of stars on the screen which depends on window size.
  */
 const StarField = () => {
-    const [ref, width, height] = useDimensions();
+    const [width, height, ref] = useDimensions();
     const user = useUser();
     const inverseSpeed = 20 / user.animationSpeed;
 

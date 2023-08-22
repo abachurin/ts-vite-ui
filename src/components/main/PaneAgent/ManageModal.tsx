@@ -5,6 +5,7 @@ import {
     useUser,
     usePalette,
 } from "../../../contexts/UserProvider/UserContext";
+import useAlert from "../../../hooks/useAlert";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import {
     ItemType,
@@ -29,7 +30,7 @@ import Checkbox from "../../base/Checkbox";
 import ConfirmDialog from "../../base/ConfirmDialog";
 import DescriptionTable from "../../base/DescriptionTable";
 import CloseButton from "../../base/Button/CloseButton";
-import Chart from "../../base/Chart";
+import Chart from "./Chart";
 
 // Emotion styles
 const footerWrapper = css`
@@ -73,6 +74,21 @@ const ManageModal = () => {
     const [scope, setScope] = useState<ItemListRequestType>("all");
     const [options, setOptions] = useState<AgentDict | GameDict>({});
     const [message, createMessage] = useAlertMessage("");
+
+    const chartComp =
+        options[item] && (options[item] as Agent).history !== undefined ? (
+            <Chart
+                name={(options[item] as Agent).name as string}
+                history={(options[item] as Agent).history}
+                step={(options[item] as Agent).collectStep}
+            />
+        ) : null;
+
+    const [chart, openChart, closeChart] = useAlert({
+        type: "info",
+        duration: 1000000,
+        children: chartComp,
+    });
 
     const owner = (options?.[item] ?? [])["user"];
 
@@ -122,13 +138,7 @@ const ManageModal = () => {
             ),
         [kind, palette]
     );
-    const brightOne = changeBrightness(palette.four, 1.5);
-    const checkboxParameters = {
-        color1: palette.background,
-        color2: palette.background,
-        color3: brightOne,
-        controlColor: palette.three,
-    };
+    const brightOne = changeBrightness(palette.one, 1.5);
 
     const description = MyObjectDescriptionLabels[kind];
 
@@ -145,6 +155,7 @@ const ManageModal = () => {
                 width: "26rem",
                 backgroundColor: palette.background,
                 color: palette.text,
+                onClose: closeChart,
             }}
         >
             <ModalBody overflow='visible'>
@@ -165,7 +176,10 @@ const ManageModal = () => {
                             />
                         </div>
                         <Checkbox
-                            {...checkboxParameters}
+                            color1={palette.background}
+                            color2={palette.background}
+                            color3={brightOne}
+                            controlColor={palette.three}
                             label='All Users'
                             checked={scope === "all"}
                             onChange={(checked) =>
@@ -193,12 +207,7 @@ const ManageModal = () => {
                                 collection={options?.[item] ?? []}
                                 translation={description}
                             />
-                            {kind === "Agents" ? (
-                                <Chart
-                                    history={(options[item] as Agent).history}
-                                    step={(options[item] as Agent).collectStep}
-                                />
-                            ) : null}
+                            {chart}
                         </main>
                     )}
                 </header>
@@ -221,6 +230,17 @@ const ManageModal = () => {
                     >
                         Delete
                     </Button>
+                    {kind === "Agents" ? (
+                        <Button
+                            background={palette.two}
+                            color={palette.background}
+                            type='clickPress'
+                            disabled={item === "" || item === GLOBAL.filler}
+                            onClick={openChart}
+                        >
+                            Train History Chart
+                        </Button>
+                    ) : null}
                     <CloseButton />
                 </footer>
             </ModalFooter>
