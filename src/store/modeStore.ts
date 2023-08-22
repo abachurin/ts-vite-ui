@@ -3,13 +3,6 @@ import { create } from "zustand";
 export type AgentModeOfAction = "none" | "train" | "test";
 export type GameModeOfAction = "none" | "watch" | "replay" | "play";
 
-type ModeState = {
-    agentMode: AgentModeOfAction;
-    gameMode: GameModeOfAction;
-    agentName: string;
-    gameName: string;
-};
-
 export const modeDescription = (
     modeVar: AgentModeOfAction | GameModeOfAction,
     name?: string
@@ -42,7 +35,7 @@ interface ModeStore {
     setGameName: (newGameName: string | undefined) => void;
 }
 
-const useModeStore = create<ModeStore>()((set, get) => ({
+const useModeStore = create<ModeStore>()((set) => ({
     agentMode: "none",
     gameMode: "none",
     agentName: "",

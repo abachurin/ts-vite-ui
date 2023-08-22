@@ -1,5 +1,5 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import { useUser } from "../../contexts/UserProvider/UserContext";
 import usePersistence from "../../hooks/usePersistence";
 import { InputType } from "../../types";
