@@ -77,7 +77,6 @@ const WatchModal = () => {
     }, [loadingWeights]);
 
     const [message, createMessage] = useAlertMessage("");
-    const [loading, setLoading] = useState(false);
 
     const [agents, setAgents] = useState<string[]>([]);
     const getAllAgentNames = async () => {
@@ -145,7 +144,6 @@ const WatchModal = () => {
                   numMoves: game.pointer.move,
               };
 
-        setLoading(true);
         const { result, error } = await connectAPI<AgentWatching, string>({
             method: "post",
             endpoint: "/watch/new_agent",
@@ -158,9 +156,11 @@ const WatchModal = () => {
         });
         if (error) {
             createMessage(error, "error");
+            setLoadingWeights(false);
         } else {
             if (result !== "ok") {
                 createMessage(result, "error");
+                setLoadingWeights(false);
             } else {
                 createMessage(
                     `Initializing ${values.name} ...`,
@@ -173,9 +173,6 @@ const WatchModal = () => {
                 setPaused(false);
             }
         }
-        setTimeout(() => {
-            setLoading(false);
-        }, 2000);
     };
 
     const handleResetDefaults = () => {
@@ -294,7 +291,7 @@ const WatchModal = () => {
                         background={palette.three}
                         color={palette.background}
                         onClick={handleWatch}
-                        disabled={loading}
+                        disabled={loadingWeights}
                     >
                         GO!
                     </Button>
@@ -304,7 +301,7 @@ const WatchModal = () => {
                         background={palette.two}
                         color={palette.background}
                         onClick={handleResetDefaults}
-                        disabled={loading}
+                        disabled={loadingWeights}
                     >
                         Reset Defaults
                     </Button>

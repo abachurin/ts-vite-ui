@@ -212,7 +212,7 @@ const TrainModal = () => {
                         <Dropdown
                             {...inputParameters}
                             label='Signature N'
-                            optionValues={["2", "3", "4"]}
+                            optionValues={["2", "3", "4", "5", "6"]}
                             initialValue={values.N}
                             persistAs='train-N'
                             disabled={!values.isNew}
