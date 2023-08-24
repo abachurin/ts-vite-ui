@@ -164,7 +164,7 @@ const Dropdown = ({
     useEffect(() => {
         persistAs &&
             persistedValue !== GLOBAL.filler &&
-            onChange(persistedValue);
+            onChange(persistedValue ?? "");
     }, [persistedValue]);
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
