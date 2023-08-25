@@ -11,8 +11,14 @@ import ModalBody from "../modal/ModalBody";
 import ButtonGroup from "../base/Button/ButtonGroup";
 import Button from "../base/Button/Button";
 import guideUrl from "../../assets/description/guide.md";
-import historyUrl from "../../assets/description/history.md";
 import structureUrl from "../../assets/description/structure.md";
+import historyOneUrl from "../../assets/description/history_1.md";
+import historyTwoUrl from "../../assets/description/history_2.md";
+import historyThreeUrl from "../../assets/description/history_3.md";
+import historyFourUrl from "../../assets/description/history_4.md";
+import chartTwo from "../../assets/description/score_chart_2_tile.png";
+import chartThree from "../../assets/description/score_chart_3_tile.png";
+import chartFive from "../../assets/description/score_chart_5_tile.png";
 
 // Emotion styles
 
@@ -41,18 +47,42 @@ const markdown = css`
         font-size: 1rem;
     }
 `;
+
+const historyMarkdown = css`
+    display: flex;
+    flex-direction: column;
+`;
 // Fetching markdown files
-const fetchMarkdown = async (url: string) => {
+const fetchFile = async (url: string) => {
     const response = await fetch(url);
-    return await response.text();
+    const text = await response.text();
+    return (
+        <ReactMarkdown css={markdown} rehypePlugins={[rehypeRaw]}>
+            {text}
+        </ReactMarkdown>
+    );
 };
 
-const sections = {
-    guide: await fetchMarkdown(guideUrl),
-    history: await fetchMarkdown(historyUrl),
-    structure: await fetchMarkdown(structureUrl),
-};
+const guideContent = await fetchFile(guideUrl);
+const structureContent = await fetchFile(structureUrl);
+const historyOneContent = await fetchFile(historyOneUrl);
+const historyTwoContent = await fetchFile(historyTwoUrl);
+const historyThreeContent = await fetchFile(historyThreeUrl);
+const historyFourContent = await fetchFile(historyFourUrl);
 
+const historyContent = (
+    <div css={historyMarkdown}>
+        {[
+            historyOneContent,
+            <img src={chartTwo} />,
+            historyTwoContent,
+            <img src={chartThree} />,
+            historyThreeContent,
+            <img src={chartFive} />,
+            historyFourContent,
+        ]}
+    </div>
+);
 /**
  * Returns a React Modal component containing the Help section.
  * @param align - The alignment parameter of the button, which opens the modal.
@@ -105,9 +135,11 @@ const HelpModal = ({ align }: AlignProps) => {
                 </div>
             </ModalHeader>
             <ModalBody>
-                <ReactMarkdown css={markdown} rehypePlugins={[rehypeRaw]}>
-                    {sections[section]}
-                </ReactMarkdown>
+                {section === "guide"
+                    ? guideContent
+                    : section === "history"
+                    ? historyContent
+                    : structureContent}
             </ModalBody>
         </Modal>
     );
