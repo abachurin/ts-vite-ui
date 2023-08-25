@@ -10,6 +10,9 @@ import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";
 import ButtonGroup from "../base/Button/ButtonGroup";
 import Button from "../base/Button/Button";
+import guideUrl from "../../assets/description/guide.md";
+import historyUrl from "../../assets/description/history.md";
+import structureUrl from "../../assets/description/structure.md";
 
 // Emotion styles
 
@@ -39,15 +42,15 @@ const markdown = css`
     }
 `;
 // Fetching markdown files
-const fetchMarkdown = async (section: string) => {
-    const response = await fetch(`src/assets/description/${section}.md`);
+const fetchMarkdown = async (url: string) => {
+    const response = await fetch(url);
     return await response.text();
 };
 
 const sections = {
-    guide: await fetchMarkdown("guide"),
-    history: await fetchMarkdown("history"),
-    structure: await fetchMarkdown("structure"),
+    guide: await fetchMarkdown(guideUrl),
+    history: await fetchMarkdown(historyUrl),
+    structure: await fetchMarkdown(structureUrl),
 };
 
 /**
