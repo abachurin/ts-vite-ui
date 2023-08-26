@@ -2,13 +2,13 @@ import { useState, useLayoutEffect, useRef } from "react";
 import { GLOBAL } from "../utils";
 
 /**
- * Returns a tuple with a React ref, width, and height based on the size of the referenced HTML element.
- * @param delay Optional delay before updating dimensions in milliseconds (default: value of GLOBAL.windowResizeDelay)
+ * Returns {width, height, reference} based on the size of the referenced HTML element.
+ * @param delay Optional debounce in milliseconds
  */
 const useDimensions = (
     element = true,
     delay = GLOBAL.windowResizeDelay
-): [number, number, React.RefObject<HTMLDivElement>] => {
+): { width: number; height: number; ref: React.RefObject<HTMLDivElement> } => {
     const ref = useRef<HTMLDivElement>(null);
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
@@ -39,7 +39,7 @@ const useDimensions = (
         };
     }, [delay, element]);
 
-    return [width, height, ref];
+    return { width, height, ref };
 };
 
 export default useDimensions;

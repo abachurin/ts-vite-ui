@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import useMotion from "../../hooks/useReducedMotion";
+import useReducedMotion from "../../hooks/useReducedMotion";
 import { User } from "../../types";
 import { GLOBAL } from "../../utils";
 import { palettes } from "../palette";
@@ -34,6 +34,6 @@ export const usePalette = () => {
 
 export const useAnimate = () => {
     const user = useUser();
-    const noMotion = useMotion();
+    const noMotion = useReducedMotion();
     return user.animate && !noMotion;
 };

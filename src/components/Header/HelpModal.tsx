@@ -72,15 +72,13 @@ const historyFourContent = await fetchFile(historyFourUrl);
 
 const historyContent = (
     <div css={historyMarkdown}>
-        {[
-            historyOneContent,
-            <img src={chartTwo} />,
-            historyTwoContent,
-            <img src={chartThree} />,
-            historyThreeContent,
-            <img src={chartFive} />,
-            historyFourContent,
-        ]}
+        {historyOneContent}
+        <img src={chartTwo} />
+        {historyTwoContent}
+        <img src={chartThree} />
+        {historyThreeContent}
+        <img src={chartFive} />
+        {historyFourContent}
     </div>
 );
 /**

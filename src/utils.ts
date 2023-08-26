@@ -11,10 +11,7 @@ import { forEach } from "lodash-es";
 
 // GLOBAL parameters
 export const GLOBAL = {
-    numOfStars: {
-        small: 200,
-        big: 300,
-    },
+    oneStarPixels: 6000,
     depthOfStarField: 5,
     borderRadius: "0.3rem",
     padding: "0.5rem",
@@ -268,7 +265,7 @@ export const defaultWatchParams: AgentWatchingBase = {
 
 export const defaultTestingParams: AgentTesting = {
     ...defaultWatchParams,
-    episodes: 1000,
+    episodes: 100,
 };
 
 export const validateTrainingParams = (

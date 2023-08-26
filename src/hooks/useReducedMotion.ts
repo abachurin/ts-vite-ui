@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useMotion = () => {
+const useReducedMotion = () => {
     const mediaQueryList = window.matchMedia(
         "(prefers-reduced-motion: reduce)"
     );
@@ -19,4 +19,4 @@ const useMotion = () => {
     return noMotion;
 };
 
-export default useMotion;
+export default useReducedMotion;

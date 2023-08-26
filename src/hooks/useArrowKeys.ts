@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 
+const keyToMove: Record<string, number> = {
+    ArrowLeft: 0,
+    ArrowUp: 1,
+    ArrowRight: 2,
+    ArrowDown: 3,
+};
+
 function useArrowKeys(): number {
-    const [arrowKey, setArrowKey] = useState<number>(-1);
+    const [arrowKey, setArrowKey] = useState(-1);
 
     useEffect(() => {
         function handleKeyDown(event: KeyboardEvent) {
@@ -9,23 +16,8 @@ function useArrowKeys(): number {
                 document.getElementById("modal")?.innerHTML !== "";
             if (modalIsOpen) return;
             const { key } = event;
-            switch (key) {
-                case "ArrowLeft":
-                    setArrowKey(0);
-                    break;
-                case "ArrowUp":
-                    setArrowKey(1);
-                    break;
-                case "ArrowRight":
-                    setArrowKey(2);
-                    break;
-                case "ArrowDown":
-                    setArrowKey(3);
-                    break;
-                default:
-                    setArrowKey(-1);
-                    break;
-            }
+            const move = keyToMove[key] ?? -1;
+            setArrowKey(move);
             setTimeout(() => {
                 setArrowKey(-1);
             }, 0);

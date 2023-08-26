@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import { useMemo } from "react";
 import { useUser } from "../../contexts/UserProvider/UserContext";
 import useDimensions from "../../hooks/useDimensions";
 import { GLOBAL } from "../../utils";
@@ -15,42 +14,31 @@ const emotion = () => css`
     overflow: hidden;
     z-index: -1;
 `;
-
-/**
- * Creates an array of JSX Elements representing a star field.
- * @param {number} width - The width of the star field.
- * @param {number} height - The height of the star field.
- * @param {number} inverseSpeed - The inverse speed of the stars.
- */
-const createStarField = (
-    width: number,
-    height: number,
-    inverseSpeed: number
-): JSX.Element[] => {
-    const numberStars =
-        // Need to rewrite this with canvas, doesn't work nicely on mobiles in the current state
-        width > 600 ? GLOBAL.numOfStars.big : 0;
-    return Array.from({ length: numberStars }, () =>
-        Star({ inverseSpeed, width, height })
+function isMobileDevice() {
+    return /Mobi|Android|iPhone|iPad|iPod|Windows Phone|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(
+        navigator.userAgent
     );
-};
+}
 
 /**
  * Renders a star field with a number of stars on the screen which depends on window size.
+ * Works weirdly on mobile, so switched off there.
+ * Need to rewrite this with "canvas"
  */
 const StarField = () => {
-    const [width, height, ref] = useDimensions();
+    const { width, height, ref } = useDimensions();
     const user = useUser();
-    const inverseSpeed = 20 / user.animationSpeed;
 
-    const stars = useMemo(
-        () => createStarField(width, height, inverseSpeed),
-        [width, height, inverseSpeed]
-    );
+    const inverseSpeed = 20 / user.animationSpeed;
+    const numberStars = Math.floor((width * height) / GLOBAL.oneStarPixels);
 
     return (
         <div ref={ref} css={emotion}>
-            {stars}
+            {isMobileDevice()
+                ? null
+                : Array.from({ length: numberStars }, () =>
+                      Star({ inverseSpeed, width, height })
+                  )}
         </div>
     );
 };
