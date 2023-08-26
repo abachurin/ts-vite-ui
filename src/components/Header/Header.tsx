@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
-import useSmallScreen from "../../hooks/useSmallScreen";
+import useDimensions from "../../hooks/useDimensions";
 import { RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
 import ToggleNav from "../base/ToggleNav";
@@ -51,7 +51,9 @@ const nav = css`
  * Header component that renders the header section of the application.
  */
 const Header = () => {
-    const hiddenNavigation = useSmallScreen(GLOBAL.navBreakpoint);
+    const { width } = useDimensions(false);
+    const hiddenNavigation = width < GLOBAL.navBreakpoint;
+
     const palette = usePalette();
     const backgroundColor = setTransparency(
         palette.header,
