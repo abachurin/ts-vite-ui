@@ -5,7 +5,11 @@ import {
     useModal,
     useModalUpdate,
 } from "../../contexts/ModalProvider/ModalContext";
-import { useUser, useAnimate } from "../../contexts/UserProvider/UserContext";
+import {
+    useSoundVolume,
+    useUser,
+    useAnimate,
+} from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
 import { GLOBAL, makeSound } from "../../utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
@@ -137,7 +141,7 @@ const ModalWindow = ({
 }: ModalWindowProps) => {
     const isOpen = useModal();
     const updateIsOpen = useModalUpdate();
-    const user = useUser();
+    const volume = useSoundVolume();
     const animate = useAnimate();
 
     const baseModal = useMemo(
@@ -147,18 +151,18 @@ const ModalWindow = ({
 
     const closeModal = useCallback(() => {
         onClose && onClose();
-        makeSound(clickSound, user);
+        makeSound(clickSound, volume);
         updateIsOpen(false);
-    }, [updateIsOpen, user]);
+    }, [volume]);
 
     const escapeHandler = useCallback(
         (e: KeyboardEvent) => {
             if (e.key === "Escape" && isOpen === true) {
-                makeSound(clickSound, user);
+                makeSound(clickSound, volume);
                 closeModal();
             }
         },
-        [closeModal, isOpen, user]
+        [isOpen, volume]
     );
 
     useEffect(() => {

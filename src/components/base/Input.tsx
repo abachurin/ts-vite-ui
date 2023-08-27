@@ -117,7 +117,7 @@ const Input = ({
         persistAs &&
             persistedValue !== GLOBAL.filler &&
             onChange(persistedValue);
-    }, [persistedValue]);
+    }, [persistAs, persistedValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (persistAs) {

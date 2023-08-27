@@ -91,10 +91,6 @@ const WatchModal = () => {
         setValues((prevValues) => ({ ...prevValues, ...update }));
     }, []);
 
-    useEffect(() => {
-        values.name && updateValues({ name: values.name });
-    }, [values.name]);
-
     const inputParameters = {
         backgroundColor: "white",
         labelColor1: palette.two,

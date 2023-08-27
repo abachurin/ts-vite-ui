@@ -1,6 +1,9 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useEffect, useCallback } from "react";
-import { usePalette, useUser } from "../../contexts/UserProvider/UserContext";
+import {
+    usePalette,
+    useSoundVolume,
+} from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";
 import Button from "./Button/Button";
 import dragMe from "../HOC/Draggable";
@@ -67,16 +70,16 @@ const StaticConfirmDialog = ({
     onCancel,
 }: ConfirmDialogProps) => {
     const palette = usePalette();
-    const user = useUser();
+    const volume = useSoundVolume();
 
     const escapeHandler = useCallback(
         (e: KeyboardEvent) => {
             if (e.key === "Escape" && isOpen === true) {
-                makeSound(clickSound, user);
+                makeSound(clickSound, volume);
                 onCancel(e);
             }
         },
-        [onCancel, isOpen, user]
+        [onCancel, isOpen, volume]
     );
 
     useEffect(() => {

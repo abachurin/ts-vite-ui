@@ -80,7 +80,7 @@ const GameBoard = () => {
             <header>
                 <div>Score: {game.score}</div>
                 <div>Moves: {game.pointer.move}</div>
-                {game.nextMove !== -1 ? (
+                {game.nextMove !== -1 && !game.isOver ? (
                     <label>Next: {showNextMove}</label>
                 ) : null}
                 {game.isOver && <label>Game over!</label>}

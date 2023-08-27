@@ -191,14 +191,10 @@ export function changeBrightness(color: RGB, ratio: number): RGB {
  * @param sound - The URL, file path or already imported sound object.
  * @param volume - The volume level of the sound, between 0 and 1.
  */
-export function makeSound(sound: string, volumeSource: number | User): void {
+export function makeSound(sound: string, volume: number): void {
     const audio = new Audio(sound);
-    if (typeof volumeSource === "number") {
-        audio.volume = volumeSource;
-    } else {
-        audio.volume = volumeSource.sound ? volumeSource.soundLevel : 0;
-    }
-    audio.play();
+    audio.volume = volume;
+    volume && audio.play();
 }
 
 /**

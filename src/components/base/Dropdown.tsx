@@ -1,7 +1,10 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
-import { useUser } from "../../contexts/UserProvider/UserContext";
+import {
+    useUser,
+    useSoundVolume,
+} from "../../contexts/UserProvider/UserContext";
 import usePersistence from "../../hooks/usePersistence";
 import { useOutsideClick } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
@@ -90,6 +93,10 @@ const optionStyle = css`
     text-align: center;
     padding: ${GLOBAL.padding};
 `;
+const chosenOptionStyle = css`
+    ${optionStyle}
+    font-weight: 500;
+`;
 
 /**
  * A dropdown component with configurable options.
@@ -150,6 +157,9 @@ const Dropdown = ({
     onChange,
 }: DropdownProps) => {
     const user = useUser();
+    const name = user.name;
+    const volume = useSoundVolume();
+
     const disabledTrue = disabled || optionValues.length === 0;
     const [optionsOpen, setOptionsOpen] = useState(alwaysOpen);
     const ref = useOutsideClick(() => {
@@ -157,7 +167,7 @@ const Dropdown = ({
     });
 
     const [persistedValue, setPersistedValue] = usePersistence(
-        user.name,
+        name,
         persistAs,
         optionValues
     );
@@ -169,7 +179,7 @@ const Dropdown = ({
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
         const currentValue = e.currentTarget.innerText;
-        makeSound(clickSound, user);
+        makeSound(clickSound, volume);
         if (persistAs) {
             setPersistedValue(currentValue);
         } else {
@@ -263,12 +273,7 @@ const Dropdown = ({
                     <div
                         key={uniqueId()}
                         css={
-                            v === initialValue
-                                ? css`
-                                      ${optionStyle}
-                                      font-weight: 500;
-                                  `
-                                : optionStyle
+                            v === initialValue ? chosenOptionStyle : optionStyle
                         }
                         onClick={handleOption}
                     >

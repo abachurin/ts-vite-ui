@@ -85,7 +85,7 @@ export type ButtonVariants = "whooshRotate" | "clickPress";
 export type ButtonExtraStyle = (background: string) => SerializedStyles;
 export type ButtonEffects = (
     el: HTMLButtonElement,
-    volume: number | User,
+    volume: number,
     animate: boolean
 ) => void;
 

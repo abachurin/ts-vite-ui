@@ -1,4 +1,4 @@
-import { Palettes } from "../types";
+import { Palettes } from "./types";
 
 export const palettes: Palettes = {
     One: {

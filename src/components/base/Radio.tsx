@@ -1,7 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { ReactNode, useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
-import { useUser } from "../../contexts/UserProvider/UserContext";
+import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
@@ -130,7 +130,7 @@ const Radio = ({
     options,
     onChange,
 }: RadioProps) => {
-    const user = useUser();
+    const volume = useSoundVolume();
     const startValue = initialValue ?? options[0];
     const [currentValue, setCurrentValue] = useState(startValue);
     useEffect(() => {
@@ -139,7 +139,7 @@ const Radio = ({
 
     const handleChoice = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCurrentValue(e.target.value);
-        makeSound(clickSound, user);
+        makeSound(clickSound, volume);
         onChange(e.target.value);
     };
 

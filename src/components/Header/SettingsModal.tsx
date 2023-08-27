@@ -8,7 +8,7 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { connectAPI } from "../../api/utils";
 import useAlertMessage from "../../hooks/useAlertMessage";
-import { palettes } from "../../contexts/palette";
+import { palettes } from "../../palette";
 import { GLOBAL, changeBrightness } from "../../utils";
 import { AlignProps, Alignment, User } from "../../types";
 import Modal from "../modal/Modal";

@@ -1,7 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
-import { useUser } from "../../contexts/UserProvider/UserContext";
+import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
@@ -102,7 +102,7 @@ const Checkbox = ({
     label = "",
     onChange,
 }: CheckboxProps) => {
-    const user = useUser();
+    const volume = useSoundVolume();
 
     const [isChecked, setIsChecked] = useState(checked);
     useEffect(() => {
@@ -112,7 +112,7 @@ const Checkbox = ({
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const checked = e.target.checked;
         setIsChecked(checked);
-        makeSound(clickSound, user);
+        makeSound(clickSound, volume);
         onChange(checked);
     };
 

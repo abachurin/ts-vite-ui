@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import {
     useUser,
     useAnimate,
+    useSoundVolume,
 } from "../../../contexts/UserProvider/UserContext";
 import { useModalUpdate } from "../../../contexts/ModalProvider/ModalContext";
 import {
@@ -160,6 +161,7 @@ const Button = ({
     const user = useUser();
     const showLegend = user.legends;
     const animate = useAnimate();
+    const volume = useSoundVolume();
 
     const container = useMemo(() => makeContainer(align), [align]);
     const emotion = useMemo(
@@ -198,7 +200,11 @@ const Button = ({
                 data-legend={legend}
                 onClick={(e) => {
                     if (toggleModal !== "none") changeIsOpen(toggleModal);
-                    flash(e.currentTarget as HTMLButtonElement, user, animate);
+                    flash(
+                        e.currentTarget as HTMLButtonElement,
+                        volume,
+                        animate
+                    );
                     onClick && onClick(e);
                 }}
                 disabled={disabled || user.level < level}
