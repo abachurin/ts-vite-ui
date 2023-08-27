@@ -27,7 +27,6 @@ const baseContainer = css`
     background: rgba(255, 255, 255, 0.1);
     z-index: 100;
 `;
-
 const baseBlock = css`
     position: fixed;
     left: 0;
@@ -38,7 +37,6 @@ const baseBlock = css`
     z-index: 50;
     transform: scale(0);
 `;
-
 const backgroundStyle = css`
     position: fixed;
     left: 0;
