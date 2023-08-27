@@ -35,9 +35,7 @@ const StarField = () => {
     return (
         <div ref={ref} css={emotion}>
             {isMobileDevice()
-                ? Array.from({ length: numberStars }, () =>
-                      Star({ inverseSpeed, width, height })
-                  )
+                ? null
                 : Array.from({ length: numberStars }, () =>
                       Star({ inverseSpeed, width, height })
                   )}
