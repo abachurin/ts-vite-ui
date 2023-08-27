@@ -7,7 +7,6 @@ import {
 } from "../../contexts/ModalProvider/ModalContext";
 import {
     useSoundVolume,
-    useUser,
     useAnimate,
 } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
