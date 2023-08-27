@@ -6,7 +6,6 @@ import {
     AgentTesting,
     ItemType,
 } from "./types";
-import { User } from "./types";
 import { forEach } from "lodash-es";
 
 // GLOBAL parameters
