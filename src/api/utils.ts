@@ -1,7 +1,6 @@
 import axios, { Method, AxiosError } from "axios";
 import { BACK_URL } from "../config";
 import {
-    UserName,
     ItemListRequest,
     ItemListRequestType,
     ItemType,
