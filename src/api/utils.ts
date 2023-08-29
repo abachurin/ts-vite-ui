@@ -1,6 +1,7 @@
 import axios, { Method, AxiosError } from "axios";
 import { BACK_URL } from "../config";
 import {
+    UserName,
     ItemListRequest,
     ItemListRequestType,
     ItemType,
@@ -105,4 +106,12 @@ export const getFullGame = async (
             };
         } else return { game: result?.game, status: "" };
     }
+};
+
+export const killWatchJob = async (userName: string) => {
+    await axios({
+        method: "DELETE",
+        url: BACK_URL + "/watch/cancel",
+        data: { userName },
+    });
 };

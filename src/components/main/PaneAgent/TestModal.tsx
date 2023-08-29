@@ -236,9 +236,9 @@ const TestModal = () => {
                             initialValue={values.episodes || undefined}
                             persistAs='train-episodes'
                             min={100}
-                            max={10000}
+                            max={1000}
                             step={100}
-                            placeholder='100 <= trigger <= 10000'
+                            placeholder='100 <= trigger <= 1000'
                             onChange={(value) =>
                                 updateValues({ episodes: Number(value) })
                             }
