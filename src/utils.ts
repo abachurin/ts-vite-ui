@@ -298,6 +298,12 @@ const checkNumberVal = (
 
 export const specialAgents = ["Random Moves", "Best Score"];
 
+/**
+ * Validates Test Agent Job parameters.
+ * @param values - parameters to be validated
+ * @return A tuple containing the validated parameters
+ * and a boolean indicating if any values were changed during validation.
+ */
 export const validateTestingParams = (
     values: Partial<AgentTesting>
 ): [Partial<AgentTesting>, boolean] => {
@@ -346,7 +352,7 @@ export const validateTestingParams = (
 
 /**
  * Simulates a click event on the element with ID "modal-close" to close a modal.
- * The ID should be assigned to Modal Background div.
+ * The ID should be assigned to Modal Background element.
  */
 export const simulateCloseModalClick = (): void => {
     const toClick = document.querySelector("#modal-close") as HTMLElement;
@@ -356,7 +362,12 @@ export const simulateCloseModalClick = (): void => {
 const characters =
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const lengthRandomName = 6;
-export function randomName(suffix: string): string {
+/**
+ * Generates a random name by concatenating the given suffix with a randomly generated string.
+ * @param suffix - suffix for the random string
+ * @return randomly generated name.
+ */
+export const randomName = (suffix: string): string => {
     return (
         "*" +
         suffix +
@@ -365,4 +376,4 @@ export function randomName(suffix: string): string {
             () => characters[Math.floor(Math.random() * characters.length)]
         ).join("")
     );
-}
+};
