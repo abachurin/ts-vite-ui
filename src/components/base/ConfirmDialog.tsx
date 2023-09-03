@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useMemo, useEffect, useCallback } from "react";
 import {
     usePalette,
@@ -10,7 +10,7 @@ import dragMe from "../HOC/Draggable";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
-const makeWrapper = (isOpen: boolean): SerializedStyles => css`
+const makeWrapper = (isOpen: boolean) => css`
     z-index: 10;
     & > header {
         position: fixed;
@@ -32,7 +32,7 @@ const makeEmotion = (
     textColor: string,
     borderColor: string,
     isOpen: boolean
-): SerializedStyles => css`
+) => css`
     min-width: 20rem;
     display: flex;
     flex-direction: column;
@@ -57,12 +57,12 @@ const makeEmotion = (
     }
 `;
 
-interface ConfirmDialogProps {
+type ConfirmDialogProps = {
     isOpen: boolean;
     message: string;
-    onConfirm: (e: React.MouseEvent<HTMLButtonElement> | KeyboardEvent) => void;
+    onConfirm: () => void;
     onCancel: (e: React.MouseEvent<HTMLButtonElement> | KeyboardEvent) => void;
-}
+};
 const StaticConfirmDialog = ({
     isOpen,
     message,
@@ -95,7 +95,7 @@ const StaticConfirmDialog = ({
     );
 
     return (
-        <main css={emotion}>
+        <div css={emotion}>
             <p>{message}</p>
             <footer>
                 <Button
@@ -117,15 +117,15 @@ const StaticConfirmDialog = ({
                     Cancel
                 </Button>
             </footer>
-        </main>
+        </div>
     );
 };
 
-const DraggableConfirmDialog = dragMe(
-    StaticConfirmDialog,
-    { x: "0px", y: "-100px" },
-    "fixed"
-);
+const DraggableConfirmDialog = dragMe({
+    ToDrag: StaticConfirmDialog,
+    initialPosition: { x: "0px", y: "-100px" },
+    positionType: "fixed",
+});
 
 const ConfirmDialog = (props: ConfirmDialogProps) => {
     const wrapper = makeWrapper(props.isOpen);

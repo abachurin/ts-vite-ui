@@ -6,7 +6,7 @@ import {
     useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
 import { useMutation } from "@tanstack/react-query";
-import { connectAPI } from "../../api/utils";
+import { connectAPI } from "../../api/requests";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { palettes } from "../../palette";
 import { GLOBAL, changeBrightness } from "../../utils";

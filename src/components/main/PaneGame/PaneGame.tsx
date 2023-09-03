@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { useEffect } from "react";
-import { killWatchJob } from "../../../api/utils";
+import { killWatchJob } from "../../../api/requests";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useModeStore, { modeDescription } from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
@@ -42,13 +42,17 @@ const PaneGame = () => {
 
     const watchUser = useGameStore((state) => state.watchUser);
     const setWatchingNow = useGameStore((state) => state.setWatchingNow);
+    const setLoadingWeights = useGameStore((state) => state.setLoadingWeights);
     const newGame = useGameStore((state) => state.newGame);
     const cutHistory = useGameStore((state) => state.cutHistory);
     const setPaused = useGameStore((state) => state.setPaused);
 
     useEffect(() => {
         setWatchingNow(gameMode === "watch");
-        if (gameMode !== "watch") killWatchJob(watchUser);
+        if (gameMode !== "watch") {
+            setLoadingWeights(false);
+            killWatchJob(watchUser);
+        }
     }, [gameMode]);
 
     const playYourself = () => {

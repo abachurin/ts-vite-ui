@@ -1,25 +1,40 @@
 import axios, { Method, AxiosError } from "axios";
 import { BACK_URL } from "../config";
 import {
-    ItemListRequest,
+    UserName,
     ItemListRequestType,
     ItemType,
-    ItemListResponse,
-    JustNamesResponse,
+    NewMovesRequest,
+    NewMovesResponse,
     AgentDict,
     GameDict,
-    FullGameResponse,
+    GameBackend,
 } from "../types";
 
-export type APIConfig<T> = {
+type APIConfig<T> = {
     method: Method;
     endpoint: string;
     data?: T;
 };
-
-export type ApiCallResult<T> = {
+type ApiCallResult<T> = {
     result?: T;
     error?: string;
+};
+
+type ItemListRequest = UserName & {
+    scope: ItemListRequestType;
+};
+type ItemListResponse = {
+    status?: string;
+    list?: AgentDict | GameDict;
+};
+type JustNamesResponse = {
+    status?: string;
+    list?: string[];
+};
+type FullGameResponse = {
+    status: string;
+    game?: GameBackend;
 };
 
 export const connectAPI = async <DataType, ResultType>({
@@ -113,4 +128,26 @@ export const killWatchJob = async (userName: string) => {
         url: BACK_URL + "/watch/cancel",
         data: { userName },
     });
+};
+
+export const fetchNewMovesTiles = async (
+    request: NewMovesRequest
+): Promise<NewMovesResponse> => {
+    const { result, error } = await connectAPI<
+        NewMovesRequest,
+        NewMovesResponse
+    >({
+        method: "POST",
+        endpoint: "/watch/new_moves",
+        data: request,
+    });
+    if (error) {
+        console.log(error);
+        return { status: error };
+    }
+    return {
+        moves: result?.moves ?? [],
+        tiles: result?.tiles ?? [],
+        loadingWeights: result?.loadingWeights,
+    };
 };

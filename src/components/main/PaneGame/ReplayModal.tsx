@@ -6,7 +6,7 @@ import {
     useUser,
 } from "../../../contexts/UserProvider/UserContext";
 import useGameStore from "../../../store/gameStore";
-import { getItems, getFullGame } from "../../../api/utils";
+import { getItems, getFullGame } from "../../../api/requests";
 import { GameDict, AlignProps, GameBackend } from "../../../types";
 import { GLOBAL } from "../../../utils";
 import useAlertMessage from "../../../hooks/useAlertMessage";
@@ -81,7 +81,7 @@ const ReplayModal = ({ align }: AlignProps) => {
             modal={{
                 backgroundColor: palette.background,
                 color: palette.text,
-                width: "24rem",
+                width: "20rem",
             }}
         >
             <ModalBody overflow='visible'>

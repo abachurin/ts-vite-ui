@@ -1,12 +1,13 @@
 import { useEffect, useRef } from "react";
-import { EventCallback } from "../types";
+
+type ClickCallBack = (e: MouseEvent) => void;
 
 /**
  * A hook that invokes a callback when a click event occurs outside of a specified element.
- * @param {EventCallback} onClickOutside - The callback function to be invoked when a click event
+ * @param {ClickCallBack} onClickOutside - The callback function to be invoked when a click event
  * occurs outside of the element specified by the ref, provided by the hook
  */
-export const useOutsideClick = (onClickOutside: EventCallback) => {
+export const useClickAwayListener = (onClickOutside: ClickCallBack) => {
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {

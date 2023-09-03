@@ -26,7 +26,7 @@ const useAlert = ({
     const [showAlert, setShowAlert] = useState(false);
 
     const AlertComponent: React.ComponentType<AlertProps> = draggable
-        ? dragMe(StaticAlert, initialPosition, positionType)
+        ? dragMe({ ToDrag: StaticAlert, initialPosition, positionType })
         : StaticAlert;
 
     const openAlert = () => {

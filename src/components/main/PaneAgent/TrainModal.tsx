@@ -1,13 +1,13 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect, useState } from "react";
-import { connectAPI, getItems } from "../../../api/utils";
+import { connectAPI, getItems } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
 import {
     usePalette,
     useUser,
 } from "../../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../../hooks/useAlertMessage";
-import useAnyRunningJob from "../../../hooks/useAnyJob";
+import useAnyRunningJob from "../../../hooks/useAnyRunningJob";
 import { AgentDict, AgentTraining } from "../../../types";
 import {
     GLOBAL,
@@ -29,7 +29,7 @@ import ModalHeader from "../../modal/ModalHeader";
 const footerWrapper = css`
     flex: 1;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
 `;
 const emotion = css`
     display: flex;
@@ -81,14 +81,14 @@ const TrainModal = () => {
     const updateValues = useCallback((update: Partial<AgentTraining>) => {
         setValues((prevValues) => ({ ...prevValues, ...update }));
     }, []);
-    const updateOnOpen = () => {
+
+    const setExistingValues = () => {
         if (!values.isNew && values.name) {
             updateValues({ ...agents[values.name] });
         }
     };
-
     useEffect(() => {
-        updateOnOpen();
+        setExistingValues();
     }, [values.isNew, values.name]);
 
     const inputParameters = {
@@ -153,7 +153,7 @@ const TrainModal = () => {
                 legend: "Only for registered users, and when no Job is running",
                 level: GLOBAL.userLevel.user,
                 disabled: anyJob,
-                onClick: () => setTimeout(() => updateOnOpen(), 100),
+                onClick: () => setTimeout(() => setExistingValues(), 100),
             }}
             modal={{
                 width: "26rem",
@@ -311,13 +311,23 @@ const TrainModal = () => {
                 <div css={footerWrapper}>
                     <Button
                         type='clickPress'
-                        width='10rem'
+                        width='8rem'
                         background={palette.three}
                         color={palette.background}
                         onClick={handleTrain}
                         disabled={loading}
                     >
                         GO!
+                    </Button>
+                    <Button
+                        type='clickPress'
+                        width='8rem'
+                        background={palette.two}
+                        color={palette.background}
+                        onClick={() => setValues(defaultTrainingParams)}
+                        disabled={!values.isNew}
+                    >
+                        Reset Defaults
                     </Button>
                 </div>
             </ModalFooter>

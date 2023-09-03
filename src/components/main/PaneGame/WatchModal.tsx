@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect, useState } from "react";
-import { connectAPI, getJustNames } from "../../../api/utils";
+import { connectAPI, getJustNames } from "../../../api/requests";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useModeStore from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
@@ -23,6 +23,7 @@ import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
 import CloseButton from "../../base/Button/CloseButton";
 import GameLogic from "../../../store/gameLogic";
+import Cube from "../../base/Cube";
 
 // Emotion styles
 const footerWrapper = css`
@@ -52,18 +53,14 @@ const emotion = css`
 
 const WatchModal = () => {
     const palette = usePalette();
+    const { setGameMode, setGameName } = useModeStore();
 
-    const setGameMode = useModeStore((state) => state.setGameMode);
-    const setGameName = useModeStore((state) => state.setGameName);
-
-    const game = useGameStore((state) => state.game);
+    const { game } = useGameStore();
     const startNewGame = useGameStore((state) => state.newGame);
     const cutHistory = useGameStore((state) => state.cutHistory);
     const setPaused = useGameStore((state) => state.setPaused);
-
     const watchUser = useGameStore((state) => state.watchUser);
     const setWatchUser = useGameStore((state) => state.setWatchUser);
-    const setWatchGame = useGameStore((state) => state.setWatchGame);
     const setWatchingNow = useGameStore((state) => state.setWatchingNow);
 
     const loadingWeights = useGameStore((state) => state.loadingWeights);
@@ -71,7 +68,7 @@ const WatchModal = () => {
 
     useEffect(() => {
         if (loadingWeights === false) {
-            createMessage("", "success");
+            createMessage("");
             simulateCloseModalClick();
         }
     }, [loadingWeights]);
@@ -80,6 +77,7 @@ const WatchModal = () => {
 
     const [agents, setAgents] = useState<string[]>([]);
     const getAllAgentNames = async () => {
+        setPaused(true);
         const { list, message } = await getJustNames("Agents", "", "all");
         createMessage(message, "error");
         setAgents(list);
@@ -117,9 +115,7 @@ const WatchModal = () => {
         }
 
         const newWatchUser = randomName("agent");
-        const newWatchGame = randomName("game");
         setWatchUser(newWatchUser);
-        setWatchGame(newWatchGame);
         setWatchingNow(false);
         setPaused(true);
         setLoadingWeights(true);
@@ -128,13 +124,11 @@ const WatchModal = () => {
         if (!isNew) cutHistory();
         const startGame: GameForWatch = isNew
             ? {
-                  name: newWatchGame,
                   initial: row,
                   score: 0,
                   numMoves: 0,
               }
             : {
-                  name: newWatchGame,
                   initial: game.row,
                   score: game.score,
                   numMoves: game.pointer.move,
@@ -151,12 +145,12 @@ const WatchModal = () => {
             },
         });
         if (error) {
-            createMessage(error, "error");
-            setLoadingWeights(false);
+            createMessage(error, "error", 5000);
+            setTimeout(() => setLoadingWeights(false), 5000);
         } else {
             if (result !== "ok") {
                 createMessage(result, "error");
-                setLoadingWeights(false);
+                setTimeout(() => setLoadingWeights(false), 5000);
             } else {
                 createMessage(
                     `Initializing ${values.name} ...`,
@@ -305,6 +299,7 @@ const WatchModal = () => {
                 </div>
             </ModalFooter>
             {message ? <ModalFooter>{message}</ModalFooter> : null}
+            {loadingWeights ? <Cube /> : null}
         </Modal>
     );
 };

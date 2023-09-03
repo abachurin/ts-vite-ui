@@ -6,22 +6,7 @@ export type RGBA = `rgba(${number}, ${number}, ${number}, ${number})`;
 export type Alignment = "left" | "center" | "right";
 export type ModalState = boolean | "none";
 
-// HTML-related types
-export type EventKey = keyof HTMLElementEventMap | keyof WindowEventMap;
-export type EventCallback = (e: Event) => void;
-export type StyledHTMLElement = HTMLElement & {
-    style: CSSStyleDeclaration;
-};
-export type InputType =
-    | "text"
-    | "password"
-    | "email"
-    | "number"
-    | "search"
-    | "tel"
-    | "url";
-
-// Common Prop types
+// Common types
 export interface UserName {
     userName: string;
 }
@@ -31,6 +16,15 @@ export interface ChildrenProps {
 export interface AlignProps {
     align?: Alignment;
 }
+
+// Button related types
+export type ButtonVariants = "whooshRotate" | "clickPress";
+export type ButtonExtraStyle = (background: string) => SerializedStyles;
+export type ButtonEffects = (
+    el: HTMLButtonElement,
+    volume: number,
+    animate: boolean
+) => void;
 
 // User styles
 export type User = {
@@ -80,15 +74,6 @@ export type Palettes = {
     [name: string]: Palette;
 };
 
-// Button types
-export type ButtonVariants = "whooshRotate" | "clickPress";
-export type ButtonExtraStyle = (background: string) => SerializedStyles;
-export type ButtonEffects = (
-    el: HTMLButtonElement,
-    volume: number,
-    animate: boolean
-) => void;
-
 // Draggable types
 export type Position = {
     x: string;
@@ -134,6 +119,12 @@ export interface AgentWatchingBase {
     width: number | undefined;
     trigger: number | undefined;
 }
+
+export type GameForWatch = {
+    initial: number[][];
+    score: number;
+    numMoves: number;
+};
 
 export interface AgentWatching extends AgentWatchingBase {
     startGame: GameForWatch;
@@ -191,18 +182,6 @@ export type GamePointer = {
     tile: number;
 };
 
-export type GameForWatch = {
-    name: string;
-    initial: number[][];
-    score: number;
-    numMoves: number;
-};
-
-export type GameWatchNew = {
-    user: string;
-    startGame: GameForWatch;
-};
-
 export interface GameCore {
     user?: string;
     name: string;
@@ -229,40 +208,18 @@ export interface Game extends GameBackend {
 
 export type GameDict = Record<string, GameDescription>;
 
-export type FullGameResponse = {
-    status: string;
-    game?: GameBackend;
-};
-
 // Items (agents and games) types
 export type ItemListRequestType = "all" | "user";
 export type ItemType = "Agents" | "Games";
-
-export interface ItemListRequest extends UserName {
-    scope: ItemListRequestType;
-}
-
-export type ItemListResponse = {
-    status?: string;
-    list?: AgentDict | GameDict;
-};
-
 export type ItemDeleteRequest = {
     name: string;
     kind: string;
 };
 
-export type JustNamesResponse = {
-    status?: string;
-    list?: string[];
-};
-
 // Watch Agent game retrieval types
-export interface NewMovesRequest extends UserName {
-    name: string;
+export type NewMovesRequest = UserName & {
     numMoves: number;
-}
-
+};
 export type NewMovesResponse = {
     status?: string;
     moves?: number[];

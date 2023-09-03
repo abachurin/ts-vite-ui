@@ -1,7 +1,6 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo, useEffect } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { connectAPI } from "../../../api/utils";
+import { useMemo, useEffect, useState } from "react";
+import { connectAPI } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
@@ -12,6 +11,7 @@ import { GLOBAL, setTransparency, JobDescriptionLabels } from "../../../utils";
 import ButtonGroup from "../../base/Button/ButtonGroup";
 import Button from "../../base/Button/Button";
 import DescriptionTable from "../../base/DescriptionTable";
+import Cube from "../../base/Cube";
 
 // Emotion styles
 const makeEmotion = (
@@ -43,7 +43,7 @@ const makeEmotion = (
 // Helper functions
 type cancelJob = "STOP" | "KILL";
 type cancelType = {
-    description: string;
+    description: string | undefined;
     type: cancelJob;
 };
 
@@ -51,9 +51,16 @@ const CurrentJobDescription = () => {
     const palette = usePalette();
     const user = useUser();
     const job = useJobDescription(user.name);
+
     const setAgentMode = useModeStore((state) => state.setAgentMode);
     const setAgentName = useModeStore((state) => state.setAgentName);
+
+    const [waitCancel, setWaitCancel] = useState(false);
     const [message, createMessage] = useAlertMessage("");
+    useEffect(() => {
+        createMessage("");
+        setWaitCancel(false);
+    }, [job?.description]);
 
     useEffect(() => {
         const type = job?.type;
@@ -62,23 +69,18 @@ const CurrentJobDescription = () => {
         setAgentName(job?.name);
     });
 
-    const cancelJobMutation = useMutation(
-        (values: cancelType) =>
-            connectAPI<cancelType, string>({
-                method: "post",
-                endpoint: "/jobs/cancel",
-                data: values,
-            }),
-        {
-            onSuccess: ({ result, error }) => {
-                if (error) {
-                    createMessage(error, "error");
-                } else {
-                    createMessage(result, "success", 100000);
-                }
-            },
+    const cancelJob = async (type: cancelJob) => {
+        const { result, error } = await connectAPI<cancelType, string>({
+            method: "post",
+            endpoint: "/jobs/cancel",
+            data: { description: job?.description, type },
+        });
+        if (error) createMessage(error, "error");
+        else {
+            createMessage(result, "success", 100000);
+            setWaitCancel(true);
         }
-    );
+    };
 
     const emotion = useMemo(
         () => makeEmotion(palette.two, palette.background),
@@ -101,29 +103,20 @@ const CurrentJobDescription = () => {
                             <Button
                                 type='clickPress'
                                 background={palette.three}
-                                onClick={() =>
-                                    cancelJobMutation.mutate({
-                                        description: job.description,
-                                        type: "STOP",
-                                    })
-                                }
+                                onClick={() => cancelJob("STOP")}
                             >
                                 STOP
                             </Button>
                             <Button
                                 type='clickPress'
                                 background={palette.error}
-                                onClick={() =>
-                                    cancelJobMutation.mutate({
-                                        description: job.description,
-                                        type: "KILL",
-                                    })
-                                }
+                                onClick={() => cancelJob("KILL")}
                             >
                                 KILL
                             </Button>
                         </ButtonGroup>
                     </aside>
+                    {waitCancel && <Cube />}
                 </div>
             )}
         </>

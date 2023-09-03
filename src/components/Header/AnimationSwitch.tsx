@@ -2,12 +2,14 @@ import {
     useAnimate,
     useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
-import { StyledHTMLElement } from "../../types";
 import { SvgPaths } from "../../utils";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 
 // Helper functions
+type StyledHTMLElement = HTMLElement & {
+    style: CSSStyleDeclaration;
+};
 const toggleMotion = (move: boolean): void => {
     const animations = document.querySelectorAll<StyledHTMLElement>(
         "[data-animated=true]"

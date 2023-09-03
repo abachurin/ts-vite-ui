@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { JobDescriptionResponse, UserName } from "../types";
-import { connectAPI } from "../api/utils";
+import { connectAPI } from "../api/requests";
 
 const fetchJobDescription = async (
     userName: string

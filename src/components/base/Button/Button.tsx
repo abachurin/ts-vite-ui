@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useMemo } from "react";
 import {
     useUser,
@@ -28,12 +28,11 @@ const buttonStyles = {
     },
 };
 
-const makeContainer = (align: Alignment): SerializedStyles => css`
+const makeContainer = (align: Alignment) => css`
     display: flex;
     justify-content: ${align};
     align-items: center;
 `;
-
 const makeEmotion = (
     width: string,
     height: string,
@@ -41,7 +40,7 @@ const makeEmotion = (
     backgroundColor: string,
     color: string,
     fontSize: string
-): SerializedStyles => css`
+) => css`
     display: flex;
     justify-content: center;
     align-items: center;
@@ -61,8 +60,7 @@ const makeEmotion = (
         color: rgb(128, 128, 128);
     }
 `;
-
-const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
+const makeLegend = (align: Alignment, legend: string) => css`
     ${!window.matchMedia("(hover: none)").matches && legend
         ? `
             &::before {
@@ -106,27 +104,24 @@ const makeLegend = (align: Alignment, legend: string): SerializedStyles => css`
 
 /**
  * Returns a Button component with specified properties.
- *
- * @param type - The type of button, should be a member of ButtonVariants,
+ * @param type - type of button, should be a member of ButtonVariants,
  * there should be .ts file describing style and default onClick behavior in Button folder,
- * it should be imported above buttonStyles object amended respectively.
- * @param align - The alignment of the button.
- * @param width - The width of the button.
- * @param height - The height of the button.
- * @param backgroundColor - The background color of the button.
- * @param color - The text color of the button.
- * @param fontSize - The font size of the button.
- * @param borderRadius - The CSS border radius of the button.
- * @param legend - The text to display when hovering over the button if it is disabled.
- * @param disabled - Whether the button is disabled.
- * @param level - The minimum user level required to click the button.
- * @param toggleModal - Whether the button should open or close a parent modal window.
- * @param onClick - The function to call when the button is clicked.
- * @param children - The child components to render within the button.
- * when clicked. Note, that this prop is actually used by the parent ModalWindow component,
- * but has to be declared here
+ * it should be imported above buttonStyles object amended respectively
+ * @param align - alignment of the button inside its container
+ * @param width - width
+ * @param height - height
+ * @param background - background
+ * @param color - text color
+ * @param fontSize - font size
+ * @param borderRadius - CSS border radius of the button, as text
+ * @param legend - text to display when hovering over the button IFF it is disabled.
+ * @param disabled - whether the button is disabled
+ * @param level - minimum user level required to enable the button
+ * @param toggleModal - whether the button should open or close a parent context modal
+ * @param onClick - function to call when the button is clicked
+ * @param children - child components to render as button innerHTML
  */
-export interface ButtonProps extends ChildrenProps {
+export type ButtonProps = ChildrenProps & {
     type?: ButtonVariants;
     align?: Alignment;
     width?: string;
@@ -140,7 +135,7 @@ export interface ButtonProps extends ChildrenProps {
     level?: number;
     toggleModal?: ModalState;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-}
+};
 const Button = ({
     type = "whooshRotate",
     align = "left",
@@ -193,20 +188,18 @@ const Button = ({
 
     const flash = useMemo(() => buttonStyles[type].click, [type]);
 
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (toggleModal !== "none") changeIsOpen(toggleModal);
+        flash(e.currentTarget, volume, animate);
+        onClick && onClick(e);
+    };
+
     return (
         <div css={container}>
             <button
                 css={emotion}
                 data-legend={legend}
-                onClick={(e) => {
-                    if (toggleModal !== "none") changeIsOpen(toggleModal);
-                    flash(
-                        e.currentTarget as HTMLButtonElement,
-                        volume,
-                        animate
-                    );
-                    onClick && onClick(e);
-                }}
+                onClick={handleClick}
                 disabled={disabled || user.level < level}
             >
                 {children}

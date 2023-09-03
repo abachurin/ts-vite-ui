@@ -10,7 +10,7 @@ import {
     defaultUser,
 } from "../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../hooks/useAlertMessage";
-import { connectAPI } from "../../api/utils";
+import { connectAPI } from "../../api/requests";
 import {
     Alignment,
     User,

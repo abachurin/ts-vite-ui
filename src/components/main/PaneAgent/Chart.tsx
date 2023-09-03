@@ -17,7 +17,7 @@ type ChartProps = {
     step: number;
 };
 const Chart = ({ name, history, step }: ChartProps) => {
-    const { width, height } = useDimensions(false);
+    const { width, height } = useDimensions();
     const w = Math.min(0.8 * width, 1000);
     const h = Math.min(0.8 * height, 0.8 * w);
 

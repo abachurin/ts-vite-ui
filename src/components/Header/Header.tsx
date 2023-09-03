@@ -51,7 +51,7 @@ const nav = css`
  * Header component that renders the header section of the application.
  */
 const Header = () => {
-    const { width } = useDimensions(false);
+    const { width } = useDimensions();
     const hiddenNavigation = width < GLOBAL.navBreakpoint;
 
     const palette = usePalette();

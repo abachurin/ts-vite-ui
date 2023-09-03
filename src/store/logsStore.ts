@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { useQuery } from "@tanstack/react-query";
-import { connectAPI } from "../api/utils";
+import { connectAPI } from "../api/requests";
 import { UserName, Logs, LogsResponse } from "../types";
 import { GLOBAL } from "../utils";
 

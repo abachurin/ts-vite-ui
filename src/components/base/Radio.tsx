@@ -1,5 +1,5 @@
-import { css, SerializedStyles } from "@emotion/react";
-import { ReactNode, useMemo, useState, useEffect } from "react";
+import { css } from "@emotion/react";
+import { ReactNode, useMemo, useState, useEffect, useCallback } from "react";
 import { uniqueId } from "lodash-es";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";
@@ -14,7 +14,7 @@ const makeEmotion = (
     color1: string,
     color2: string,
     textColor: string
-): SerializedStyles => css`
+) => css`
     width: ${width};
     display: flex;
     flex-direction: column;
@@ -57,7 +57,7 @@ const makeControl = (
     controlColor: string,
     textColor: string,
     fontSize: number
-): SerializedStyles => css`
+) => css`
     padding-block: ${GLOBAL.padding};
     display: flex;
     align-items: center;
@@ -102,6 +102,21 @@ const makeControl = (
     }
 `;
 
+/**
+ * Renders a radio button component with customizable options and styling.
+ * @param width - width
+ * @param fontSize - font size in rem
+ * @param labelRatio - ratio of the label width to the control width
+ * @param backgroundColor - background color
+ * @param controlColor - color of the radio button control
+ * @param color1 - colors 1-2 for gradient label text
+ * @param color2
+ * @param textColor - text color
+ * @param label - label
+ * @param initialValue - initial value
+ * @param options - radio options
+ * @param onChange - callback function to be called when the value of the radio button component changes
+ */
 type RadioProps = {
     width?: string;
     fontSize?: number;
@@ -137,11 +152,15 @@ const Radio = ({
         setCurrentValue(startValue);
     }, [startValue]);
 
-    const handleChoice = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCurrentValue(e.target.value);
-        makeSound(clickSound, volume);
-        onChange(e.target.value);
-    };
+    const handleChoice = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const newValue = e.target.value;
+            setCurrentValue(newValue);
+            makeSound(clickSound, volume);
+            onChange(newValue);
+        },
+        [onChange, volume]
+    );
 
     const emotion = useMemo(
         () =>
@@ -161,23 +180,26 @@ const Radio = ({
         [backgroundColor, controlColor, textColor, fontSize]
     );
 
-    const renderOption = (option: string): ReactNode => {
-        const id = uniqueId("radio");
-        const key = uniqueId("option");
-        return (
-            <div css={control} key={key}>
-                <input
-                    type='radio'
-                    id={id}
-                    name='radio'
-                    value={option}
-                    onChange={handleChoice}
-                    checked={option === currentValue}
-                />
-                <label htmlFor={id}>{option}</label>
-            </div>
-        );
-    };
+    const renderOption = useCallback(
+        (option: string): ReactNode => {
+            const id = uniqueId("radio");
+            const key = uniqueId("option");
+            return (
+                <div css={control} key={key}>
+                    <input
+                        type='radio'
+                        id={id}
+                        name='radio'
+                        value={option}
+                        onChange={handleChoice}
+                        checked={option === currentValue}
+                    />
+                    <label htmlFor={id}>{option}</label>
+                </div>
+            );
+        },
+        [control, currentValue, handleChoice]
+    );
 
     return (
         <form css={emotion}>

@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { useState, useMemo, useEffect } from "react";
-import { connectAPI, getItems } from "../../../api/utils";
+import { connectAPI, getItems } from "../../../api/requests";
 import {
     useUser,
     usePalette,
@@ -9,10 +9,10 @@ import useAlert from "../../../hooks/useAlert";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import {
     ItemType,
-    AgentDict,
-    GameDict,
     ItemListRequestType,
     ItemDeleteRequest,
+    AgentDict,
+    GameDict,
     Agent,
 } from "../../../types";
 import {
@@ -127,7 +127,12 @@ const ManageModal = () => {
             data: { name: item, kind: kind },
         });
         if (error) createMessage(error, "error");
-        else createMessage(`${item} deleted from ${kind}`, "success");
+        else {
+            const { [item]: _, ...newOptions } = options;
+            setOptions(newOptions);
+            setItem("");
+            createMessage(`${item} deleted from ${kind}`, "success");
+        }
     };
 
     const backgroundColor = useMemo(

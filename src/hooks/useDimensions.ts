@@ -6,7 +6,7 @@ import { GLOBAL } from "../utils";
  * @param delay Optional debounce in milliseconds
  */
 const useDimensions = (
-    element = true,
+    element = false,
     delay = GLOBAL.windowResizeDelay
 ): { width: number; height: number; ref: React.RefObject<HTMLDivElement> } => {
     const ref = useRef<HTMLDivElement>(null);

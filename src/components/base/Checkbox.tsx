@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
@@ -12,7 +12,7 @@ const makeEmotion = (
     color2: string,
     color3: string,
     textColor: string
-): SerializedStyles => css`
+) => css`
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,10 +30,7 @@ const makeEmotion = (
     }
 `;
 
-const makeControl = (
-    controlSize: number,
-    controlColor: string
-): SerializedStyles => css`
+const makeControl = (controlSize: number, controlColor: string) => css`
     appearance: none;
     position: relative;
     width: ${controlSize * 1.5}rem;
@@ -67,18 +64,18 @@ const makeControl = (
 
 /**
  * This function returns a checkbox component that can be used to render a checkbox in a UI
- * @param {string} width - The width of the checkbox component with label
- * @param {number} controlSize - The height of the checkbox
- * @param {string} controlColor - The color of the checkbox when "checked"
- * @param {string} color1 - colors for gradient on the component, set the same if no gradient
- * @param {string} color2 - or just don't provide any, and the background will be inherited
- * @param {string} color3
- * @param {string} textColor - The color of the label
- * @param {string} label - The label
- * @param {boolean} checked - The initial state of "checked"
- * @param {function} onChange - The function that gets called when the checkbox toggled
+ * @param width - width
+ * @param controlSize - height
+ * @param controlColor - color of the checkbox when "checked"
+ * @param color1 - colors for gradient on the component, set the same if no gradient
+ * @param color2 - or just don't provide any, and the background will be inherited
+ * @param color3
+ * @param textColor - color of the label
+ * @param checked - initial state of "checked"
+ * @param label - label
+ * @param onChange - function that gets called when the checkbox is toggled
  */
-interface CheckboxProps {
+type CheckboxProps = {
     width?: string;
     controlSize?: number;
     controlColor?: string;
@@ -89,7 +86,7 @@ interface CheckboxProps {
     checked?: boolean;
     label?: string;
     onChange: (checked: boolean) => void;
-}
+};
 const Checkbox = ({
     width = "auto",
     controlSize = 1.2,

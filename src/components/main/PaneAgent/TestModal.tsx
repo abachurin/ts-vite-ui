@@ -1,13 +1,13 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect, useState } from "react";
-import { connectAPI, getJustNames } from "../../../api/utils";
+import { connectAPI, getJustNames } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
 import {
     usePalette,
     useUser,
 } from "../../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../../hooks/useAlertMessage";
-import useAnyRunningJob from "../../../hooks/useAnyJob";
+import useAnyRunningJob from "../../../hooks/useAnyRunningJob";
 import { AgentTesting } from "../../../types";
 import {
     GLOBAL,
@@ -234,7 +234,7 @@ const TestModal = () => {
                             type='number'
                             label='Test episodes'
                             initialValue={values.episodes || undefined}
-                            persistAs='train-episodes'
+                            persistAs='test-episodes'
                             min={100}
                             max={1000}
                             step={100}

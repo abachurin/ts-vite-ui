@@ -2,7 +2,6 @@ import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useEffect } from "react";
 import { useUser } from "../../contexts/UserProvider/UserContext";
 import usePersistence from "../../hooks/usePersistence";
-import { InputType } from "../../types";
 import { GLOBAL } from "../../utils";
 
 // Emotion styles
@@ -15,13 +14,12 @@ const makeEmotion = (
     labelColor1: string,
     labelColor2: string,
     controlColor: string,
-    standAlone: boolean,
     disabled: boolean,
     zIndex: number | "auto"
 ): SerializedStyles => css`
     padding: ${GLOBAL.padding};
-    border-radius: ${standAlone ? "" : GLOBAL.borderRadius};
-    box-shadow: ${standAlone ? "" : GLOBAL.littleShadow};
+    border-radius: ${GLOBAL.borderRadius};
+    box-shadow: ${GLOBAL.littleShadow};
     background-color: ${backgroundColor};
     color: ${color};
     width: ${width};
@@ -29,7 +27,7 @@ const makeEmotion = (
     opacity: ${disabled ? 0.7 : 1};
     z-index: ${zIndex};
     :hover {
-        box-shadow: ${standAlone ? "" : GLOBAL.middleShadow};
+        box-shadow: ${GLOBAL.middleShadow};
     }
     & > header {
         width: 100%;
@@ -63,7 +61,17 @@ const makeEmotion = (
     }
 `;
 
-interface InputProps {
+// Helper functions
+type InputType =
+    | "text"
+    | "password"
+    | "email"
+    | "number"
+    | "search"
+    | "tel"
+    | "url";
+
+type InputProps = {
     width?: string;
     fontSize?: number;
     labelRatio?: number;
@@ -79,12 +87,33 @@ interface InputProps {
     step?: number;
     placeholder?: string;
     initialValue?: string | number;
-    standAlone?: boolean;
     disabled?: boolean;
     persistAs?: string | undefined;
     zIndex?: number | "auto";
     onChange: (value: string) => void;
-}
+};
+/**
+ * Input component with customizable properties.
+ * @param width - width
+ * @param fontSize - font size in rem
+ * @param labelRatio - ratio of the label width to font size
+ * @param backgroundColor - =background color
+ * @param labelColor1 - colors 1-2 for gradient label text
+ * @param labelColor2
+ * @param controlColor - color of the input control
+ * @param color - text color
+ * @param label - label
+ * @param type - type of input
+ * @param min - minimum value for numeric input types
+ * @param max - maximum value for numeric input types
+ * @param step - step value for numeric input types
+ * @param placeholder - placeholder text for the input component
+ * @param initialValue - initial value
+ * @param disabled - specifies if the input component is disabled
+ * @param persistAs - name for localStorage key to persist value, no persisting by default
+ * @param zIndex - z-index
+ * @param onChange - callback function for handling input changes
+ */
 const Input = ({
     width = "auto",
     fontSize = 1,
@@ -101,7 +130,6 @@ const Input = ({
     step,
     placeholder = "",
     initialValue = "",
-    standAlone = false,
     disabled = false,
     persistAs,
     zIndex = "auto",
@@ -114,16 +142,21 @@ const Input = ({
         persistAs
     );
     useEffect(() => {
+        initialValue !== "" && setPersistedValue(String(initialValue));
+    }, [initialValue]);
+
+    useEffect(() => {
         persistAs &&
             persistedValue !== GLOBAL.filler &&
             onChange(persistedValue);
     }, [persistAs, persistedValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
         if (persistAs) {
-            setPersistedValue(e.target.value);
+            setPersistedValue(value);
         } else {
-            onChange(e.target.value);
+            onChange(value);
         }
     };
 
@@ -138,7 +171,6 @@ const Input = ({
                 labelColor1,
                 labelColor2,
                 controlColor,
-                standAlone,
                 disabled,
                 zIndex
             ),
@@ -151,7 +183,6 @@ const Input = ({
             labelColor1,
             labelColor2,
             controlColor,
-            standAlone,
             disabled,
             zIndex,
         ]

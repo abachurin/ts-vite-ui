@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { uniqueId } from "lodash-es";
 import { GLOBAL } from "../../utils";
@@ -7,7 +7,7 @@ const makeEmotion = (
     background: string,
     textColor: string,
     borderColor: string
-): SerializedStyles => css`
+) => css`
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -34,6 +34,14 @@ type DescriptionTableProps = {
     collection: object;
     translation: Record<string, string>;
 };
+/**
+ * Renders a table with descriptions.
+ * @param background - background color
+ * @param textColor - text color
+ * @param borderColor - border color
+ * @param collection - collection of data to display in the table
+ * @param translation - translation map to translate labels
+ */
 const DescriptionTable = ({
     background = "inherit",
     textColor = "inherit",

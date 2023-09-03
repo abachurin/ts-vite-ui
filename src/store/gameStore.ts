@@ -41,13 +41,11 @@ interface GameStore {
     interval: number;
     paused: boolean;
     watchUser: string;
-    watchGame: string;
     watchingNow: boolean;
     loadingWeights: boolean;
     setPaused: (newPaused: boolean) => void;
     setIntervalValue: (newInterval: number) => void;
     setWatchUser: (newWatchUser: string) => void;
-    setWatchGame: (newWatchGame: string) => void;
     setWatchingNow: (watching: boolean) => void;
     setLoadingWeights: (loading: boolean) => void;
     fullMove: (move?: number) => void;
@@ -76,12 +74,11 @@ const useGameStore = create<GameStore>()((set, get) => ({
     setIntervalValue: (newInterval) => set(() => ({ interval: newInterval })),
     setWatchUser: (newWatchUser: string) =>
         set(() => ({ watchUser: newWatchUser })),
-    setWatchGame: (newWatchGame: string) =>
-        set(() => ({ watchGame: newWatchGame })),
     setWatchingNow: (watching: boolean) =>
         set(() => ({ watchingNow: watching })),
-    setLoadingWeights: (loading: boolean) =>
-        set(() => ({ loadingWeights: loading })),
+    setLoadingWeights: (loading: boolean) => {
+        set(() => ({ loadingWeights: loading }));
+    },
 
     fullMove: (move?: number) => {
         const newGame = fullMove(get().game, move);

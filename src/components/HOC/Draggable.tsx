@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import React, { useState, useEffect, useRef } from "react";
 import { Position, Offset, PositionType } from "../../types";
 
@@ -8,7 +8,7 @@ const makeEmotion = (
     left: string,
     top: string,
     isDragging: boolean
-): SerializedStyles => css`
+) => css`
     position: ${positionType};
     left: ${left};
     top: ${top};
@@ -20,11 +20,23 @@ const makeEmotion = (
 const defaultPosition: Position = { x: "50%", y: "50%" };
 const zeroOffset: Offset = { x: 0, y: 0 };
 
-const dragMe = <P extends object>(
-    ToDrag: React.ComponentType<P>,
+/**
+ * Generates a higher-order component that enables dragging functionality to the provided component.
+ *
+ * @param ToDrag - The component to be wrapped with dragging functionality.
+ * @param initialPosition - The initial position of the wrapped component. Default is 'defaultPosition'.
+ * @param positionType - CSS "position" to be applied to the wrapped component. Default is 'fixed'.
+ */
+type dragMeProps<P> = {
+    ToDrag: React.ComponentType<P>;
+    initialPosition?: Position;
+    positionType?: PositionType;
+};
+const dragMe = <P extends object>({
+    ToDrag,
     initialPosition = defaultPosition,
-    positionType = "fixed" as PositionType
-) => {
+    positionType = "fixed" as PositionType,
+}: dragMeProps<P>) => {
     return (props: P) => {
         const [isDragging, setIsDragging] = useState(false);
         const [offset, setOffset] = useState<Offset>(zeroOffset);

@@ -1,11 +1,12 @@
-import { css, SerializedStyles } from "@emotion/react";
-import { useMemo } from "react";
+import { css } from "@emotion/react";
+import { useMemo, useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { uniqueId } from "lodash-es";
 import { gameMoves } from "../../../store/gameLogic";
+import { fetchNewMovesTiles } from "../../../api/requests";
 import useGameStore from "../../../store/gameStore";
-import useWatchGame from "../../../hooks/useWatchGame";
-import useNextMoveInterval from "../../../hooks/useNextMoveInterval";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import { NewMovesRequest, NewMovesResponse } from "../../../types";
 import { GLOBAL } from "../../../utils";
 import GameCell from "./GameCell";
 
@@ -15,7 +16,7 @@ const makeEmotion = (
     color2: string,
     color3: string,
     color: string
-): SerializedStyles => css`
+) => css`
     display: flex;
     flex-direction: column;
     margin-top: ${GLOBAL.padding};
@@ -44,12 +45,77 @@ const makeEmotion = (
     }
 `;
 
-const GameBoard = () => {
-    useWatchGame();
-    useNextMoveInterval();
+// Helper functions
+const minInterval = 10;
+const maxInterval = 5000;
+const beta = (maxInterval - minInterval) / 100;
 
+const getDelay = (pause: boolean, interval: number): number => {
+    if (pause) return 0;
+    return minInterval + beta * interval * interval;
+};
+
+/**
+ * Renders the game board component,
+ * Looks after new moves in Watch Agent mode,
+ * Makes next move at the regular interval
+ */
+const GameBoard = () => {
     const palette = usePalette();
-    const game = useGameStore((state) => state.game);
+    const {
+        game,
+        watchUser,
+        watchingNow,
+        setWatchingNow,
+        setLoadingWeights,
+        appendHistory,
+        fullMove,
+        interval,
+        paused,
+    } = useGameStore();
+    const delay = getDelay(paused, interval);
+
+    const request: NewMovesRequest = {
+        userName: watchUser,
+        numMoves: game.moves.length,
+    };
+    const { data } = useQuery<NewMovesResponse>(
+        ["newMoves", request],
+        () => fetchNewMovesTiles(request),
+        {
+            refetchInterval: GLOBAL.watchInterval,
+            enabled: watchingNow,
+        }
+    );
+
+    const moves = data?.moves || null;
+    const tiles = data?.tiles ?? [];
+    const loadingWeights = data?.loadingWeights ?? false;
+
+    useEffect(() => {
+        if (moves) {
+            appendHistory(moves, tiles);
+            if (moves[moves.length - 1] === -1) setWatchingNow(false);
+        }
+    }, [moves]);
+
+    useEffect(() => {
+        setLoadingWeights(loadingWeights);
+    }, [loadingWeights]);
+
+    const [timerId, setTimerId] = useState<NodeJS.Timer>();
+    useEffect(() => {
+        if (timerId) clearInterval(timerId);
+        if (delay) {
+            const newTimerId = setInterval(fullMove, delay);
+            setTimerId(newTimerId);
+        }
+        return () => {
+            if (timerId) {
+                clearInterval(timerId);
+            }
+        };
+    }, [delay]);
 
     const emotion = useMemo(
         () =>
@@ -62,16 +128,10 @@ const GameBoard = () => {
         [palette]
     );
 
-    const values = [
-        ...game.row[0],
-        ...game.row[1],
-        ...game.row[2],
-        ...game.row[3],
-    ];
+    const values = game.row.flatMap((row) => row);
     const lastTilePosition =
         (game.lastTile?.position.x ?? 0) * 4 +
         (game.lastTile?.position.y ?? -1);
-
     const showNextMove =
         game.nextMove === undefined ? "..." : gameMoves[game.nextMove];
 
@@ -80,9 +140,9 @@ const GameBoard = () => {
             <header>
                 <div>Score: {game.score}</div>
                 <div>Moves: {game.pointer.move}</div>
-                {game.nextMove !== -1 && !game.isOver ? (
+                {game.nextMove !== -1 && !game.isOver && (
                     <label>Next: {showNextMove}</label>
-                ) : null}
+                )}
                 {game.isOver && <label>Game over!</label>}
             </header>
             <main>

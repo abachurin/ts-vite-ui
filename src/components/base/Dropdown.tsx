@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
 import {
@@ -6,7 +6,7 @@ import {
     useSoundVolume,
 } from "../../contexts/UserProvider/UserContext";
 import usePersistence from "../../hooks/usePersistence";
-import { useOutsideClick } from "../../hooks/useClickAwayListener";
+import { useClickAwayListener } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
 import { GLOBAL, SvgPaths, makeSound } from "../../utils";
 import Icon from "./Icon/Icon";
@@ -17,16 +17,15 @@ const makeContainer = (
     color: string,
     width: string,
     fontSize: number,
-    standAlone: boolean,
     zIndex: number | "auto"
-): SerializedStyles => css`
+) => css`
     position: relative;
     color: ${color};
     width: ${width};
     font-size: ${fontSize}rem;
     z-index: ${zIndex};
     &:hover main {
-        box-shadow: ${standAlone ? "" : GLOBAL.middleShadow};
+        box-shadow: ${GLOBAL.middleShadow};
     }
 `;
 const makeEmotion = (
@@ -36,12 +35,11 @@ const makeEmotion = (
     labelColor1: string,
     labelColor2: string,
     controlColor: string,
-    standAlone: boolean,
     disabled: boolean
-): SerializedStyles => css`
+) => css`
     padding: ${GLOBAL.padding};
-    border-radius: ${standAlone ? "" : GLOBAL.borderRadius};
-    box-shadow: ${standAlone ? "" : GLOBAL.littleShadow};
+    border-radius: ${GLOBAL.borderRadius};
+    box-shadow: ${GLOBAL.littleShadow};
     background-color: ${backgroundColor};
     opacity: ${disabled ? 0.7 : 1};
     & > header {
@@ -58,12 +56,13 @@ const makeEmotion = (
     &:hover > header {
         font-weight: ${disabled ? "auto" : "500"};
     }
-    & > section {
+    & > footer {
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: relative;
         width: 100%;
+        font-weight: 400;
         cursor: ${disabled ? "default" : "pointer"};
         margin-top: ${GLOBAL.padding};
     }
@@ -73,7 +72,7 @@ const makeOptionsBox = (
     controlColor: string,
     backgroundColor: string,
     zIndex: number | "auto"
-): SerializedStyles => css`
+) => css`
     position: absolute;
     min-width: ${controlWidthRatio}%;
     width: max-content;
@@ -92,6 +91,7 @@ const makeOptionsBox = (
 const optionStyle = css`
     text-align: center;
     padding: ${GLOBAL.padding};
+    font-weight: 300;
 `;
 const chosenOptionStyle = css`
     ${optionStyle}
@@ -99,22 +99,27 @@ const chosenOptionStyle = css`
 `;
 
 /**
- * A dropdown component with configurable options.
- * @param width - Width.
- * @param fontSize - Font size.
- * @param labelRatio - Ratio of label size to font size.
- * @param backgroundColor - Background color.
+ * A Dropdown Input component with configurable options.
+ * @param width - width
+ * @param fontSize - font size
+ * @param labelRatio - ratio of label size to font size
+ * @param backgroundColor - background color
  * @param labelColor1 - colors 1-2 for gradient label text
  * @param labelColor2
- * @param controlColor - Color of the dropdown control.
- * @param color - Text color.
- * @param label - Dropdown label.
- * @param optionValues - Array of values to display as dropdown options.
- * @param initialValue - The initially selected dropdown value, first option as default.
- * @param alignOptions - Alignment of the options box ("left" or "right").
- * @param onChange - Function to be called when dropdown value changes.
+ * @param controlWidthRatio - ratio of control size to font size
+ * @param controlColor - color of the dropdown control
+ * @param color - text color
+ * @param label - label
+ * @param optionValues - array of values to display as dropdown options
+ * @param initialValue - initial value, first option as default
+ * @param alignOptions - alignment of the options box ("left" or "right")
+ * @param alwaysOpen - whether the options box should always be open
+ * @param disabled - whether the dropdown is disabled
+ * @param persistAs - name for localStorage key to persist value, no persisting by default
+ * @param zIndex - z-index of component
+ * @param onChange - function to be called when dropdown value changes.
  */
-interface DropdownProps {
+type DropdownProps = {
     width?: string;
     fontSize?: number;
     labelRatio?: number;
@@ -129,12 +134,11 @@ interface DropdownProps {
     initialValue?: string | number;
     alignOptions?: Alignment;
     alwaysOpen?: boolean;
-    standAlone?: boolean;
     disabled?: boolean;
     persistAs?: string | undefined;
     zIndex?: number | "auto";
     onChange: (value: string) => void;
-}
+};
 const Dropdown = ({
     width = "auto",
     fontSize = 1,
@@ -150,24 +154,21 @@ const Dropdown = ({
     initialValue = undefined,
     alignOptions = "left",
     alwaysOpen = false,
-    standAlone = false,
     disabled = false,
     persistAs,
     zIndex = "auto",
     onChange,
 }: DropdownProps) => {
     const user = useUser();
-    const name = user.name;
+    const userName = user.name;
     const volume = useSoundVolume();
 
     const disabledTrue = disabled || optionValues.length === 0;
     const [optionsOpen, setOptionsOpen] = useState(alwaysOpen);
-    const ref = useOutsideClick(() => {
-        if (!optionsOpen) setOptionsOpen(false);
-    });
+    const ref = useClickAwayListener(() => setOptionsOpen(false));
 
     const [persistedValue, setPersistedValue] = usePersistence(
-        name,
+        userName,
         persistAs,
         optionValues
     );
@@ -189,8 +190,8 @@ const Dropdown = ({
     };
 
     const container = useMemo(
-        () => makeContainer(color, width, fontSize, standAlone, zIndex),
-        [color, width, fontSize, standAlone, zIndex]
+        () => makeContainer(color, width, fontSize, zIndex),
+        [color, width, fontSize, zIndex]
     );
     const emotion = useMemo(
         () =>
@@ -201,7 +202,6 @@ const Dropdown = ({
                 labelColor1,
                 labelColor2,
                 controlColor,
-                standAlone,
                 disabledTrue
             ),
         [
@@ -211,7 +211,6 @@ const Dropdown = ({
             labelColor1,
             labelColor2,
             controlColor,
-            standAlone,
             disabledTrue,
         ]
     );
@@ -249,7 +248,7 @@ const Dropdown = ({
                 <header>
                     <div>{label}</div>
                 </header>
-                <section
+                <footer
                     onClick={() => {
                         if (!alwaysOpen) setOptionsOpen((prev) => !prev);
                     }}
@@ -266,19 +265,19 @@ const Dropdown = ({
                             color={controlColor}
                         />
                     </aside>
-                </section>
+                </footer>
             </main>
             <div css={optionsBox}>
                 {optionValues.map((v) => (
-                    <div
+                    <section
                         key={uniqueId()}
                         css={
-                            v === initialValue ? chosenOptionStyle : optionStyle
+                            v == initialValue ? chosenOptionStyle : optionStyle
                         }
                         onClick={handleOption}
                     >
                         {v}
-                    </div>
+                    </section>
                 ))}
             </div>
         </div>
