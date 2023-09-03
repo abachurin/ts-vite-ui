@@ -55,7 +55,6 @@ interface GameStore {
     assignGame: (game: GameBackend) => void;
     restartGame: () => void;
 }
-
 const useGameStore = create<GameStore>()((set, get) => ({
     game: GameLogic.emptyGame(),
     interval: 4,

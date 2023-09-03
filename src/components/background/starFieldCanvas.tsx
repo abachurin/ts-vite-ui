@@ -1,3 +1,5 @@
+// Work in progress !!! Not a functional component yet. Will replace StarField when ready
+
 import { css } from "@emotion/react";
 import { useEffect, useRef } from "react";
 import { useUser } from "../../contexts/UserProvider/UserContext";

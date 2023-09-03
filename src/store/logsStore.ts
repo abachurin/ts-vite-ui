@@ -52,8 +52,7 @@ interface LogsStore {
     clearLogs: (userName: string) => void;
     downloadLogs: () => void;
 }
-
-export const useLogsStore = create<LogsStore>((set, get) => ({
+const useLogsStore = create<LogsStore>((set, get) => ({
     logs: [],
     setLogs: (newLogs: Logs) =>
         set(() => ({

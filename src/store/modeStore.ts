@@ -34,7 +34,6 @@ interface ModeStore {
     setAgentName: (newAgentName: string | undefined) => void;
     setGameName: (newGameName: string | undefined) => void;
 }
-
 const useModeStore = create<ModeStore>()((set) => ({
     agentMode: "none",
     gameMode: "none",

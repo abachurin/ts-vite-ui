@@ -10,8 +10,7 @@ export const gameMoves: Record<number, string> = {
 };
 
 /**
- * An collection of methods for changing state of Game object.
- * Some functions are written in functional style and are not pure, by design.
+ * A collection of methods for changing state of Game object.
  */
 export abstract class GameLogic {
     public static restartGame(game: Game): Game {
