@@ -39,6 +39,10 @@ type FullGameResponse = {
 
 export const restrictedAgents = ["A6"];
 
+/**
+ * Connects to the API and makes a request.
+ * @return value of ResultType if no error, error message otherwise
+ */
 export const connectAPI = async <DataType, ResultType>({
     method,
     endpoint,
@@ -56,6 +60,13 @@ export const connectAPI = async <DataType, ResultType>({
     }
 };
 
+/**
+ * Retrieves a list of items based on the specified parameters.
+ * @param kind - "Agents" or "Games"
+ * @param userName - name of the User
+ * @param scope - items only belonging to User, or all
+ * @return A promise that resolves to an object containing the retrieved item list and a message.
+ */
 export const getItems = async (
     kind: ItemType,
     userName: string,
@@ -81,6 +92,10 @@ export const getItems = async (
     }
 };
 
+/**
+ * Same as getItems, but only returns a list of names. Excludes Agents in restrictedAgents
+ * ... unless the user is "Loki".
+ */
 export const getJustNames = async (
     kind: ItemType,
     userName: string,
@@ -115,6 +130,9 @@ export const getJustNames = async (
     }
 };
 
+/**
+ * Retrieves the full game information for a given game name.
+ */
 export const getFullGame = async (
     gameName: string
 ): Promise<FullGameResponse> => {
@@ -133,6 +151,9 @@ export const getFullGame = async (
     }
 };
 
+/**
+ * Cancels Watch Agent job if it exists
+ */
 export const killWatchJob = async (userName: string) => {
     await axios({
         method: "DELETE",
@@ -141,6 +162,9 @@ export const killWatchJob = async (userName: string) => {
     });
 };
 
+/**
+ * Fetches new moves for the Watch Agent functionality in GameBoard component
+ */
 export const fetchNewMovesTiles = async (
     request: NewMovesRequest
 ): Promise<NewMovesResponse> => {
