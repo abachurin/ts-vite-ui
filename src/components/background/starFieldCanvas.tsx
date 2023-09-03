@@ -43,7 +43,7 @@ const StarFieldCanvas = () => {
             const stars: Star[] = [];
 
             const maxSize = width > 600 ? 7 : 5;
-            const inverseSpeed = 20 / user.animationSpeed;
+            // const inverseSpeed = 20 / user.animationSpeed;
             // const numberStars = Math.floor(
             //     (width * height) / GLOBAL.oneStarPixels
             // );
@@ -113,7 +113,7 @@ const StarFieldCanvas = () => {
                 requestAnimationFrame(animate);
             };
 
-            const animationDuration = 2000; // Total duration for star animation in milliseconds
+            // const animationDuration = 2000; // Total duration for star animation in milliseconds
 
             animate();
         }
