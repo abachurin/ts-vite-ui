@@ -1,5 +1,6 @@
 import { css } from "@emotion/react";
-import { useUser } from "../../contexts/UserProvider/UserContext";
+import { useMemo } from "react";
+import { useInverseAnimationSpeed } from "../../contexts/UserProvider/UserContext";
 import useDimensions from "../../hooks/useDimensions";
 import { GLOBAL } from "../../utils";
 import Star from "./Star";
@@ -16,11 +17,21 @@ const emotion = css`
 `;
 
 // Helper functions
-function isMobileDevice() {
+const isMobileDevice = () => {
     return /Mobi|Android|iPhone|iPad|iPod|Windows Phone|BlackBerry|Opera Mini|IEMobile|Mobile/i.test(
         navigator.userAgent
     );
-}
+};
+const createStars = (
+    numStars: number,
+    inverseSpeed: number,
+    width: number,
+    height: number
+): JSX.Element[] => {
+    return Array.from({ length: numStars }, () =>
+        Star({ inverseSpeed, width, height })
+    );
+};
 
 /**
  * Renders a star field with a number of stars on the screen which depends on window size,
@@ -29,18 +40,19 @@ function isMobileDevice() {
  */
 const StarField = () => {
     const { width, height } = useDimensions();
-    const user = useUser();
+    const inverseSpeed = useInverseAnimationSpeed();
 
-    const inverseSpeed = 20 / user.animationSpeed;
-    const numberStars = Math.floor((width * height) / GLOBAL.oneStarPixels);
+    const numStars = Math.floor((width * height) / GLOBAL.oneStarPixels);
 
-    const stars = isMobileDevice()
-        ? null
-        : Array.from({ length: numberStars }, () =>
-              Star({ inverseSpeed, width, height })
-          );
+    const starArray = useMemo(() => {
+        if (isMobileDevice()) {
+            return null;
+        } else {
+            return createStars(numStars, inverseSpeed, width, height);
+        }
+    }, [numStars, inverseSpeed, width, height]);
 
-    return <div css={emotion}>{stars}</div>;
+    return <div css={emotion}>{starArray}</div>;
 };
 
 export default StarField;

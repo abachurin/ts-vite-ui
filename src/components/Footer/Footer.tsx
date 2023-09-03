@@ -1,11 +1,10 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
-import { RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency, smoothScroll } from "../../utils";
 
 // Emotion styles
-const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
+const makeEmotion = (backgroundColor: string, color: string) => css`
     position: sticky;
     display: flex;
     justify-content: center;
@@ -17,6 +16,10 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
     padding: ${GLOBAL.padding};
 `;
 
+/**
+ * Renders the footer component.
+ * Scrolls to Game Pane when clicked (on small screen)
+ */
 const Footer = () => {
     const palette = usePalette();
 
@@ -31,7 +34,7 @@ const Footer = () => {
 
     return (
         <div css={emotion} onClick={() => smoothScroll("#game-pane")}>
-            &#8595; Game Pane &#8595;
+            &darr; Game Pane &darr;
         </div>
     );
 };

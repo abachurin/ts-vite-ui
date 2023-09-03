@@ -1,15 +1,15 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useMemo, useEffect } from "react";
 import useAlert from "../../../hooks/useAlert";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
-import useLogs, { useLogsStore } from "../../../store/logsStore";
+import useLogsStore, { useLogs } from "../../../store/logsStore";
 import ButtonGroup from "../../base/Button/ButtonGroup";
 import Button from "../../base/Button/Button";
 import { GLOBAL } from "../../../utils";
 
 // Emotion styles
-const makeEmotion = (color: string): SerializedStyles => css`
+const makeEmotion = (color: string) => css`
     width: 100%;
     height: 100%;
     position: relative;
@@ -35,12 +35,16 @@ const makeEmotion = (color: string): SerializedStyles => css`
     }
 `;
 
+/**
+ * Log window.
+ */
 const LogWindow = () => {
     const user = useUser();
-    const [logs, alert] = useLogs(user.name);
     const palette = usePalette();
-    const clearLogs = useLogsStore((state) => state.clearLogs);
-    const downloadLogs = useLogsStore((state) => state.downloadLogs);
+    const { clearLogs, downloadLogs } = useLogsStore();
+
+    const [logs, alert] = useLogs(user.name);
+
     const [warning, openWarning, closeWarning] = useAlert({
         type: "error",
         duration: 100000,
@@ -52,7 +56,7 @@ const LogWindow = () => {
         else closeWarning();
     }, [alert]);
 
-    const emotion = useMemo(() => makeEmotion(palette.logs), [palette]);
+    const emotion = useMemo(() => makeEmotion(palette.logs), [palette.logs]);
 
     return (
         <div css={emotion}>
@@ -73,7 +77,7 @@ const LogWindow = () => {
                         color={palette.background}
                         background={palette.three}
                         disabled={logs.length === 0}
-                        onClick={() => downloadLogs()}
+                        onClick={downloadLogs}
                     >
                         DOWNLOAD
                     </Button>

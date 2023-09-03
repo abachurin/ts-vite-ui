@@ -2,7 +2,6 @@ import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import useDimensions from "../../hooks/useDimensions";
-import { RGBA, RGB } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
 import ToggleNav from "../base/ToggleNav";
 import Logo from "./Logo";
@@ -15,7 +14,7 @@ import SettingsModal from "./SettingsModal";
 import Login from "./Login";
 
 // Emotion styles
-const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
+const makeEmotion = (backgroundColor: string, color: string) => css`
     position: sticky;
     padding: ${GLOBAL.padding};
     display: flex;
@@ -31,16 +30,12 @@ const makeEmotion = (backgroundColor: RGB | RGBA, color: RGB) => css`
     & > * {
         flex: 1;
     }
-    & * {
-        text-transform: uppercase;
-    }
 `;
 const smallScreenStyle = css`
     display: flex;
     justify-content: flex-end;
     align-items: center;
 `;
-
 const nav = css`
     display: flex;
     justify-content: center;
@@ -48,7 +43,7 @@ const nav = css`
 `;
 
 /**
- * Header component that renders the header section of the application.
+ * App Header component.
  */
 const Header = () => {
     const { width } = useDimensions();
@@ -62,47 +57,43 @@ const Header = () => {
 
     const emotion = useMemo(
         () => makeEmotion(backgroundColor, palette.background),
-        [backgroundColor, palette]
+        [palette]
     );
 
     return hiddenNavigation ? (
-        <>
-            <header css={emotion}>
-                <Logo />
-                <nav css={nav}>
-                    <SoundSwitch />
-                    <AnimationSwitch />
-                </nav>
-                <div css={smallScreenStyle}>
-                    <ToggleNav
-                        align='right'
-                        backgroundColor={backgroundColor}
-                        logoColor={palette.logo}
-                    >
-                        <HelpModal />
-                        <ContactsModal />
-                        <AdminModal />
-                        <SettingsModal />
-                    </ToggleNav>
-                    <Login align='right' />
-                </div>
-            </header>
-        </>
-    ) : (
-        <>
-            <header css={emotion}>
-                <Logo />
-                <nav css={nav}>
+        <header css={emotion}>
+            <Logo />
+            <nav css={nav}>
+                <SoundSwitch />
+                <AnimationSwitch />
+            </nav>
+            <main css={smallScreenStyle}>
+                <ToggleNav
+                    align='right'
+                    backgroundColor={backgroundColor}
+                    logoColor={palette.logo}
+                >
                     <HelpModal />
                     <ContactsModal />
                     <AdminModal />
                     <SettingsModal />
-                    <SoundSwitch />
-                    <AnimationSwitch />
-                </nav>
+                </ToggleNav>
                 <Login align='right' />
-            </header>
-        </>
+            </main>
+        </header>
+    ) : (
+        <header css={emotion}>
+            <Logo />
+            <nav css={nav}>
+                <HelpModal />
+                <ContactsModal />
+                <AdminModal />
+                <SettingsModal />
+                <SoundSwitch />
+                <AnimationSwitch />
+            </nav>
+            <Login align='right' />
+        </header>
     );
 };
 

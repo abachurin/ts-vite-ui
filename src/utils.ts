@@ -4,14 +4,14 @@ import {
     AgentTraining,
     AgentWatchingBase,
     AgentTesting,
-    ItemType,
 } from "./types";
 import { forEach } from "lodash-es";
 
-// GLOBAL parameters
+// Global constants
 export const GLOBAL = {
     oneStarPixels: 6000,
     depthOfStarField: 5,
+    inverseAnimationCoefficient: 20,
     borderRadius: "0.3rem",
     padding: "0.5rem",
     boxShadow: "0 0 0.5em 0.1em rgba(255, 255, 255, 0.2)",
@@ -27,6 +27,8 @@ export const GLOBAL = {
     minPaneWidth: 340,
     gameCellSize: "6rem",
     gameCellPadding: "3px",
+    gameMinInterval: 10,
+    gameMaxInterval: 5000,
     contactButtonWidth: "12rem",
     messageDuration: 5000,
     watchInterval: 2000,
@@ -39,7 +41,9 @@ export const GLOBAL = {
         admin: 2,
     },
 };
+export const alphaSymbol = String.fromCharCode(945);
 
+// SVG paths
 export const SvgPaths = {
     menu: "M3 6a1 1 0 0 1 1-1h16a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1zm0 6a1 1 0 0 1 1-1h16a1 1 0 1 1 0 2H4a1 1 0 0 1-1-1zm1 5a1 1 0 1 0 0 2h16a1 1 0 1 0 0-2H4z",
     robot: "M5 16c0 3.87 3.13 7 7 7s7-3.13 7-7v-4H5v4zM16.12 4.37l2.1-2.1-.82-.83-2.3 2.31C14.16 3.28 13.12 3 12 3s-2.16.28-3.09.75L6.6 1.44l-.82.83 2.1 2.1C6.14 5.64 5 7.68 5 10v1h14v-1c0-2.32-1.14-4.36-2.88-5.63zM9 9c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm6 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1z",
@@ -60,68 +64,12 @@ export const SvgPaths = {
     login: "M11,7L9.6,8.4l2.6,2.6H2v2h10.2l-2.6,2.6L11,17l5-5L11,7z M20,19h-8v2h8c1.1,0,2-0.9,2-2V5c0-1.1-0.9-2-2-2h-8v2h8V19z",
 };
 
-export const boardColors: Record<number, string> = {
-    0: "white",
-    1: "hsl(255, 100%, 75%)",
-    2: "hsl(300, 100%, 55%)",
-    3: "hsl(120, 100%, 40%)",
-    4: "hsl(30, 100%, 50%)",
-    5: "hsl(192, 100%, 35%)",
-    6: "hsl(336, 100%, 50%)",
-    7: "hsl(80, 100%, 30%)",
-    8: "hsl(30, 30%, 30%)",
-    9: "hsl(220, 100%, 70%)",
-    10: "hsl(12, 100%, 55%)",
-    11: "hsl(165, 100%, 30%)",
-    12: "hsl(270, 100%, 40%)",
-    13: "hsl(255, 100%, 45%)",
-    14: "hsl(0, 100%, 30%)",
-    15: "hsl(0, 0%, 20%)",
-};
-
-export const JobDescriptionLabels = {
-    name: "Agent name:",
-    currentAlpha: "Current learning rate:",
-    start: "Started at:",
-    timeElapsed: "Elapsed time:",
-    remainingTimeEstimate: "Remaining time estimate:",
-    depth: "Look ahead (depth):",
-    width: "Branching (width):",
-    trigger: "Empty cells (trigger):",
-    episodes: "Episodes:",
-};
-
-export const alphaSymbol = String.fromCharCode(945);
-export const MyObjectDescriptionLabels: Record<
-    ItemType | "",
-    Record<string, string>
-> = {
-    Agents: {
-        user: "Owner:",
-        name: "Agent name:",
-        N: "Signature N:",
-        alpha: `Current ${alphaSymbol}`,
-        decay: `${alphaSymbol} decay rate`,
-        step: "Decay step",
-        minAlpha: `Minimal ${alphaSymbol}`,
-        bestScore: "Best score:",
-        maxTile: "Max tile reached:",
-        lastTrainingEpisode: "Training episodes:",
-    },
-    Games: {
-        user: "Owner:",
-        name: "Game name:",
-        score: "Score:",
-        numMoves: "Number of moves:",
-        maxTile: "Max tile reached:",
-    },
-    "": {},
-};
+// Useful global functions
 
 /**
  * Generate a random number between start and end (inclusive).
- * @param end - The maximum number to generate.
- * @param start - The minimum number to generate (defaults to 0).
+ * @param end - maximum
+ * @param start - minimum (defaults to 0).
  */
 export function randomNum(end: number, start = 0): number {
     return Math.random() * (end - start) + start;
@@ -129,7 +77,7 @@ export function randomNum(end: number, start = 0): number {
 
 /**
  * Scrolls smoothly to the first element matching the given CSS selector.
- * @param selector - The CSS selector of the element to scroll to.
+ * @param selector - CSS selector of the element to scroll to
  */
 export function smoothScroll(selector: string): void {
     document
@@ -138,8 +86,8 @@ export function smoothScroll(selector: string): void {
 }
 
 /**
- * Splits RGBA color object into an array of 4 numbers.
- * @param color - The RGBA color object to destructure.
+ * Splits RGB/RGBA color object into an array of numbers.
+ * @param color - color object to destructure
  */
 const destructureColor = (color: RGB | RGBA): number[] => {
     const startOfNumbers = (color as string).indexOf("(") + 1;
@@ -151,7 +99,7 @@ const destructureColor = (color: RGB | RGBA): number[] => {
 
 /**
  * Convert an RGBA color to the same hue RGB color, but not transparent.
- * @param color - An RGBA color in the format "rgba(r, g, b, a)".
+ * @param color - RGBA color in the format "rgba(r, g, b, a)"
  */
 export function removeTransparency(color: RGB | RGBA): RGB {
     const numbers = destructureColor(color);
@@ -163,8 +111,8 @@ export function removeTransparency(color: RGB | RGBA): RGB {
 
 /**
  * Returns an RGBA color string with the given opacity.
- * @param color - The RGBA color to adjust transparency for.
- * @param opacity - The opacity value, between 0 and 1.
+ * @param color - RGB/RGBA color to adjust transparency for
+ * @param opacity - transparency value between 0 and 1
  */
 export function setTransparency(color: RGB | RGBA, opacity: number): RGBA {
     const numbers = destructureColor(color);
@@ -174,9 +122,9 @@ export function setTransparency(color: RGB | RGBA, opacity: number): RGBA {
 }
 
 /**
- * Returns an RGBA color string with the given opacity.
- * @param color - The RGBA color to adjust transparency for.
- * @param opacity - The opacity value, between 0 and 1.
+ * Returns an RGB color string with the given opacity.
+ * @param color - RGB color to adjust opacity
+ * @param opacity - opacity value between 0 and 1.
  */
 export function changeBrightness(color: RGB, ratio: number): RGB {
     const numbers = destructureColor(color).map((v) =>
@@ -187,8 +135,8 @@ export function changeBrightness(color: RGB, ratio: number): RGB {
 
 /**
  * Creates and plays a new Audio object with the specified sound and volume.
- * @param sound - The URL, file path or already imported sound object.
- * @param volume - The volume level of the sound, between 0 and 1.
+ * @param sound - URL, file path or already imported sound object
+ * @param volume - volume level of the sound between 0 and 1.
  */
 export function makeSound(sound: string, volume: number): void {
     const audio = new Audio(sound);
@@ -197,8 +145,9 @@ export function makeSound(sound: string, volume: number): void {
 }
 
 /**
- * Checks if the given string has only letters, numbers, dashes and underscores.
- * @param text - The text to check
+ * Checks if the given string has only letters, numbers, dashes and underscores,
+ * not empty and not longer than GLOBAL.maxNameLength.
+ * @param text - text to check
  */
 export function checkRe(text: string | undefined): boolean {
     const re = /^[0-9A-Za-z-_]+$/;
@@ -213,6 +162,7 @@ export function checkRe(text: string | undefined): boolean {
 /**
  * Performs a deep copy of the given object by first serializing it to JSON and then
  * deserializing it back into a new object.
+ * @param obj - object to copy
  */
 export function deepCopy<T>(obj: T): T {
     return JSON.parse(JSON.stringify(obj));
@@ -220,6 +170,8 @@ export function deepCopy<T>(obj: T): T {
 
 /**
  * Checks if two Objects are deeply equal.
+ * @param a - first object
+ * @param b - second object
  */
 export function deepEqual<T>(a: T, b: T): boolean {
     return JSON.stringify(a) === JSON.stringify(b);
@@ -227,6 +179,7 @@ export function deepEqual<T>(a: T, b: T): boolean {
 
 /**
  * Checks if an object has at least one property with a value of undefined.
+ * @param obj - object
  */
 export function hasUndefinedValues(obj: Record<string, unknown>): boolean {
     return Object.values(obj).some(
@@ -250,19 +203,23 @@ export const defaultTrainingParams = {
     name: undefined,
     isNew: true,
 };
-
 export const defaultWatchParams: AgentWatchingBase = {
     depth: 0,
     width: 1,
     trigger: 0,
     name: undefined,
 };
-
 export const defaultTestingParams: AgentTesting = {
     ...defaultWatchParams,
     episodes: 100,
 };
 
+/**
+ * Validates Train Agent Job parameters.
+ * @param values - parameters to be validated
+ * @return A tuple containing the validated parameters
+ * and a boolean indicating if any values were changed during validation.
+ */
 export const validateTrainingParams = (
     values: Partial<AgentTraining>
 ): [Partial<AgentTraining>, boolean] => {
@@ -318,6 +275,14 @@ export const validateTrainingParams = (
     ];
 };
 
+/**
+ * Validates a number value based on the given minimum and maximum values.
+ * @param key - key of the default testing parameters
+ * @param val - to be validated
+ * @param minVal - minimum allowed value
+ * @param maxVal - maximum allowed value
+ * @return The validated value, or default if not provided, or undefined if it fails the validation.
+ */
 const checkNumberVal = (
     key: keyof typeof defaultTestingParams,
     val: number | undefined,

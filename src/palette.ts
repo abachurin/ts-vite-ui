@@ -1,4 +1,33 @@
-import { Palettes } from "./types";
+import { RGB } from "./types";
+
+type Palette = {
+    name: string;
+    background: RGB;
+    text: RGB;
+    header: RGB;
+    headerOpacity: number;
+    logo: RGB;
+    pane: RGB;
+    paneOpacity: number;
+    one: RGB;
+    two: RGB;
+    three: RGB;
+    four: RGB;
+    success: RGB;
+    error: RGB;
+    warning: RGB;
+    info: RGB;
+    logs: RGB;
+};
+type Palettes = {
+    [name: string]: Palette;
+};
+export type paletteAlertType =
+    | "success"
+    | "error"
+    | "warning"
+    | "info"
+    | "logs";
 
 export const palettes: Palettes = {
     One: {

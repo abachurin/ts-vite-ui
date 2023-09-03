@@ -19,15 +19,14 @@ const emotion = css`
     }
 `;
 
+/**
+ * Game Pane footer when mode is "Watch Agent" or "Replay Game"
+ */
 const WatchFooter = () => {
     const palette = usePalette();
 
-    const interval = useGameStore((state) => state.interval);
-    const restartGame = useGameStore((state) => state.restartGame);
-
-    const setIntervalValue = useGameStore((state) => state.setIntervalValue);
-    const paused = useGameStore((state) => state.paused);
-    const setPaused = useGameStore((state) => state.setPaused);
+    const { interval, setIntervalValue, paused, setPaused, restartGame } =
+        useGameStore();
 
     return (
         <div css={emotion}>

@@ -27,6 +27,11 @@ export const UserUpdateContext = createContext<(update: Partial<User>) => void>(
 export const useUser = () => useContext(UserContext);
 export const useUserUpdate = () => useContext(UserUpdateContext);
 
+export const useUserName = () => {
+    const user = useUser();
+    return user.name;
+};
+
 export const usePalette = () => {
     const user = useUser();
     return palettes[user.paletteName];
@@ -41,4 +46,9 @@ export const useAnimate = () => {
 export const useSoundVolume = () => {
     const user = useUser();
     return user.sound ? user.soundLevel : 0;
+};
+
+export const useInverseAnimationSpeed = () => {
+    const user = useUser();
+    return GLOBAL.inverseAnimationCoefficient / user.animationSpeed;
 };

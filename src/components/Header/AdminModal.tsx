@@ -4,8 +4,8 @@ import { GLOBAL } from "../../utils";
 import { AlignProps } from "../../types";
 
 /**
- * Returns a React Modal component containing the Admin section.
- * @param align - The alignment parameter of the button, which opens the modal
+ * React Modal component containing the Admin section
+ * @param align - alignment of the open modal button
  */
 const AdminModal = ({ align }: AlignProps) => {
     const palette = usePalette();
@@ -23,7 +23,7 @@ const AdminModal = ({ align }: AlignProps) => {
                 color: palette.text,
             }}
         >
-            Admin section
+            Admin section, to be developed
         </Modal>
     );
 };

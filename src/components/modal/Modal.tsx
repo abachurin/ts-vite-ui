@@ -5,12 +5,12 @@ import ModalWindow, { ModalWindowProps } from "../modal/ModalWindow";
 
 /**
  * Renders a modal component with a Button that opens the modal.
- * @param props - The props include Button props and children, as well as ModalWindow props.
+ * @param props - The props include Button props, ModalWindow props and children to be rendered
  */
-interface ModalProps extends ChildrenProps {
+type ModalProps = ChildrenProps & {
     button?: ButtonProps;
     modal?: ModalWindowProps;
-}
+};
 const Modal = ({
     button = { children: "Open Modal" },
     modal,

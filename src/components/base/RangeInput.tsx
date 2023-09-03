@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useState, useEffect, useMemo } from "react";
 import { GLOBAL } from "../../utils";
 
@@ -8,7 +8,7 @@ const makeEmotion = (
     labelFontSize: number,
     backgroundColor: string,
     color: string
-): SerializedStyles => css`
+) => css`
     display: flex;
     flex-direction: column;
     box-shadow: ${GLOBAL.littleShadow};
@@ -29,11 +29,7 @@ const makeEmotion = (
         font-weight: 500;
     }
 `;
-
-const makeControlWrapper = (
-    innerWidth: string,
-    controlSize: number
-): SerializedStyles => css`
+const makeControlWrapper = (innerWidth: string, controlSize: number) => css`
     position: relative;
     width: ${innerWidth};
     margin-left: ${GLOBAL.padding};
@@ -44,7 +40,7 @@ const makeControl = (
     labelFontSize: number,
     controlColor: string,
     controlSize: number
-): SerializedStyles => css`
+) => css`
     width: ${controlSize}rem;
     aspect-ratio: 1;
     border: 2px solid ${controlColor};
@@ -64,10 +60,7 @@ const makeControl = (
         background-color: transparent;
     }
 `;
-const makeLine = (
-    width: string,
-    backgroundColor: string
-): SerializedStyles => css`
+const makeLine = (width: string, backgroundColor: string) => css`
     position: absolute;
     width: ${width};
     background-color: ${backgroundColor};
@@ -78,11 +71,7 @@ const makeLine = (
     margin-bottom: ${GLOBAL.padding};
     transition: width 0.15s ease;
 `;
-
-const makeInputLine = (
-    width: string,
-    controlSize: number
-): SerializedStyles => css`
+const makeInputLine = (width: string, controlSize: number) => css`
     position: absolute;
     width: calc(${width} - ${controlSize}rem * 0.7);
     height: ${controlSize}rem;
@@ -98,19 +87,20 @@ const makeInputLine = (
 /**
  * RangeInput is a component that renders a range input with a label and some
  * optional styling.
- * @param start - Minimum value of the range.
- * @param end - Maximum value of the range.
- * @param step - Step between each value in the range.
- * @param initialValue - Initial value of the range.
- * @param width - Width of the component.
- * @param labelFontSize - Font size of the label in rem.
- * @param controlSizeRatio - Ratio between thumb size and label font size.
- * @param label - Label.
- * @param labelAbove - Whether the label should be above or below range control.
- * @param backgroundColor - Background color.
- * @param color - Text color.
- * @param controlColor - Thumb color
- * @param onChange - The function to be called when the value changes.
+ * @param start - minimum value
+ * @param end - maximum value
+ * @param step - step
+ * @param initialValue - initial value
+ * @param width - width
+ * @param labelFontSize - font size of the label in rem
+ * @param controlSizeRatio - ratio between thumb size and label font size
+ * @param label - label
+ * @param labelAbove - whether the label should be above or below range control
+ * @param backgroundColor - background color
+ * @param color - text color
+ * @param controlColor - thumb color
+ * @param onChange - function to be called when the value changes
+ * @param debounceMs - debounce delay in ms
  */
 interface RangeInputProps {
     start: number;
@@ -144,13 +134,13 @@ const RangeInput = ({
     onChange,
     debounceMs = GLOBAL.windowResizeDelay,
 }: RangeInputProps) => {
-    const [value, setValue] = useState(initialValue ?? start);
+    const startValue = initialValue ?? start;
+    const [value, setValue] = useState(startValue);
     useEffect(() => {
-        setValue(initialValue ?? start);
-    }, [initialValue, start]);
+        setValue(startValue);
+    }, [startValue]);
 
     const [timer, setTimer] = useState<NodeJS.Timeout>();
-
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = +e.target.value;
         setValue(value);
@@ -161,7 +151,6 @@ const RangeInput = ({
         setTimer(newTimer);
     };
 
-    // styles depending only on props
     const controlSize = labelFontSize * controlSizeRatio;
     const lineWidth = `calc(100% + ${controlSize}rem)`;
     const innerWidth = `calc(100% - 2 * ${GLOBAL.padding} - ${controlSize}rem)`;
@@ -192,7 +181,6 @@ const RangeInput = ({
         [lineWidth]
     );
 
-    // styles depending on input value
     const offset = ((value - start) / (end - start)) * 100;
     const control = css`
         ${controlBase}
@@ -203,7 +191,7 @@ const RangeInput = ({
     return (
         <div css={emotion}>
             {labelAbove && <header>{label}</header>}
-            <div css={controlWrapper}>
+            <main css={controlWrapper}>
                 <div css={control}>{value}</div>
                 <div css={fullLine} />
                 <div css={leftLine} />
@@ -216,7 +204,7 @@ const RangeInput = ({
                     value={value}
                     onChange={handleOnChange}
                 />
-            </div>
+            </main>
             {!labelAbove && <header>{label}</header>}
         </div>
     );

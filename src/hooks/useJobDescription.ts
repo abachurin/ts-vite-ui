@@ -1,6 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
-import { JobDescriptionResponse, UserName } from "../types";
+import { UserName } from "../types";
 import { connectAPI } from "../api/requests";
+
+type Job = {
+    description: string;
+    type: number;
+    name: string;
+    episodes: number;
+    start: string;
+    timeElapsed: string;
+    remainingTimeEstimate: string;
+};
+type TrainJobDescription = Job & {
+    currentAlpha: number;
+};
+type TestJobDescription = Job & {
+    depth: number;
+    width: number;
+    trigger: number;
+};
+type JobDescription = TrainJobDescription | TestJobDescription | null;
+type JobDescriptionResponse = {
+    status?: string;
+    job?: JobDescription;
+};
 
 const fetchJobDescription = async (
     userName: string
@@ -23,6 +46,11 @@ const fetchJobDescription = async (
     return { job: result?.job };
 };
 
+/**
+ * Hook that returns the current running job description for a given user.
+ * @param userName - The name of the user
+ * @return Job description for the user, or null if it is not available.
+ */
 const useJobDescription = (userName: string) => {
     const { data } = useQuery<JobDescriptionResponse>(
         ["jobDescription", userName],

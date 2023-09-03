@@ -1,9 +1,10 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
+import { useMemo } from "react";
 import { ChildrenProps } from "../../types";
 import { GLOBAL } from "../../utils";
 
 // Emotion styles
-const makeEmotion = (overflow: string): SerializedStyles => css`
+const makeEmotion = (overflow: string) => css`
     flex: 1;
     width: 100%;
     height: "auto";
@@ -16,14 +17,15 @@ const makeEmotion = (overflow: string): SerializedStyles => css`
 `;
 
 /**
- * Renders a scrollable modal body with the given children.
- * @param children - The children to render within the modal body.
+ * Modal body
+ * @param children - to be rendered within the modal body
+ * @param overflow - CSS overflow property, "scroll" by default
  */
 interface ModalBodyProps extends ChildrenProps {
     overflow?: string;
 }
 const ModalBody = ({ overflow = "scroll", children }: ModalBodyProps) => {
-    const emotion = makeEmotion(overflow);
+    const emotion = useMemo(() => makeEmotion(overflow), [overflow]);
 
     return <div css={emotion}>{children}</div>;
 };

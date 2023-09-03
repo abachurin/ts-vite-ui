@@ -3,6 +3,11 @@ import { useState, useRef } from "react";
 import { usePalette } from "../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../utils";
 
+/**
+ * Hook for displaying text message of suitable color.
+ * @param initialMessage - initial alert message
+ * @return A tuple containing the current alert message and a function to set a new alert message.
+ */
 const useAlertMessage = (
     initialMessage: string
 ): [

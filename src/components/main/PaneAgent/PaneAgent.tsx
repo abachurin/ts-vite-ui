@@ -12,8 +12,7 @@ import LogWindow from "./LogWindow";
  * Renders the Agent Pane component on the left, goes top on small screen.
  */
 const PaneAgent = () => {
-    const agentMode = useModeStore((state) => state.agentMode);
-    const agentName = useModeStore((state) => state.agentName);
+    const { agentMode, agentName } = useModeStore();
 
     return (
         <Pane id='agent-pane'>

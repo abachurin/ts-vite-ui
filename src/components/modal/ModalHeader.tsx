@@ -20,15 +20,15 @@ const emotion = css`
 `;
 
 /**
- * Renders a modal header component with children.
- * @param {ChildrenProps} children - The children to be rendered in the modal header.
+ * Modal header.
+ * @param children - to be rendered in the modal header
  */
 const ModalHeader = ({ children }: ChildrenProps) => {
     return (
-        <div css={emotion}>
+        <header css={emotion}>
             {children}
             <CloseButton />
-        </div>
+        </header>
     );
 };
 

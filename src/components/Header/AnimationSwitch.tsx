@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
     useAnimate,
     useUserUpdate,
@@ -28,12 +29,12 @@ const AnimationSwitch = () => {
     const updateUser = useUserUpdate();
     const icon = animate ? SvgPaths.yesMotion : SvgPaths.noMotion;
 
-    Promise.resolve().then(() => toggleMotion(animate));
+    useEffect(() => toggleMotion(animate), [animate]);
 
     const toggleAnimation = (): void => {
         const newAnimate = !animate;
         updateUser({ animate: newAnimate });
-        Promise.resolve().then(() => toggleMotion(animate));
+        toggleMotion(newAnimate);
     };
 
     return (

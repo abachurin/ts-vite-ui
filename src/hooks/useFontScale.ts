@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { GLOBAL } from "../utils";
 
 /**
@@ -14,27 +14,28 @@ const reScale = (): number => {
 };
 
 /**
- * Returns a font scaling factor that re-renders on window resize.
- * @param delay - The number of milliseconds to wait after a window resize event before
- * re-rendering the font scaling factor. Defaults to the GLOBAL.windowResizeDelay.
+ * Hook to calculate the font scaling factor.
+ * @param delay - debounce delay
+ * @return font scaling factor
  */
 const useFontScale = (delay = GLOBAL.windowResizeDelay): number => {
     const [scale, setScale] = useState(reScale());
 
-    useEffect(() => {
-        let timer: NodeJS.Timeout;
-        const handleSize = (): void => {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                setScale(reScale);
-            }, delay);
-        };
+    const timer = useRef<NodeJS.Timeout>();
 
+    const handleSize = useCallback(() => {
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => {
+            setScale(reScale);
+        }, delay);
+    }, [delay]);
+
+    useEffect(() => {
         window.addEventListener("resize", handleSize);
         return () => {
             window.removeEventListener("resize", handleSize);
         };
-    }, [delay]);
+    }, [handleSize]);
 
     return scale;
 };

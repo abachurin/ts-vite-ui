@@ -58,7 +58,7 @@ interface GameStore {
 
 const useGameStore = create<GameStore>()((set, get) => ({
     game: GameLogic.emptyGame(),
-    interval: 5,
+    interval: 4,
     paused: true,
     watchUser: "",
     watchGame: "",

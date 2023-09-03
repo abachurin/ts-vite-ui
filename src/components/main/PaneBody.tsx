@@ -17,7 +17,7 @@ const emotion = css`
 `;
 
 /**
- * A React component that renders a flexible pane.
+ * Pane body.
  * @param children
  */
 const PaneBody = ({ children }: ChildrenProps) => {

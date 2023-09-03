@@ -5,7 +5,7 @@ import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useModeStore from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
 import useAlertMessage from "../../../hooks/useAlertMessage";
-import { AgentWatching, AgentWatchingBase, GameForWatch } from "../../../types";
+import { AgentWatchingBase } from "../../../types";
 import {
     GLOBAL,
     defaultWatchParams,
@@ -51,20 +51,35 @@ const emotion = css`
     }
 `;
 
+// Helper functions
+type GameForWatch = {
+    initial: number[][];
+    score: number;
+    numMoves: number;
+};
+type AgentWatching = AgentWatchingBase & {
+    startGame: GameForWatch;
+    previous: string;
+};
+
+/**
+ * Watch Agent modal
+ */
 const WatchModal = () => {
     const palette = usePalette();
+
     const { setGameMode, setGameName } = useModeStore();
-
-    const { game } = useGameStore();
-    const startNewGame = useGameStore((state) => state.newGame);
-    const cutHistory = useGameStore((state) => state.cutHistory);
-    const setPaused = useGameStore((state) => state.setPaused);
-    const watchUser = useGameStore((state) => state.watchUser);
-    const setWatchUser = useGameStore((state) => state.setWatchUser);
-    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
-
-    const loadingWeights = useGameStore((state) => state.loadingWeights);
-    const setLoadingWeights = useGameStore((state) => state.setLoadingWeights);
+    const {
+        game,
+        watchUser,
+        setWatchUser,
+        setPaused,
+        setWatchingNow,
+        loadingWeights,
+        setLoadingWeights,
+        cutHistory,
+        newGame,
+    } = useGameStore();
 
     useEffect(() => {
         if (loadingWeights === false) {
@@ -120,7 +135,7 @@ const WatchModal = () => {
         setPaused(true);
         setLoadingWeights(true);
 
-        const row = isNew ? startNewGame() : game.row;
+        const row = isNew ? newGame() : game.row;
         if (!isNew) cutHistory();
         const startGame: GameForWatch = isNew
             ? {
@@ -199,7 +214,6 @@ const WatchModal = () => {
                         }
                         zIndex={30}
                     />
-
                     <section>
                         <Input
                             {...inputParameters}
@@ -274,7 +288,7 @@ const WatchModal = () => {
                 </main>
             </ModalBody>
             <ModalFooter>
-                <div css={footerWrapper}>
+                <footer css={footerWrapper}>
                     <Button
                         type='clickPress'
                         width='8rem'
@@ -296,7 +310,7 @@ const WatchModal = () => {
                         Reset Defaults
                     </Button>
                     <CloseButton />
-                </div>
+                </footer>
             </ModalFooter>
             {message ? <ModalFooter>{message}</ModalFooter> : null}
             {loadingWeights ? <Cube /> : null}

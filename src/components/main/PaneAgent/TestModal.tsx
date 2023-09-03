@@ -4,7 +4,7 @@ import { connectAPI, getJustNames } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
 import {
     usePalette,
-    useUser,
+    useUserName,
 } from "../../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import useAnyRunningJob from "../../../hooks/useAnyRunningJob";
@@ -51,16 +51,14 @@ const emotion = css`
 `;
 
 /**
- * Returns a React Modal component containing the Admin section.
- * @param align - The alignment parameter of the button, which opens the modal
+ * Test Agent modal.
  */
 const TestModal = () => {
     const palette = usePalette();
-    const user = useUser();
+    const userName = useUserName();
     const anyJob = useAnyRunningJob();
 
-    const setAgentMode = useModeStore((state) => state.setAgentMode);
-    const setAgentName = useModeStore((state) => state.setAgentName);
+    const { setAgentMode, setAgentName } = useModeStore();
 
     const [message, createMessage] = useAlertMessage("");
     const [loading, setLoading] = useState(false);
@@ -72,17 +70,14 @@ const TestModal = () => {
 
     const [agents, setAgents] = useState<string[]>([]);
     const getAllAgentNames = async () => {
-        const { list, message } = await getJustNames(
-            "Agents",
-            user.name,
-            "all"
-        );
+        const { list, message } = await getJustNames("Agents", userName, "all");
         createMessage(message, "error");
         setAgents(list);
     };
+
     useEffect(() => {
         getAllAgentNames();
-    }, [user]);
+    }, [userName]);
 
     useEffect(() => {
         values.name && updateValues({ name: values.name });
@@ -109,7 +104,7 @@ const TestModal = () => {
             const { result, error } = await connectAPI<AgentTesting, string>({
                 method: "post",
                 endpoint: "/jobs/test",
-                data: { ...values, user: user.name },
+                data: { ...values, user: userName },
             });
             if (error) {
                 createMessage(error, "error");

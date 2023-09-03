@@ -16,11 +16,11 @@ const emotion = css`
 `;
 
 /**
- * Renders a modal header with the provided children.
- * @param {ChildrenProps} children - The children to be rendered inside the modal header.
+ * Modal footer.
+ * @param children - to be rendered inside the modal header.
  */
 const ModalFooter = ({ children }: ChildrenProps) => {
-    return <div css={emotion}>{children}</div>;
+    return <footer css={emotion}>{children}</footer>;
 };
 
 export default ModalFooter;

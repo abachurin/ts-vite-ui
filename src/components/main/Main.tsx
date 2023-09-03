@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../../utils";
 import PaneAgent from "./PaneAgent/PaneAgent";
@@ -7,7 +7,7 @@ import PaneGame from "./PaneGame/PaneGame";
 
 // Emotion styles
 
-const makeEmotion = (textColor: string): SerializedStyles => css`
+const makeEmotion = (textColor: string) => css`
     display: flex;
     gap: ${GLOBAL.padding};
     flex-wrap: wrap;

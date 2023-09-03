@@ -21,14 +21,12 @@ import chartThree from "../../assets/description/score_chart_3_tile.png";
 import chartFive from "../../assets/description/score_chart_5_tile.png";
 
 // Emotion styles
-
 const emotion = css`
     flex: 1;
     margin-right: calc(${GLOBAL.padding} * 2);
     display: flex;
     justify-content: space-between;
 `;
-
 const markdown = css`
     padding: calc(${GLOBAL.padding} * 2);
     text-align: justify;
@@ -47,12 +45,12 @@ const markdown = css`
         font-size: 1rem;
     }
 `;
-
 const historyMarkdown = css`
     display: flex;
     flex-direction: column;
 `;
-// Fetching markdown files
+
+// Helper functions
 const fetchFile = async (url: string) => {
     const response = await fetch(url);
     const text = await response.text();
@@ -81,15 +79,38 @@ const historyContent = (
         {historyFourContent}
     </div>
 );
+
+const helpSectionContent = {
+    guide: guideContent,
+    history: historyContent,
+    structure: structureContent,
+};
+
+type HelpSection = "guide" | "history" | "structure";
 /**
- * Returns a React Modal component containing the Help section.
- * @param align - The alignment parameter of the button, which opens the modal.
+ * Help section.
+ * @param align - alignment parameter of the open modal button
  */
 const HelpModal = ({ align }: AlignProps) => {
     const palette = usePalette();
-    const [section, setSection] = useState<"guide" | "history" | "structure">(
-        "guide"
-    );
+    const [helpSection, setHelpSection] = useState<HelpSection>("guide");
+
+    const renderButton = (
+        helpSection: HelpSection,
+        label: string,
+        background: string
+    ) => {
+        return (
+            <Button
+                type='clickPress'
+                background={background}
+                color={palette.background}
+                onClick={() => setHelpSection(helpSection)}
+            >
+                {label}
+            </Button>
+        );
+    };
 
     return (
         <Modal
@@ -103,42 +124,15 @@ const HelpModal = ({ align }: AlignProps) => {
         >
             <ModalHeader>
                 <div css={emotion}>
-                    <h1>{section.toUpperCase()}</h1>
+                    <h1>{helpSection.toUpperCase()}</h1>
                     <ButtonGroup>
-                        <Button
-                            type='clickPress'
-                            background={palette.one}
-                            color={palette.background}
-                            onClick={() => setSection("guide")}
-                        >
-                            Guide
-                        </Button>
-                        <Button
-                            type='clickPress'
-                            background={palette.two}
-                            color={palette.background}
-                            onClick={() => setSection("history")}
-                        >
-                            History
-                        </Button>
-                        <Button
-                            type='clickPress'
-                            background={palette.three}
-                            color={palette.background}
-                            onClick={() => setSection("structure")}
-                        >
-                            Structure
-                        </Button>
+                        {renderButton("guide", "Guide", palette.one)}
+                        {renderButton("history", "History", palette.two)}
+                        {renderButton("structure", "Structure", palette.three)}
                     </ButtonGroup>
                 </div>
             </ModalHeader>
-            <ModalBody>
-                {section === "guide"
-                    ? guideContent
-                    : section === "history"
-                    ? historyContent
-                    : structureContent}
-            </ModalBody>
+            <ModalBody>{helpSectionContent[helpSection]}</ModalBody>
         </Modal>
     );
 };

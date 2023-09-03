@@ -1,10 +1,11 @@
-import { css, keyframes, SerializedStyles } from "@emotion/react";
+import { css, keyframes } from "@emotion/react";
 import { useMemo } from "react";
 import {
     usePalette,
     useAnimate,
 } from "../../contexts/UserProvider/UserContext";
-import { ChildrenProps, AlertColors } from "../../types";
+import { ChildrenProps } from "../../types";
+import { paletteAlertType } from "../../palette";
 import { GLOBAL } from "../../utils";
 import CloseButton from "./Button/CloseButton";
 
@@ -24,7 +25,7 @@ const makeEmotion = (
     borderColor: string,
     backgroundColor: string,
     color: string
-): SerializedStyles =>
+) =>
     css`
         display: flex;
         justify-content: center;
@@ -38,21 +39,26 @@ const makeEmotion = (
         color: ${color};
     `;
 
-export interface AlertProps extends ChildrenProps {
-    type?: AlertColors;
+/**
+ * Static alert component with customizable type and Close button
+ * @param type - type
+ * @param closeAlert - callback function to execute upon closing the alert
+ * @param children - content to be rendered inside
+ */
+export type AlertProps = ChildrenProps & {
+    type?: paletteAlertType;
     closeAlert: () => void;
-}
+};
 const StaticAlert = ({ type = "info", closeAlert, children }: AlertProps) => {
     const animate = useAnimate();
     const palette = usePalette();
-    const borderColor = palette[type];
 
     const emotion = useMemo(
         () => css`
-            ${makeEmotion(borderColor, palette.text, palette.background)}
-            ${animate ? animation : null},
+            ${makeEmotion(palette[type], palette.text, palette.background)}
+            ${animate ? animation : ""},
         `,
-        [borderColor, palette, animate]
+        [type, palette, animate]
     );
 
     if (!children) return null;

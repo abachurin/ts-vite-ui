@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import React, {
     useRef,
     cloneElement,
@@ -14,10 +14,7 @@ import Button from "./Button/Button";
 import Icon from "./Icon/Icon";
 
 // Emotion styles
-const makeEmotion = (
-    align: Alignment,
-    textColor: string
-): SerializedStyles => css`
+const makeEmotion = (align: Alignment, textColor: string) => css`
     display: flex;
     justify-content: ${align};
     align-items: center;
@@ -28,7 +25,7 @@ const makeHidden = (
     backgroundColor: RGB | RGBA,
     align: Alignment,
     visibility: boolean
-): SerializedStyles => css`
+) => css`
     position: fixed;
     top: 6rem;
     background-color: ${removeTransparency(backgroundColor)};
@@ -47,20 +44,19 @@ const makeHidden = (
 `;
 
 /**
- * Renders a vertical navigation bar with a toggle icon button and hidden menu.
- *
- * @param align - The alignment of the navigation component. Can be "left" or "right".
- * @param textColor - The color of the text in the navigation component.
- * @param logoColor - The color of the logo in the navigation component.
- * @param backgroundColor - The background color of the navigation component - in RGBA format!
- * @param children - The child components to render in the hidden menu.
+ * Vertical hidden navigation bar with a toggle icon button
+ * @param align - alignment of the navigation component, "left" or "right"
+ * @param textColor - text color
+ * @param logoColor - logo color
+ * @param backgroundColor - background color in RGB / RGBA format
+ * @param children - child components to render in the navigation
  */
-interface ToggleNavProps extends ChildrenProps {
+type ToggleNavProps = ChildrenProps & {
     align?: Alignment;
     textColor?: string;
     logoColor?: string;
     backgroundColor: RGB | RGBA;
-}
+};
 const ToggleNav = ({
     align = "left",
     textColor = "inherit",
@@ -71,6 +67,9 @@ const ToggleNav = ({
     const ref = useRef<HTMLDivElement>(null);
     const [visibility, setVisibility] = useState(false);
 
+    const toggleVisibility = () =>
+        setVisibility((prevVisibility) => !prevVisibility);
+
     const emotion = useMemo(
         () => makeEmotion(align, textColor),
         [align, textColor]
@@ -78,7 +77,7 @@ const ToggleNav = ({
 
     const hiddenNavStyle = useMemo(
         () => makeHidden(backgroundColor, align, visibility),
-        [visibility, backgroundColor, align]
+        [backgroundColor, align, visibility]
     );
 
     const renderChild = useCallback(
@@ -92,7 +91,7 @@ const ToggleNav = ({
 
     return (
         <div css={emotion}>
-            <Button onClick={() => setVisibility(!visibility)} align={align}>
+            <Button onClick={toggleVisibility} align={align}>
                 <Icon
                     color={logoColor}
                     svg={SvgPaths.menu}

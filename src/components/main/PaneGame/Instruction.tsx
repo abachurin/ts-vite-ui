@@ -1,9 +1,9 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../../../utils";
 
 // Helper functions
-const makeEmotion = (color: string): SerializedStyles => css`
+const makeEmotion = (color: string) => css`
     display: flex;
     flex-direction: column;
     gap: ${GLOBAL.padding};
@@ -23,8 +23,12 @@ const makeEmotion = (color: string): SerializedStyles => css`
     }
 `;
 
+/**
+ * Instruction for Play Yourself
+ */
 const Instruction = () => {
     const palette = usePalette();
+
     const emotion = makeEmotion(palette.background);
 
     return (

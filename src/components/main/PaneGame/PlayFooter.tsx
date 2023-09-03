@@ -59,11 +59,14 @@ const useArrowKey = (): number => {
     return arrowKey;
 };
 
+/**
+ * Game Pane footer when mode is "Play Yourself"
+ */
 const PlayFooter = () => {
     const palette = usePalette();
     const arrowKey = useArrowKey();
-    const fullMove = useGameStore((state) => state.fullMove);
-    const newGame = useGameStore((state) => state.newGame);
+
+    const { fullMove, newGame } = useGameStore();
 
     useEffect(() => {
         if (arrowKey >= 0) {

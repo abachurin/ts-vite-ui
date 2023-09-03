@@ -1,6 +1,6 @@
-import { css, keyframes, SerializedStyles } from "@emotion/react";
+import { css, keyframes } from "@emotion/react";
 import ReactDOM from "react-dom";
-import { useCallback, useMemo, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import {
     useModal,
     useModalUpdate,
@@ -14,38 +14,6 @@ import { GLOBAL, makeSound } from "../../utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
-const baseContainer = css`
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    transform: scale(0);
-    background: rgba(255, 255, 255, 0.1);
-    z-index: 100;
-`;
-const baseBlock = css`
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(255, 255, 255, 0.001);
-    z-index: 50;
-    transform: scale(0);
-`;
-const backgroundStyle = css`
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 200;
-`;
-
 const unFold = keyframes`
     0% {
         transform: scaleY(0.005) scaleX(0);
@@ -84,50 +52,101 @@ const unZoom = keyframes`
         transform:scale(0);
     }
 `;
-
-const makeBaseModal = (
-    ModalBackgroundColor: string,
+const makeContainer = (isOpen: boolean, animate: boolean) => css`
+    position: fixed;
+    display: ${isOpen || animate ? "flex" : "none"};
+    justify-content: center;
+    align-items: center;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    transform: scale(0);
+    background: rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    transform: ${isOpen
+        ? animate
+            ? "scaleY(0.01) scaleX(0)"
+            : "scale(1)"
+        : animate && "scale(1)"};
+    animation: ${animate &&
+    (isOpen
+        ? css`
+              ${unFold} 1s cubic-bezier(0.165, 0.84, 0.44, 1) forwards
+          `
+        : css`
+              ${fold} 0.5s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) forwards
+          `)};
+`;
+const makeBlock = (isOpen: boolean) => css`
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.001);
+    z-index: 50;
+    transform: ${isOpen ? "scale(1)" : "scale(0)"};
+`;
+const background = css`
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+`;
+const makeContent = (
+    backgroundColor: string,
     color: string,
     width: string,
-    height: string
-): SerializedStyles => css`
-    display: flex;
+    height: string,
+    isOpen: boolean,
+    animate: boolean
+) => css`
+    display: ${isOpen || animate ? "flex" : "none"};
     flex-direction: column;
     position: relative;
     border-radius: ${GLOBAL.borderRadius};
     box-shadow: ${GLOBAL.boxShadow};
-    background: ${ModalBackgroundColor};
+    background: ${backgroundColor};
     color: ${color};
     width: ${width};
     height: ${height};
     max-height: 90%;
     z-index: 300;
+    transform: ${animate ? "scale(0)" : "scale(1)"};
+    animation: ${animate &&
+    (isOpen
+        ? css`
+              ${zoom} 0.5s 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+          `
+        : css`
+              ${unZoom} 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+          `)};
 `;
 
 /**
  * A customizable modal window component that can be opened from a parent component,
- * and closed from inside or by clicking on the background
- * @param ModalBackgroundColor - The background color of the modal content.
- * @param color - The text color of the modal content.
- * @param width - The width of the modal content.
- * @param height - The height of the modal content.
- * @param children - The child elements to be displayed inside the modal content.
+ * and closed from inside or by clicking on the background.
+ * @param backgroundColor - background color of the modal content.
+ * @param color - text color
+ * @param width - width of the modal content
+ * @param height - height of the modal content
+ * @param children - The child elements to be displayed inside the modal content
  * ModalHeader, ModalBody and ModalFooter components are available
- * All are optional, but the content is recommended to wrap in ModalBody as it controls overflow.
+ * All are optional, but the content is recommended to wrap in ModalBody as it controls overflow
+ * @param onClose - callback function to execute when the modal is closed
  * @returns A portal to render the modal outside of the main React tree,
  * including a container with a background overlay and a modal content area.
  */
-export interface ModalWindowProps extends ChildrenProps {
+export type ModalWindowProps = ChildrenProps & {
     backgroundColor?: string;
     color?: string;
     width?: string;
     height?: string;
     onClose?: () => void;
-}
-export interface ModalWindowRef {
-    open: () => () => void;
-    close: () => () => void;
-}
+};
 const ModalWindow = ({
     backgroundColor = "white",
     color = "black",
@@ -140,11 +159,6 @@ const ModalWindow = ({
     const updateIsOpen = useModalUpdate();
     const volume = useSoundVolume();
     const animate = useAnimate();
-
-    const baseModal = useMemo(
-        () => makeBaseModal(backgroundColor, color, width, height),
-        [backgroundColor, color, width, height]
-    );
 
     const closeModal = useCallback(() => {
         onClose && onClose();
@@ -171,69 +185,23 @@ const ModalWindow = ({
 
     if (isOpen === "none") return null;
 
-    // If animation is switched off we just open/close Modal immediately
-    const containerStyle = isOpen
-        ? animate
-            ? css`
-                  ${baseContainer}
-                  transform: scaleY(0.01) scaleX(0);
-                  animation: ${unFold} 1s cubic-bezier(0.165, 0.84, 0.44, 1)
-                      forwards;
-              `
-            : css`
-                  ${baseContainer}
-                  transform: scale(1);
-              `
-        : animate
-        ? css`
-              ${baseContainer}
-              transform: scale(1);
-              animation: ${fold} 0.5s 0.3s cubic-bezier(0.165, 0.84, 0.44, 1)
-                  forwards;
-          `
-        : css`
-              display: none;
-          `;
-
-    const modalStyle = isOpen
-        ? animate
-            ? css`
-                  ${baseModal}
-                  transform: scale(0);
-                  animation: ${zoom} 0.5s 0.8s
-                      cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-              `
-            : css`
-                  ${baseModal}
-                  transform: scale(1);
-              `
-        : animate
-        ? css`
-              ${baseModal}
-              animation: ${unZoom} 0.5s cubic-bezier(0.165, 0.84, 0.44, 1)
-            forwards;
-          `
-        : css`
-              display: none;
-          `;
-
-    const block = isOpen
-        ? baseBlock
-        : css`
-              ${baseBlock}
-              transform: scale(1);
-          `;
+    const container = makeContainer(isOpen, animate);
+    const block = makeBlock(isOpen);
+    const content = makeContent(
+        backgroundColor,
+        color,
+        width,
+        height,
+        isOpen,
+        animate
+    );
 
     return ReactDOM.createPortal(
         <>
             <div css={block}></div>
-            <div css={containerStyle}>
-                <div
-                    onClick={closeModal}
-                    id='modal-close'
-                    css={backgroundStyle}
-                />
-                <div css={modalStyle}>{children}</div>
+            <div css={container}>
+                <div onClick={closeModal} id='modal-close' css={background} />
+                <main css={content}>{children}</main>
             </div>
         </>,
         document.getElementById("modal") as HTMLElement

@@ -6,7 +6,7 @@ import Header from "./components/Header/Header";
 import Main from "./components/main/Main";
 import Footer from "./components/Footer/Footer";
 
-import StarFieldCanvas from "./components/background/starFieldCanvas";
+// import StarFieldCanvas from "./components/background/starFieldCanvas";
 
 // Emotion styles
 const emotion = css`

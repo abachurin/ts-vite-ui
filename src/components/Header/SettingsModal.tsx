@@ -2,10 +2,9 @@ import { css } from "@emotion/react";
 import { useState, useEffect } from "react";
 import {
     useUser,
-    usePalette,
     useUserUpdate,
+    usePalette,
 } from "../../contexts/UserProvider/UserContext";
-import { useMutation } from "@tanstack/react-query";
 import { connectAPI } from "../../api/requests";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { palettes } from "../../palette";
@@ -52,21 +51,21 @@ const getUserValues = (user: User) => {
 };
 
 type ValuesType = ReturnType<typeof getUserValues>;
-type UpdateUserValues = {
+type UpdateUserValues = ValuesType & {
     name: string;
-} & ValuesType;
+};
 
 /**
- * Returns a Modal component with a button that displays a settings section.
- * @param align - The alignment parameter of the button, which opens the modal.
+ * Settings section.
+ * @param align - alignment parameter of the open modal button
  */
 const SettingsModal = ({ align }: AlignProps) => {
     const user = useUser();
     const palette = usePalette();
     const updateUser = useUserUpdate();
-    const [message, createMessage] = useAlertMessage("");
 
-    // const [currentValues, setCurrentValues] = useInitialValue(userValues);
+    const [message, createMessage] = useAlertMessage("");
+    const [loading, setLoading] = useState(false);
 
     const [currentValues, setCurrentValues] = useState<ValuesType>(
         getUserValues(user)
@@ -75,31 +74,28 @@ const SettingsModal = ({ align }: AlignProps) => {
         setCurrentValues(getUserValues(user));
     }, [user]);
 
-    const updateValues = (values: Partial<ValuesType>) =>
-        setCurrentValues((prevValues) => ({ ...prevValues, ...values }));
-
     const headerText =
         user.name === "Login"
             ? "Guest settings"
             : `${user.name} personal settings`;
 
-    const saveUserValues = useMutation(
-        (values: UpdateUserValues) =>
-            connectAPI<UpdateUserValues, void>({
-                method: "put",
-                endpoint: "/users/settings",
-                data: values,
-            }),
-        {
-            onSuccess: ({ error }) => {
-                if (error) {
-                    createMessage(error, "error", 3000);
-                } else {
-                    createMessage("Settings updated!", "success", 3000);
-                }
-            },
+    const updateValues = (values: Partial<ValuesType>) =>
+        setCurrentValues((prevValues) => ({ ...prevValues, ...values }));
+
+    const saveUserValues = async (values: UpdateUserValues) => {
+        setLoading(true);
+        const { error } = await connectAPI<UpdateUserValues, void>({
+            method: "put",
+            endpoint: "/users/settings",
+            data: values,
+        });
+        if (error) {
+            createMessage(error, "error", 3000);
+        } else {
+            createMessage("Settings updated!", "success", 3000);
         }
-    );
+        setLoading(false);
+    };
 
     const saveButton =
         user.name !== "Login" ? (
@@ -108,10 +104,10 @@ const SettingsModal = ({ align }: AlignProps) => {
                 align='center'
                 background={palette.two}
                 color='white'
-                disabled={saveUserValues.isLoading}
+                disabled={loading}
                 onClick={() => {
                     updateUser(currentValues);
-                    saveUserValues.mutate({
+                    saveUserValues({
                         name: user.name,
                         ...currentValues,
                     });
@@ -121,17 +117,10 @@ const SettingsModal = ({ align }: AlignProps) => {
             </Button>
         ) : null;
 
-    const headerStyle = css`
-        color: ${palette.text};
-    `;
-
-    const brightOne = changeBrightness(palette.one, 1.5);
-    const brightTwo = changeBrightness(palette.two, 1.5);
-
     const checkboxParameters = {
-        color1: brightTwo,
+        color1: changeBrightness(palette.two, 1.5),
         color2: palette.background,
-        color3: brightOne,
+        color3: changeBrightness(palette.one, 1.5),
         controlColor: palette.three,
     };
     const dropdownParameters = {
@@ -161,7 +150,13 @@ const SettingsModal = ({ align }: AlignProps) => {
             }}
         >
             <ModalHeader>
-                <h1 css={headerStyle}>{headerText}</h1>
+                <h1
+                    css={css`
+                        color: ${palette.text};
+                    `}
+                >
+                    {headerText}
+                </h1>
             </ModalHeader>
             <ModalBody>
                 <form css={emotion}>

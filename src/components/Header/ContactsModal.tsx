@@ -1,4 +1,6 @@
 import { css } from "@emotion/react";
+import { useMemo } from "react";
+import { uniqueId } from "lodash-es";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { AlignProps } from "../../types";
 import Modal from "../modal/Modal";
@@ -15,28 +17,56 @@ const emotion = css`
     flex-direction: column;
     gap: ${GLOBAL.padding};
     padding-block: calc(${GLOBAL.padding} * 2);
-    & > * {
+    & > section {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding-right: ${GLOBAL.padding};
         gap: ${GLOBAL.padding};
-    }
-    & * {
         text-transform: uppercase;
     }
 `;
 
 /**
- * Returns a React Modal component containing the Contacts section.
- * @param align - The alignment parameter of the button, which opens the modal.
+ * Contacts section.
+ * @param align - alignment parameter of the o[pen modal button
  */
 const ContactsModal = ({ align }: AlignProps) => {
     const palette = usePalette();
 
+    const contactMethods = useMemo(
+        () => [
+            {
+                svg: SvgPaths.email,
+                label: "E-mail",
+                onClick: () => window.open("mailto: bachurin.alex@gmail.com"),
+                background: palette.one,
+                initialSize: 24,
+                rescaleFactor: 2,
+            },
+            {
+                svg: WhatsappIcon,
+                label: "Whatsapp",
+                onClick: () => window.open("https://wa.me/351961072567"),
+                background: palette.two,
+                initialSize: 48,
+                rescaleFactor: 1,
+            },
+            {
+                svg: TelegramIcon,
+                label: "Telegram",
+                onClick: () => window.open("https://t.me/abachurin1974"),
+                background: palette.three,
+                initialSize: 48,
+                rescaleFactor: 1,
+            },
+        ],
+        [palette]
+    );
+
     return (
         <Modal
-            button={{ align: align, children: "Contacts" }}
+            button={{ align, children: "Contacts" }}
             modal={{
                 width: "24em",
                 backgroundColor: palette.background,
@@ -48,64 +78,21 @@ const ContactsModal = ({ align }: AlignProps) => {
             </ModalHeader>
             <ModalBody>
                 <div css={emotion}>
-                    <div>
-                        <Icon
-                            svg={SvgPaths.email}
-                            initialSize={24}
-                            rescaleFactor={2}
-                            color={palette.one}
-                        />
-                        <Button
-                            type='clickPress'
-                            align='center'
-                            width={GLOBAL.contactButtonWidth}
-                            background={palette.one}
-                            color={palette.background}
-                            onClick={() =>
-                                window.open("mailto: bachurin.alex@gmail.com")
-                            }
-                        >
-                            E-mail
-                        </Button>
-                    </div>
-                    <div>
-                        <Icon
-                            svg={WhatsappIcon}
-                            initialSize={48}
-                            rescaleFactor={1}
-                        />
-                        <Button
-                            type='clickPress'
-                            align='center'
-                            width={GLOBAL.contactButtonWidth}
-                            background={palette.two}
-                            color={palette.background}
-                            onClick={() =>
-                                window.open("https://wa.me/351961072567")
-                            }
-                        >
-                            Whatsapp
-                        </Button>
-                    </div>
-                    <div>
-                        <Icon
-                            svg={TelegramIcon}
-                            initialSize={48}
-                            rescaleFactor={1}
-                        />
-                        <Button
-                            type='clickPress'
-                            align='center'
-                            width={GLOBAL.contactButtonWidth}
-                            background={palette.three}
-                            color={palette.background}
-                            onClick={() =>
-                                window.open("https://t.me/abachurin1974")
-                            }
-                        >
-                            Telegram
-                        </Button>
-                    </div>
+                    {contactMethods.map((method, _) => (
+                        <section key={uniqueId()}>
+                            <Icon {...method} />
+                            <Button
+                                type='clickPress'
+                                align='center'
+                                width={GLOBAL.contactButtonWidth}
+                                background={method.background}
+                                color={palette.background}
+                                onClick={method.onClick}
+                            >
+                                {method.label}
+                            </Button>
+                        </section>
+                    ))}
                 </div>
             </ModalBody>
         </Modal>

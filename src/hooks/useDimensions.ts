@@ -1,9 +1,12 @@
-import { useState, useLayoutEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef, useCallback } from "react";
 import { GLOBAL } from "../utils";
 
 /**
- * Returns {width, height, reference} based on the size of the referenced HTML element.
- * @param delay Optional debounce in milliseconds
+ * Hook to kep track pf dimensions of window or some specific HTML element.
+ * @param element - True if the dimensions are for an element, False for window object
+ * @param delay - debounce in milliseconds
+ * @returns {width, height, ref}
+ *
  */
 const useDimensions = (
     element = false,
@@ -13,23 +16,24 @@ const useDimensions = (
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
 
-    useLayoutEffect(() => {
-        function handleSize() {
-            if (element) {
-                setWidth(ref.current?.clientWidth || 0);
-                setHeight(ref.current?.clientHeight || 0);
-            } else {
-                setWidth(window.innerWidth);
-                setHeight(window.innerHeight);
-            }
-        }
-        handleSize();
+    const timer = useRef<NodeJS.Timeout>();
 
-        let timer: NodeJS.Timeout;
-        function delayedHandleSize() {
-            clearTimeout(timer);
-            timer = setTimeout(handleSize, delay);
+    const handleSize = useCallback(() => {
+        if (element) {
+            setWidth(ref.current?.clientWidth || 0);
+            setHeight(ref.current?.clientHeight || 0);
+        } else {
+            setWidth(window.innerWidth);
+            setHeight(window.innerHeight);
         }
+    }, [element]);
+
+    useLayoutEffect(() => {
+        handleSize();
+        const delayedHandleSize = () => {
+            if (timer.current) clearTimeout(timer.current);
+            timer.current = setTimeout(handleSize, delay);
+        };
 
         window.addEventListener("load", delayedHandleSize);
         window.addEventListener("resize", delayedHandleSize);
@@ -37,7 +41,7 @@ const useDimensions = (
             window.removeEventListener("load", delayedHandleSize);
             window.removeEventListener("resize", delayedHandleSize);
         };
-    }, [delay, element]);
+    }, [delay, handleSize]);
 
     return { width, height, ref };
 };

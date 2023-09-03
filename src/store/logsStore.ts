@@ -2,8 +2,14 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { useQuery } from "@tanstack/react-query";
 import { connectAPI } from "../api/requests";
-import { UserName, Logs, LogsResponse } from "../types";
+import { UserName } from "../types";
 import { GLOBAL } from "../utils";
+
+type Logs = string[];
+type LogsResponse = {
+    status: string;
+    logs: Logs;
+};
 
 const addNewLogs = (currentLogs: Logs, newLogs: Logs): Logs => {
     let updatedLogs: Logs = [...currentLogs, ...newLogs];
@@ -65,20 +71,24 @@ export const useLogsStore = create<LogsStore>((set, get) => ({
     },
     downloadLogs: () => {
         const logs = get().logs;
-        const textToSave = logs.join("\n");
-        const link = document.createElement("a");
-        const file = new Blob([textToSave], {
-            type: "text/plain;charset=utf-8",
-        });
-        link.href = URL.createObjectURL(file);
-        link.download = "logs.txt";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        if (logs.length) {
+            const textToSave = logs.join("\n");
+            const link = document.createElement("a");
+            const file = new Blob([textToSave], {
+                type: "text/plain;charset=utf-8",
+            });
+            link.href = URL.createObjectURL(file);
+            link.download = "logs.txt";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
     },
 }));
 
-const useLogs = (userName: string): [Logs, boolean] => {
+export default useLogsStore;
+
+export const useLogs = (userName: string): [Logs, boolean] => {
     const setLogs = useLogsStore((state) => state.setLogs);
     const addLogs = useLogsStore((state) => state.addLogs);
     const [alert, setAlert] = useState(false);
@@ -104,5 +114,3 @@ const useLogs = (userName: string): [Logs, boolean] => {
 
     return [useLogsStore((state) => state.logs), alert];
 };
-
-export default useLogs;

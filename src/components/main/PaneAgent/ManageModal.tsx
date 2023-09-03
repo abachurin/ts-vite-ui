@@ -15,11 +15,7 @@ import {
     GameDict,
     Agent,
 } from "../../../types";
-import {
-    GLOBAL,
-    changeBrightness,
-    MyObjectDescriptionLabels,
-} from "../../../utils";
+import { GLOBAL, changeBrightness, alphaSymbol } from "../../../utils";
 import Modal from "../../modal/Modal";
 import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
@@ -61,9 +57,35 @@ const emotion = css`
     }
 `;
 
+// Helper functions
+const MyObjectDescriptionLabels: Record<
+    ItemType | "",
+    Record<string, string>
+> = {
+    Agents: {
+        user: "Owner:",
+        name: "Agent name:",
+        N: "Signature N:",
+        alpha: `Current ${alphaSymbol}`,
+        decay: `${alphaSymbol} decay rate`,
+        step: "Decay step",
+        minAlpha: `Minimal ${alphaSymbol}`,
+        bestScore: "Best score:",
+        maxTile: "Max tile reached:",
+        lastTrainingEpisode: "Training episodes:",
+    },
+    Games: {
+        user: "Owner:",
+        name: "Game name:",
+        score: "Score:",
+        numMoves: "Number of moves:",
+        maxTile: "Max tile reached:",
+    },
+    "": {},
+};
+
 /**
- * Returns a React Modal component containing the Admin section.
- * @param align - The alignment parameter of the button, which opens the modal
+ * Item Management modal.
  */
 const ManageModal = () => {
     const palette = usePalette();
@@ -77,11 +99,7 @@ const ManageModal = () => {
 
     const chartComp =
         options[item] && (options[item] as Agent).history !== undefined ? (
-            <Chart
-                name={(options[item] as Agent).name as string}
-                history={(options[item] as Agent).history}
-                step={(options[item] as Agent).collectStep}
-            />
+            <Chart agent={options[item] as Agent} />
         ) : null;
 
     const [chart, openChart, closeChart] = useAlert({

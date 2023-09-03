@@ -1,15 +1,15 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
-import { ChildrenProps, RGBA, RGB } from "../../types";
+import { ChildrenProps } from "../../types";
 import { GLOBAL, setTransparency, smoothScroll } from "../../utils";
 
 // Emotion styles
 const makeEmotion = (
-    backgroundColor: RGBA,
-    descriptionColor: RGB,
+    backgroundColor: string,
+    descriptionColor: string,
     color: string
-): SerializedStyles => css`
+) => css`
     display: flex;
     justify-content: space-between;
     background-color: ${backgroundColor};
@@ -34,8 +34,9 @@ const makeEmotion = (
 `;
 
 /**
- * A React component that renders a flexible pane.
- * @param props - The props object with optional properties and children.
+ * Pane header.
+ * @param type - "agent" or "game" pane
+ * @param text - text describing current action
  */
 interface PaneHeaderProps extends ChildrenProps {
     type: "agent" | "game";
@@ -43,11 +44,11 @@ interface PaneHeaderProps extends ChildrenProps {
 }
 const PaneHeader = ({ type, text, children }: PaneHeaderProps) => {
     const palette = usePalette();
+
     const backgroundColor = setTransparency(
         type === "agent" ? palette.one : palette.two,
         2 * palette.paneOpacity
     );
-
     const emotion = useMemo(
         () => makeEmotion(backgroundColor, palette.text, palette.background),
         [palette]

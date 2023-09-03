@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import Plot from "react-plotly.js";
 import useDimensions from "../../../hooks/useDimensions";
 import useFontScale from "../../../hooks/useFontScale";
-import { Offset } from "../../../types";
+import { Offset, Agent } from "../../../types";
 
 // Emotion styles
 const makeEmotion = (width: number, height: number) => css`
@@ -11,20 +11,19 @@ const makeEmotion = (width: number, height: number) => css`
     height: ${height}px;
 `;
 
-type ChartProps = {
-    name: string;
-    history: number[];
-    step: number;
-};
-const Chart = ({ name, history, step }: ChartProps) => {
+/**
+ * Training History Chart.
+ * @param agent - Agent
+ */
+const Chart = ({ agent }: { agent: Agent }) => {
     const { width, height } = useDimensions();
     const w = Math.min(0.8 * width, 1000);
     const h = Math.min(0.8 * height, 0.8 * w);
 
     const scale = useFontScale();
 
-    const data: Offset[] = Array.from(history, (value, index) => ({
-        x: (index + 1) * step,
+    const data: Offset[] = Array.from(agent.history, (value, index) => ({
+        x: (index + 1) * agent.collectStep,
         y: value,
     }));
 
@@ -47,7 +46,7 @@ const Chart = ({ name, history, step }: ChartProps) => {
                     height: h,
                     margin: {},
                     title: {
-                        text: `Training History Chart of ${name}`,
+                        text: `Training History Chart of ${agent.name}`,
                         font: { size: scale * 12 },
                     },
                     font: { size: scale * 8 },

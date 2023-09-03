@@ -1,4 +1,4 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useMemo, useEffect, useState } from "react";
 import { connectAPI } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
@@ -7,7 +7,7 @@ import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useJobDescription from "../../../hooks/useJobDescription";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import { RGB } from "../../../types";
-import { GLOBAL, setTransparency, JobDescriptionLabels } from "../../../utils";
+import { GLOBAL, setTransparency } from "../../../utils";
 import ButtonGroup from "../../base/Button/ButtonGroup";
 import Button from "../../base/Button/Button";
 import DescriptionTable from "../../base/DescriptionTable";
@@ -17,7 +17,7 @@ import Cube from "../../base/Cube";
 const makeEmotion = (
     backgroundColor: RGB,
     messageBackgroundColor: string
-): SerializedStyles => css`
+) => css`
     display: flex;
     width: 100%;
     border-radius: ${GLOBAL.borderRadius};
@@ -47,16 +47,31 @@ type cancelType = {
     type: cancelJob;
 };
 
+const JobDescriptionLabels = {
+    name: "Agent name:",
+    currentAlpha: "Current learning rate:",
+    start: "Started at:",
+    timeElapsed: "Elapsed time:",
+    remainingTimeEstimate: "Remaining time estimate:",
+    depth: "Look ahead (depth):",
+    width: "Branching (width):",
+    trigger: "Empty cells (trigger):",
+    episodes: "Episodes:",
+};
+
+/**
+ * Job description component.
+ */
 const CurrentJobDescription = () => {
     const palette = usePalette();
     const user = useUser();
     const job = useJobDescription(user.name);
 
-    const setAgentMode = useModeStore((state) => state.setAgentMode);
-    const setAgentName = useModeStore((state) => state.setAgentName);
+    const { setAgentMode, setAgentName } = useModeStore();
 
     const [waitCancel, setWaitCancel] = useState(false);
     const [message, createMessage] = useAlertMessage("");
+
     useEffect(() => {
         createMessage("");
         setWaitCancel(false);
@@ -67,7 +82,7 @@ const CurrentJobDescription = () => {
         const jobType = type === 0 ? "train" : type === 1 ? "test" : "none";
         setAgentMode(jobType);
         setAgentName(job?.name);
-    });
+    }, [job?.type, job?.name]);
 
     const cancelJob = async (type: cancelJob) => {
         const { result, error } = await connectAPI<cancelType, string>({
@@ -87,39 +102,39 @@ const CurrentJobDescription = () => {
         [palette]
     );
 
+    if (!job) {
+        return null;
+    }
+
     return (
-        <>
-            {job && (
-                <div css={emotion}>
-                    <main>
-                        <DescriptionTable
-                            collection={job}
-                            translation={JobDescriptionLabels}
-                        />
-                        {message && <footer>{message}</footer>}
-                    </main>
-                    <aside>
-                        <ButtonGroup>
-                            <Button
-                                type='clickPress'
-                                background={palette.three}
-                                onClick={() => cancelJob("STOP")}
-                            >
-                                STOP
-                            </Button>
-                            <Button
-                                type='clickPress'
-                                background={palette.error}
-                                onClick={() => cancelJob("KILL")}
-                            >
-                                KILL
-                            </Button>
-                        </ButtonGroup>
-                    </aside>
-                    {waitCancel && <Cube />}
-                </div>
-            )}
-        </>
+        <div css={emotion}>
+            <main>
+                <DescriptionTable
+                    collection={job}
+                    translation={JobDescriptionLabels}
+                />
+                {message && <footer>{message}</footer>}
+            </main>
+            <aside>
+                <ButtonGroup>
+                    <Button
+                        type='clickPress'
+                        background={palette.three}
+                        onClick={() => cancelJob("STOP")}
+                    >
+                        STOP
+                    </Button>
+                    <Button
+                        type='clickPress'
+                        background={palette.error}
+                        onClick={() => cancelJob("KILL")}
+                    >
+                        KILL
+                    </Button>
+                </ButtonGroup>
+            </aside>
+            {waitCancel && <Cube />}
+        </div>
     );
 };
 

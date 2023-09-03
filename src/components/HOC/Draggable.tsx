@@ -22,10 +22,9 @@ const zeroOffset: Offset = { x: 0, y: 0 };
 
 /**
  * Generates a higher-order component that enables dragging functionality to the provided component.
- *
- * @param ToDrag - The component to be wrapped with dragging functionality.
- * @param initialPosition - The initial position of the wrapped component. Default is 'defaultPosition'.
- * @param positionType - CSS "position" to be applied to the wrapped component. Default is 'fixed'.
+ * @param ToDrag - the component to be wrapped and dragged
+ * @param initialPosition - initial position of the wrapped component
+ * @param positionType - CSS "position" to be applied to the wrapped component
  */
 type dragMeProps<P> = {
     ToDrag: React.ComponentType<P>;

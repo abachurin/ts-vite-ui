@@ -28,24 +28,24 @@ const emotion = css`
  */
 const PaneGame = () => {
     const user = useUser();
+    const palette = usePalette();
+
     const [instruction, openInstruction] = useAlert({
         onlyOnce: true,
         type: "info",
         duration: 100000,
         children: user.legends ? <Instruction /> : null,
     });
-    const palette = usePalette();
 
-    const gameMode = useModeStore((state) => state.gameMode);
-    const gameName = useModeStore((state) => state.gameName);
-    const setGameMode = useModeStore((state) => state.setGameMode);
-
-    const watchUser = useGameStore((state) => state.watchUser);
-    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
-    const setLoadingWeights = useGameStore((state) => state.setLoadingWeights);
-    const newGame = useGameStore((state) => state.newGame);
-    const cutHistory = useGameStore((state) => state.cutHistory);
-    const setPaused = useGameStore((state) => state.setPaused);
+    const { gameMode, setGameMode, gameName } = useModeStore();
+    const {
+        watchUser,
+        setWatchingNow,
+        setLoadingWeights,
+        newGame,
+        cutHistory,
+        setPaused,
+    } = useGameStore();
 
     useEffect(() => {
         setWatchingNow(gameMode === "watch");
@@ -78,13 +78,13 @@ const PaneGame = () => {
             </PaneHeader>
             <PaneBody>
                 <GameBoard />
-                <div css={emotion}>
+                <footer css={emotion}>
                     {gameMode === "play" ? (
                         <PlayFooter />
                     ) : gameMode === "watch" || gameMode === "replay" ? (
                         <WatchFooter />
                     ) : null}
-                </div>
+                </footer>
             </PaneBody>
             {instruction}
         </Pane>

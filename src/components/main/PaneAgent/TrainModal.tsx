@@ -4,7 +4,7 @@ import { connectAPI, getItems } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
 import {
     usePalette,
-    useUser,
+    useUserName,
 } from "../../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import useAnyRunningJob from "../../../hooks/useAnyRunningJob";
@@ -52,29 +52,27 @@ const emotion = css`
 `;
 
 /**
- * Returns a React Modal component containing the Admin section.
- * @param align - The alignment parameter of the button, which opens the modal
+ * Train Agent modal.
  */
 const TrainModal = () => {
     const palette = usePalette();
-    const user = useUser();
+    const userName = useUserName();
     const anyJob = useAnyRunningJob();
 
-    const setAgentMode = useModeStore((state) => state.setAgentMode);
-    const setAgentName = useModeStore((state) => state.setAgentName);
+    const { setAgentMode, setAgentName } = useModeStore();
 
     const [message, createMessage] = useAlertMessage("");
     const [loading, setLoading] = useState(false);
 
     const [agents, setAgents] = useState<AgentDict>({});
     const getUserAgents = async () => {
-        const { list, message } = await getItems("Agents", user.name, "user");
+        const { list, message } = await getItems("Agents", userName, "user");
         createMessage(message, "error");
         setAgents(list as AgentDict);
     };
     useEffect(() => {
         getUserAgents();
-    }, [user]);
+    }, [userName]);
     const agentList = Object.keys(agents);
 
     const [values, setValues] = useState<AgentTraining>(defaultTrainingParams);
@@ -113,7 +111,7 @@ const TrainModal = () => {
             const { result, error } = await connectAPI<AgentTraining, string>({
                 method: "post",
                 endpoint: "/jobs/train",
-                data: { ...values, user: user.name },
+                data: { ...values, user: userName },
             });
             if (error) {
                 createMessage(error, "error");

@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { GLOBAL } from "../utils";
 
+/**
+ * Hook for managing Local Storage persistence for Input, Dropdown etc.
+ * @param userName - username to use for persistence
+ * @param persistAs - name to use as part of local storage key
+ * @param containedIn - an optional array of strings tht should contain the persisted value
+ * @return A tuple containing the current value and a function it.
+ */
 const usePersistence = (
     userName = "dummy-user",
     persistAs = "dummy-storage",

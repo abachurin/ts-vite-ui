@@ -46,8 +46,8 @@ const makeEmotion = (
 `;
 
 // Helper functions
-const minInterval = 10;
-const maxInterval = 5000;
+const minInterval = GLOBAL.gameMinInterval;
+const maxInterval = GLOBAL.gameMaxInterval;
 const beta = (maxInterval - minInterval) / 100;
 
 const getDelay = (pause: boolean, interval: number): number => {
@@ -56,7 +56,7 @@ const getDelay = (pause: boolean, interval: number): number => {
 };
 
 /**
- * Renders the game board component,
+ * Renders the Game Board,
  * Looks after new moves in Watch Agent mode,
  * Makes next move at the regular interval
  */

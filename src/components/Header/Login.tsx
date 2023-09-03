@@ -4,20 +4,14 @@ import useModeStore from "../../store/modeStore";
 import { useLogsStore } from "../../store/logsStore";
 import useGameStore from "../../store/gameStore";
 import {
-    useUser,
+    useUserName,
     usePalette,
     useUserUpdate,
     defaultUser,
 } from "../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { connectAPI } from "../../api/requests";
-import {
-    Alignment,
-    User,
-    UserLogin,
-    UserLoginAction,
-    LoginResponse,
-} from "../../types";
+import { Alignment, User } from "../../types";
 import {
     GLOBAL,
     SvgPaths,
@@ -50,33 +44,42 @@ const emotion = css`
     }
 `;
 
+// Helper functions
+type UserLoginAction = "login" | "register" | "delete" | "logout";
+type UserLogin = {
+    name: string;
+    pwd: string;
+};
+type LoginResponse = {
+    status: string;
+    content: User | undefined;
+};
+
 const successMessage = (action: UserLoginAction, userName: string): string =>
     action === "login"
         ? `Welcome back, ${userName}!`
         : action === "register"
         ? `Welcome ${userName}!`
         : `${userName} deleted`;
+
 const initialMessage = "Enter Name and Password";
 
 /**
- * Renders a login section with a button that displays the user's name and
- * opens a modal when clicked.
- * @param align - The alignment of the button.
+ * Login section with a button that displays the user's name.
+ * @param align - alignment of the Login button
  */
 type LoginProps = {
     align?: Alignment;
 };
 
 const Login = ({ align = "left" }: LoginProps) => {
-    const user = useUser();
-    const defaultMode = useModeStore((state) => state.defaultMode);
-    const newGame = useGameStore((state) => state.newGame);
-    const setPaused = useGameStore((state) => state.setPaused);
-    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
-
-    const setLogs = useLogsStore((state) => state.setLogs);
+    const userName = useUserName();
     const palette = usePalette();
     const updateUser = useUserUpdate();
+    const defaultMode = useModeStore((state) => state.defaultMode);
+    const { newGame, setPaused, setWatchingNow } = useGameStore();
+    const setLogs = useLogsStore((state) => state.setLogs);
+
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const [name, setName] = useState<string | undefined>();
@@ -97,11 +100,7 @@ const Login = ({ align = "left" }: LoginProps) => {
         }, 1000);
     };
 
-    const handleSubmit = async (
-        e: React.MouseEvent<HTMLButtonElement>,
-        action: UserLoginAction
-    ) => {
-        e.preventDefault();
+    const handleSubmit = async (action: UserLoginAction) => {
         if (action === "logout") {
             finalizeLogin(defaultUser);
         } else if (name === undefined || pwd === undefined) {
@@ -161,7 +160,7 @@ const Login = ({ align = "left" }: LoginProps) => {
     };
 
     const buttonText =
-        user.name === "Login" ? (
+        userName === "Login" ? (
             <Icon svg={SvgPaths.login} rescaleFactor={1.2} />
         ) : (
             <div
@@ -169,7 +168,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                     text-transform: none;
                 `}
             >
-                {user.name}
+                {userName}
             </div>
         );
 
@@ -215,9 +214,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                             background={palette.one}
                             color={palette.background}
                             disabled={loading}
-                            onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                                handleSubmit(e, "login")
-                            }
+                            onClick={() => handleSubmit("login")}
                         >
                             Login
                         </Button>
@@ -226,9 +223,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                             background={palette.two}
                             color={palette.background}
                             disabled={loading}
-                            onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                                handleSubmit(e, "register")
-                            }
+                            onClick={() => handleSubmit("register")}
                         >
                             Register
                         </Button>
@@ -236,9 +231,8 @@ const Login = ({ align = "left" }: LoginProps) => {
                             type='clickPress'
                             background={palette.four}
                             color={palette.background}
-                            disabled={loading || user.name === "Login"}
-                            onClick={(e) => {
-                                e.preventDefault();
+                            disabled={loading || userName === "Login"}
+                            onClick={() => {
                                 setConfirmDelete(true);
                             }}
                         >
@@ -249,10 +243,8 @@ const Login = ({ align = "left" }: LoginProps) => {
                             align='right'
                             background={palette.three}
                             color={palette.background}
-                            disabled={loading || user.name === "Login"}
-                            onClick={(e: React.MouseEvent<HTMLButtonElement>) =>
-                                handleSubmit(e, "logout")
-                            }
+                            disabled={loading || userName === "Login"}
+                            onClick={() => handleSubmit("logout")}
                         >
                             <Icon svg={SvgPaths.logout} />
                         </Button>
@@ -263,12 +255,9 @@ const Login = ({ align = "left" }: LoginProps) => {
             <ConfirmDialog
                 isOpen={confirmDelete}
                 message={`Are you sure you want to delete ${name}?`}
-                onConfirm={(e) => {
+                onConfirm={() => {
                     setConfirmDelete(false);
-                    handleSubmit(
-                        e as React.MouseEvent<HTMLButtonElement>,
-                        "delete"
-                    );
+                    handleSubmit("delete");
                 }}
                 onCancel={() => setConfirmDelete(false)}
             />

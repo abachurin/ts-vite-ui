@@ -1,18 +1,29 @@
 import React, { ReactNode, useState, useEffect, useRef } from "react";
-import { ChildrenProps, Position, PositionType, AlertColors } from "../types";
+import { ChildrenProps, Position, PositionType } from "../types";
+import { paletteAlertType } from "../palette";
 import { GLOBAL } from "../utils";
 import StaticAlert, { AlertProps } from "../components/base/StaticAlert";
 import dragMe from "../components/HOC/Draggable";
 
-interface AlertHookProps extends ChildrenProps {
+/**
+ * Hook for displaying a popover alert.
+ * @param draggable - indicates if the alert is draggable
+ * @param onlyOnce - indicates if the alert should be shown only once
+ * @param type - type of the alert
+ * @param initialPosition - initial position
+ * @param positionType - CSS position property
+ * @param duration - duration of the alert
+ * @param children - content
+ * @return An array containing the alert component, openAlert function, and closeAlert function
+ */
+type AlertHookProps = ChildrenProps & {
     draggable?: boolean;
     onlyOnce?: boolean;
-    type?: AlertColors;
+    type?: paletteAlertType;
     initialPosition?: Position;
     positionType?: PositionType;
     duration?: number;
-}
-
+};
 const useAlert = ({
     draggable = true,
     onlyOnce = false,
@@ -52,12 +63,12 @@ const useAlert = ({
     }, [showAlert, duration]);
 
     const props: AlertProps = {
-        type: type,
-        closeAlert: closeAlert,
-        children: children,
+        type,
+        closeAlert,
+        children,
     };
 
-    const alert = showAlert ? <AlertComponent {...props} /> : null;
+    const alert = showAlert && children ? <AlertComponent {...props} /> : null;
 
     return [alert, openAlert, closeAlert];
 };

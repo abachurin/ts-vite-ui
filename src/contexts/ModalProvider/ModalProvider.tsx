@@ -1,17 +1,16 @@
-import { useState, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { ModalContext, ModalUpdateContext } from "./ModalContext";
 import { ChildrenProps, ModalState } from "../../types";
 
 /**
- * Creates a ModalProvider Context Provider.
- * The aim is to be able to close the Modal from any Component inside.
- * @param children - The child components to be wrapped.
+ * Modal Context Provider.
+ * @param children - components to be wrapped
  */
 const ModalProvider = ({ children }: ChildrenProps) => {
     const [isOpen, setIsOpen] = useState<ModalState>("none");
 
-    const changeIsOpen = useMemo(
-        () => (newState: ModalState) => {
+    const changeIsOpen = useCallback(
+        (newState: ModalState) => {
             setIsOpen(newState);
             if (newState === false) {
                 setTimeout(() => {
