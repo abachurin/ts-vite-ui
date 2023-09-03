@@ -148,7 +148,6 @@ const WatchModal = () => {
                   score: game.score,
                   numMoves: game.pointer.move,
               };
-
         const { result, error } = await connectAPI<AgentWatching, string>({
             method: "post",
             endpoint: "/watch/new_agent",
@@ -224,7 +223,7 @@ const WatchModal = () => {
                             min={0}
                             max={2}
                             step={1}
-                            placeholder='0 <= depth <= 2'
+                            placeholder='0 <= x <= 2'
                             onChange={(value) =>
                                 updateValues({
                                     depth:
@@ -240,10 +239,10 @@ const WatchModal = () => {
                             label='Width'
                             initialValue={values.width}
                             persistAs='test-width'
-                            min={0}
+                            min={1}
                             max={3}
                             step={1}
-                            placeholder='0 <= width <= 3'
+                            placeholder='1 <= x <= 3'
                             onChange={(value) =>
                                 updateValues({
                                     width:
@@ -262,7 +261,7 @@ const WatchModal = () => {
                             min={0}
                             max={6}
                             step={1}
-                            placeholder='0 <= trigger <= 6'
+                            placeholder='0 <= x <= 6'
                             onChange={(value) =>
                                 updateValues({
                                     trigger:
