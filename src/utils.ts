@@ -321,7 +321,7 @@ export const validateTestingParams = (
                 validated.depth = checkNumberVal("depth", values.depth, 0, 2);
                 break;
             case "width":
-                validated.width = checkNumberVal("width", values.width, 0, 3);
+                validated.width = checkNumberVal("width", values.width, 1, 3);
                 break;
             case "trigger":
                 validated.trigger = checkNumberVal(

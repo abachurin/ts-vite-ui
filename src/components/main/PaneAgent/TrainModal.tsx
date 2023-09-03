@@ -253,7 +253,7 @@ const TrainModal = () => {
                             min={0.5}
                             max={1.0}
                             step={0.01}
-                            placeholder='Set at 1 if no decay'
+                            placeholder='1 = no decay'
                             disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({ decay: Number(value) })
@@ -268,7 +268,7 @@ const TrainModal = () => {
                             min={1000}
                             max={10000}
                             step={1000}
-                            placeholder='1000 <= step <= 10000'
+                            placeholder='1000 <= x <= 10000'
                             disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({ step: Number(value) })
@@ -300,7 +300,7 @@ const TrainModal = () => {
                             min={values.isNew ? 0 : 5000}
                             max={100000}
                             step={5000}
-                            placeholder='Blanc = just create Agent'
+                            placeholder='Just create Agent'
                             onChange={(value) =>
                                 updateValues({ episodes: Number(value) })
                             }

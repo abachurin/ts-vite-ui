@@ -175,7 +175,7 @@ const TestModal = () => {
                             min={0}
                             max={2}
                             step={1}
-                            placeholder='0 <= depth <= 2'
+                            placeholder='0 <= x <= 2'
                             onChange={(value) =>
                                 updateValues({
                                     depth:
@@ -191,10 +191,10 @@ const TestModal = () => {
                             label='Width'
                             initialValue={values.width}
                             persistAs='test-width'
-                            min={0}
+                            min={1}
                             max={3}
                             step={1}
-                            placeholder='0 <= width <= 3'
+                            placeholder='1 <= x <= 3'
                             onChange={(value) =>
                                 updateValues({
                                     width:
@@ -215,7 +215,7 @@ const TestModal = () => {
                             min={0}
                             max={6}
                             step={1}
-                            placeholder='0 <= trigger <= 6'
+                            placeholder='0 <= x <= 6'
                             onChange={(value) =>
                                 updateValues({
                                     trigger:
@@ -234,7 +234,7 @@ const TestModal = () => {
                             min={100}
                             max={1000}
                             step={100}
-                            placeholder='100 <= trigger <= 1000'
+                            placeholder='100 <= x <= 1000'
                             onChange={(value) =>
                                 updateValues({ episodes: Number(value) })
                             }
