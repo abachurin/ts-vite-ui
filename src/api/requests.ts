@@ -37,6 +37,8 @@ type FullGameResponse = {
     game?: GameBackend;
 };
 
+export const restrictedAgents = ["A6"];
+
 export const connectAPI = async <DataType, ResultType>({
     method,
     endpoint,
@@ -100,7 +102,16 @@ export const getJustNames = async (
                 list: [],
                 message: result?.status ?? "Something is wrong!",
             };
-        } else return { list: result?.list ?? [], message: "" };
+        } else {
+            const preliminaryList = result?.list ?? [];
+            const finalList =
+                userName === "Loki"
+                    ? preliminaryList
+                    : preliminaryList.filter(
+                          (name) => !restrictedAgents.includes(name)
+                      );
+            return { list: finalList, message: "" };
+        }
     }
 };
 

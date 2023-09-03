@@ -42,6 +42,7 @@ export const GLOBAL = {
     },
 };
 export const alphaSymbol = String.fromCharCode(945);
+export const specialAgents = ["Random Moves", "Best Score"];
 
 // SVG paths
 export const SvgPaths = {
@@ -295,8 +296,6 @@ const checkNumberVal = (
         return undefined;
     } else return val;
 };
-
-export const specialAgents = ["Random Moves", "Best Score"];
 
 /**
  * Validates Test Agent Job parameters.

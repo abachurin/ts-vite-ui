@@ -143,6 +143,9 @@ const TrainModal = () => {
         " Learning Rate " +
         alphaSymbol;
 
+    const optionsForN =
+        userName === "Loki" ? ["2", "3", "4", "5", "6"] : ["2", "3", "4"];
+
     return (
         <Modal
             button={{
@@ -210,7 +213,7 @@ const TrainModal = () => {
                         <Dropdown
                             {...inputParameters}
                             label='Signature N'
-                            optionValues={["2", "3", "4", "5", "6"]}
+                            optionValues={optionsForN}
                             initialValue={values.N}
                             persistAs='train-N'
                             disabled={!values.isNew}

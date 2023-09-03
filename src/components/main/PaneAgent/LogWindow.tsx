@@ -47,7 +47,7 @@ const LogWindow = () => {
 
     const [warning, openWarning, closeWarning] = useAlert({
         type: "error",
-        duration: 100000,
+        duration: 10000000,
         children: "Network error. Backend doesn't respond!",
     });
 

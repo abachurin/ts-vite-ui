@@ -97,7 +97,7 @@ const Login = ({ align = "left" }: LoginProps) => {
         updateUser(newUser);
         setTimeout(() => {
             simulateCloseModalClick();
-        }, 1000);
+        }, 2000);
     };
 
     const handleSubmit = async (action: UserLoginAction) => {

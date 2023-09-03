@@ -140,6 +140,7 @@ const TestModal = () => {
                 legend: "Only for registered users, and when no Job is running",
                 level: GLOBAL.userLevel.user,
                 disabled: anyJob,
+                onClick: getAllAgentNames,
             }}
             modal={{
                 width: "26rem",
