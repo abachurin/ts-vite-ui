@@ -82,7 +82,6 @@ const GameBoard = () => {
     const swipe = useSwipeDirection();
     useEffect(() => {
         if (gameMode === "play" && swipe !== -1) {
-            console.log(swipe);
             fullMove(swipe);
         }
     }, [swipe, gameMode]);

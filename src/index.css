@@ -3,7 +3,6 @@
 *::after {
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
-  touch-action: pinch-zoom;
 }
 
 html,

@@ -23,6 +23,17 @@ const emotion = css`
     width: calc(${GLOBAL.gameCellSize} * 4 + ${GLOBAL.gameCellPadding} * 2);
 `;
 
+// Helper functions
+const disableSwipe = () => {
+    const swipeBlocker = document.getElementById("swipeBlocker");
+    if (swipeBlocker)
+        swipeBlocker.textContent = "html * { touch-action: none; }";
+};
+const enableSwipe = () => {
+    const swipeBlocker = document.getElementById("swipeBlocker");
+    if (swipeBlocker) swipeBlocker.textContent = "";
+};
+
 /**
  * Renders the Game Pane component on the right, goes bottom on small screen.
  */
@@ -53,6 +64,9 @@ const PaneGame = () => {
             setLoadingWeights(false);
             killWatchJob(watchUser);
         }
+        if (gameMode === "play") {
+            disableSwipe();
+        } else enableSwipe();
     }, [gameMode]);
 
     const playYourself = () => {
@@ -70,8 +84,8 @@ const PaneGame = () => {
     return (
         <Pane id='game-pane'>
             <PaneHeader type='game' text={modeDescription(gameMode, gameName)}>
-                <WatchModal />
                 <ReplayModal />
+                <WatchModal />
                 <Button background={palette.one} onClick={playYourself}>
                     Play Yourself
                 </Button>

@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 import { GLOBAL } from "../utils";
+
+const gameBoard = document.getElementById("game-board");
 
 /**
  * Hook that detects the swipe direction based on touch events.
@@ -9,7 +11,7 @@ import { GLOBAL } from "../utils";
 const useSwipeDirection = (minSwipeDistance = GLOBAL.minSwipeDistance) => {
     const [swipeDirection, setSwipeDirection] = useState(-1);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         let touchStartX: number | null = null;
         let touchStartY: number | null = null;
 
@@ -46,13 +48,15 @@ const useSwipeDirection = (minSwipeDistance = GLOBAL.minSwipeDistance) => {
             touchStartY = null;
             setSwipeDirection(-1);
         };
+        console.log(gameBoard);
 
-        document.addEventListener("touchstart", handleTouchStart);
+        gameBoard && gameBoard.addEventListener("touchstart", handleTouchStart);
         document.addEventListener("touchmove", handleTouchMove);
         document.addEventListener("touchend", handleTouchEnd);
 
         return () => {
-            document.removeEventListener("touchstart", handleTouchStart);
+            gameBoard &&
+                gameBoard.removeEventListener("touchstart", handleTouchStart);
             document.removeEventListener("touchmove", handleTouchMove);
             document.removeEventListener("touchend", handleTouchEnd);
         };
