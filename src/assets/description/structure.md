@@ -1,26 +1,24 @@
 ##### General
 
--   There are 5 components, all independent of each other, can be restarted/scaled/changed without any loss of overall functionality.
--   At the moment it is all Python.
--   The current plan is to rewrite _Frontend_ in React JS, and _Worker_ in Julia.
+-   There are several components, independent of each other, can be restarted/scaled/changed without any loss of overall functionality.
 
 ##### Frontend
 
--   Use to be Dash Python + CSS.
--   As of May 2023 the _Frontend_ is in React Typescript, using Emotion for CSS and Vite for development.
+-   Used to be Dash Python + CSS.
+-   As of August 2023 it is done with React Typescript, using Emotion for CSS and Vite as building tool.
 
 ##### Backend
 
 -   Python FastAPI.
 -   MongoDB for User information and most other data.
--   S3 Storage for Agent weights. Those are small for N <= 4, but rise to almost 400 Mb for N=6.
+-   S3 Storage for Agent weights.
 
-##### Queues and Workers
+##### Worker
 
--   Initially a Redis Queue was employed, but it proved to be unsuited/unnecessary for the task.
--   Backend tasks are either very fast, responded straight away.
--   Or background calculations, which can last up to several days, e.g. _Train_ an Agent for 100,000 episodes. Those are managed by a Python Worker Manager process. It launches a separate worker subprocess for a particular User with non-empty Job Queue, it takes Jobs from the user-specific Queue, which holds only Job parameters in the User information in MongoDB.
--   This user-dedicated worker is terminated by a parent process when there are no more Jobs. Any Job can also be stopped graciously or killed immediately by the User himself or Admin.
+-   A Python Worker takes new Jobs from MongoDB database and launches a separate subprocess for a particular Job.
+-   Background calculations can last up to several days, e.g. _Train_ an Agent for 100,000 episodes. User can launch a Job, come back later and observe results in the Logs Window.
+-   Any Job can also be stopped graciously, saving current results, or killed immediately by the User himself or Admin.
+-   I further plan to rewrite this engine in _Julia_.
 
 ##### Deployment
 
