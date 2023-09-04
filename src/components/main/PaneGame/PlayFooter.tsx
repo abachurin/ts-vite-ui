@@ -29,6 +29,7 @@ const emotion = css`
     }
     & > footer {
         display: flex;
+        align-items: center;
         gap: ${GLOBAL.padding};
     }
     & > footer > div:nth-child(1) {
