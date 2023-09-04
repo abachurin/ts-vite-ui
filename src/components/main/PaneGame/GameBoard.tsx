@@ -21,7 +21,7 @@ const makeEmotion = (
 ) => css`
     display: flex;
     flex-direction: column;
-    margin-top: ${GLOBAL.padding};
+    margin-top: calc(${GLOBAL.padding} * 2);
     gap: ${GLOBAL.padding};
     & > header {
         width: 100%;

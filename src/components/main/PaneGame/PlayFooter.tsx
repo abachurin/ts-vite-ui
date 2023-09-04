@@ -12,6 +12,7 @@ import CloseButton from "../../base/Button/CloseButton";
 const emotion = css`
     display: flex;
     flex-direction: column;
+    margin-top: ${GLOBAL.padding};
     gap: ${GLOBAL.padding};
     & > main {
         margin-block: ${GLOBAL.padding};
@@ -136,7 +137,6 @@ const PlayFooter = () => {
                         background={colorFooter}
                         fontSize='1rem'
                         width='100%'
-                        height='3rem'
                         onClick={() => newGame()}
                     >
                         NEW GAME

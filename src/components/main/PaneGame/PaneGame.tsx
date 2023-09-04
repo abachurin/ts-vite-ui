@@ -27,7 +27,7 @@ const emotion = css`
 const disableSwipe = () => {
     const swipeBlocker = document.getElementById("swipeBlocker");
     if (swipeBlocker)
-        swipeBlocker.textContent = "html * { touch-action: none; }";
+        swipeBlocker.textContent = "html * { touch-action: pinch-zoom; }";
 };
 const enableSwipe = () => {
     const swipeBlocker = document.getElementById("swipeBlocker");
