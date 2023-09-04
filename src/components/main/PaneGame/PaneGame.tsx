@@ -87,7 +87,7 @@ const PaneGame = () => {
                 <ReplayModal />
                 <WatchModal />
                 <Button background={palette.one} onClick={playYourself}>
-                    Play Yourself
+                    Play
                 </Button>
             </PaneHeader>
             <PaneBody>

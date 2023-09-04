@@ -6,7 +6,7 @@ import Icon from "../Icon/Icon";
  * Renders a Close button component with an onClick event handler.
  */
 type CloseButtonProps = {
-    toggleModal?: "none" | false;
+    toggleModal?: false | "none";
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 const CloseButton = ({ toggleModal = false, onClick }: CloseButtonProps) => {

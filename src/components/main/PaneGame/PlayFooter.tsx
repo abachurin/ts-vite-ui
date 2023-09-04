@@ -1,29 +1,38 @@
 import { css } from "@emotion/react";
 import { useEffect, useState } from "react";
+import useModeStore from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import { ButtonVariants } from "../../../types";
 import { GLOBAL, changeBrightness } from "../../../utils";
 import Button from "../../base/Button/Button";
+import CloseButton from "../../base/Button/CloseButton";
 
 // Emotion styles
 const emotion = css`
     display: flex;
     flex-direction: column;
     gap: ${GLOBAL.padding};
-    & main {
+    & > main {
         margin-block: ${GLOBAL.padding};
         flex: 1;
         display: flex;
         justify-content: center;
     }
-    & section {
+    & > main > section {
         flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: calc(${GLOBAL.padding} * 2);
+    }
+    & > footer {
+        display: flex;
+        gap: ${GLOBAL.padding};
+    }
+    & > footer > div:nth-child(1) {
+        flex: 1;
     }
 `;
 
@@ -66,6 +75,7 @@ const PlayFooter = () => {
     const palette = usePalette();
     const arrowKey = useArrowKey();
 
+    const setGameMode = useModeStore((state) => state.setGameMode);
     const { fullMove, newGame } = useGameStore();
 
     useEffect(() => {
@@ -117,15 +127,23 @@ const PlayFooter = () => {
                     &rarr;
                 </Button>
             </main>
-            <Button
-                type='clickPress'
-                width='100%'
-                background={colorFooter}
-                fontSize='1rem'
-                onClick={() => newGame()}
-            >
-                NEW GAME
-            </Button>
+            <footer>
+                <div>
+                    <Button
+                        type='clickPress'
+                        background={colorFooter}
+                        fontSize='1rem'
+                        width='100%'
+                        onClick={() => newGame()}
+                    >
+                        NEW GAME
+                    </Button>
+                </div>
+                <CloseButton
+                    toggleModal='none'
+                    onClick={() => setGameMode("none")}
+                />
+            </footer>
         </div>
     );
 };
