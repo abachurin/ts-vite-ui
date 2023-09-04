@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import GameLogic from "./gameLogic";
+import GameLogic from "../gameLogic";
 import { Game, GameTile, GameBackend } from "../types";
 import { deepCopy } from "../utils";
 

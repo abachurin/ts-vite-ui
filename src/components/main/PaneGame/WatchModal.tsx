@@ -22,7 +22,7 @@ import Modal from "../../modal/Modal";
 import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
 import CloseButton from "../../base/Button/CloseButton";
-import GameLogic from "../../../store/gameLogic";
+import GameLogic from "../../../gameLogic";
 import Cube from "../../base/Cube";
 
 // Emotion styles

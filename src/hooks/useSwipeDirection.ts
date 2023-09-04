@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { GLOBAL } from "../utils";
 
+/**
+ * Hook that detects the swipe direction based on touch events.
+ * @param minSwipeDistance - minimum distance required for a swipe to be detected
+ * @return - The swipe direction: 0, 1, 2, 3 for left, up, right, down. -1 if none.
+ */
 const useSwipeDirection = (minSwipeDistance = GLOBAL.minSwipeDistance) => {
     const [swipeDirection, setSwipeDirection] = useState(-1);
 
@@ -13,7 +18,6 @@ const useSwipeDirection = (minSwipeDistance = GLOBAL.minSwipeDistance) => {
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
         };
-
         const handleTouchMove = (e: TouchEvent) => {
             if (touchStartX === null || touchStartY === null) {
                 return;
@@ -37,7 +41,6 @@ const useSwipeDirection = (minSwipeDistance = GLOBAL.minSwipeDistance) => {
                 touchStartY = null;
             }
         };
-
         const handleTouchEnd = () => {
             touchStartX = null;
             touchStartY = null;

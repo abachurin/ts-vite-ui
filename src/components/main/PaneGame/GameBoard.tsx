@@ -2,10 +2,12 @@ import { css } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { uniqueId } from "lodash-es";
-import { gameMoves } from "../../../store/gameLogic";
+import { gameMoves } from "../../../gameLogic";
 import { fetchNewMovesTiles } from "../../../api/requests";
+import useModeStore from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import useSwipeDirection from "../../../hooks/useSwipeDirection";
 import { NewMovesRequest, NewMovesResponse } from "../../../types";
 import { GLOBAL } from "../../../utils";
 import GameCell from "./GameCell";
@@ -62,6 +64,8 @@ const getDelay = (pause: boolean, interval: number): number => {
  */
 const GameBoard = () => {
     const palette = usePalette();
+
+    const gameMode = useModeStore((state) => state.gameMode);
     const {
         game,
         watchUser,
@@ -74,6 +78,14 @@ const GameBoard = () => {
         paused,
     } = useGameStore();
     const delay = getDelay(paused, interval);
+
+    const swipe = useSwipeDirection();
+    useEffect(() => {
+        if (gameMode === "play" && swipe !== -1) {
+            console.log(swipe);
+            fullMove(swipe);
+        }
+    }, [swipe, gameMode]);
 
     const request: NewMovesRequest = {
         userName: watchUser,

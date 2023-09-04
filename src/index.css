@@ -1,12 +1,9 @@
-:root {
-  --white: rgb(235, 235, 235);
-}
-
 *,
 *::before,
 *::after {
   box-sizing: border-box;
   font-family: 'Roboto', sans-serif;
+  touch-action: none;
 }
 
 html,

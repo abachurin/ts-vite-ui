@@ -40,6 +40,7 @@ export const GLOBAL = {
         user: 1,
         admin: 2,
     },
+    minSwipeDistance: 50,
 };
 export const alphaSymbol = String.fromCharCode(945);
 export const specialAgents = ["Random Moves", "Best Score"];

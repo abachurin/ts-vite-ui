@@ -1,6 +1,6 @@
 import { uniqueId } from "lodash-es";
-import { Offset, Game, GameTile, GameBackend } from "../types";
-import { deepCopy, deepEqual } from "../utils";
+import { Offset, Game, GameTile, GameBackend } from "./types";
+import { deepCopy, deepEqual } from "./utils";
 
 export const gameMoves: Record<number, string> = {
     0: "LEFT",
