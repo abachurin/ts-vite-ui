@@ -79,12 +79,12 @@ const GameBoard = () => {
     } = useGameStore();
     const delay = getDelay(paused, interval);
 
-    const swipe = useSwipeDirection();
+    const { ref, swipeDirection } = useSwipeDirection();
     useEffect(() => {
-        if (gameMode === "play" && swipe !== -1) {
-            fullMove(swipe);
+        if (gameMode === "play" && swipeDirection !== -1) {
+            fullMove(swipeDirection);
         }
-    }, [swipe, gameMode]);
+    }, [swipeDirection, gameMode]);
 
     const request: NewMovesRequest = {
         userName: watchUser,
@@ -147,7 +147,7 @@ const GameBoard = () => {
         game.nextMove === undefined ? "..." : gameMoves[game.nextMove];
 
     return (
-        <div id='game-board' css={emotion}>
+        <div ref={ref} css={emotion}>
             <header>
                 <div>Score: {game.score}</div>
                 <div>Moves: {game.pointer.move}</div>

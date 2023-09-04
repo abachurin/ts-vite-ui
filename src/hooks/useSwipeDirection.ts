@@ -1,17 +1,19 @@
-import { useState, useLayoutEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GLOBAL } from "../utils";
 
-const gameBoard = document.getElementById("game-board");
-
 /**
- * Hook that detects the swipe direction based on touch events.
+ * Hook that detects the swipe direction based on touch event above some HTML element
  * @param minSwipeDistance - minimum distance required for a swipe to be detected
- * @return - The swipe direction: 0, 1, 2, 3 for left, up, right, down. -1 if none.
+ * @return - useRef to the HTML element
+ * and the swipe direction: 0, 1, 2, 3 for left, up, right, down. -1 if none.
  */
-const useSwipeDirection = (minSwipeDistance = GLOBAL.minSwipeDistance) => {
+const useSwipeDirection = (
+    minSwipeDistance = GLOBAL.minSwipeDistance
+): { ref: React.RefObject<HTMLDivElement>; swipeDirection: number } => {
+    const ref = useRef<HTMLDivElement>(null);
     const [swipeDirection, setSwipeDirection] = useState(-1);
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         let touchStartX: number | null = null;
         let touchStartY: number | null = null;
 
@@ -48,21 +50,22 @@ const useSwipeDirection = (minSwipeDistance = GLOBAL.minSwipeDistance) => {
             touchStartY = null;
             setSwipeDirection(-1);
         };
-        console.log(gameBoard);
 
-        gameBoard && gameBoard.addEventListener("touchstart", handleTouchStart);
+        const currentRef = ref.current;
+        currentRef &&
+            currentRef.addEventListener("touchstart", handleTouchStart);
         document.addEventListener("touchmove", handleTouchMove);
         document.addEventListener("touchend", handleTouchEnd);
 
         return () => {
-            gameBoard &&
-                gameBoard.removeEventListener("touchstart", handleTouchStart);
+            currentRef &&
+                currentRef.removeEventListener("touchstart", handleTouchStart);
             document.removeEventListener("touchmove", handleTouchMove);
             document.removeEventListener("touchend", handleTouchEnd);
         };
     }, [minSwipeDistance]);
 
-    return swipeDirection;
+    return { ref, swipeDirection };
 };
 
 export default useSwipeDirection;
