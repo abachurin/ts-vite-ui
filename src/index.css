@@ -14,7 +14,13 @@ body {
 }
 
 html {
-  font-size: clamp(10px, 1.4vw, 18px);
+  font-size: clamp(12px, 1.4vw, 18px);
+}
+
+@media (max-height: 850px) {
+  html {
+    font-size: clamp(10px, 1.4vh, 18px);
+  }
 }
 
 #root {
