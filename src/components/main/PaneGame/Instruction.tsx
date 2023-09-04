@@ -36,12 +36,12 @@ const Instruction = () => {
             <header>Controls</header>
             <main>
                 Press arrow buttons or keyboard arrows to move. Swipe on mobile
-                devices is not implemented yet. Anyway, if you really want to
-                play 2048, better to use the official App.
+                devices. Native swipe actions are blocked in "Play Yourself"
+                mode.
             </main>
             <footer>
-                p.s. This instruction can be permanently switched off by turning
-                off Verbose option in User Settings.
+                / This instruction can be permanently switched off by turning
+                off Verbose option in User Settings /
             </footer>
         </div>
     );

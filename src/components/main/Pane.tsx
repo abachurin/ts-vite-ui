@@ -1,14 +1,11 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
 import { GLOBAL, setTransparency } from "../../utils";
 
 // Emotion styles
-const makeEmotion = (
-    backgroundColor: string,
-    color: string
-): SerializedStyles => css`
+const makeEmotion = (backgroundColor: string, color: string) => css`
     flex: 1;
     display: flex;
     flex-direction: column;
