@@ -14,23 +14,17 @@ const useSwipeDirection = (
     const [swipeDirection, setSwipeDirection] = useState(-1);
 
     useEffect(() => {
-        let touchStartX: number | null = null;
-        let touchStartY: number | null = null;
-
+        let touchStartX = 0;
+        let touchStartY = 0;
         const handleTouchStart = (e: TouchEvent) => {
             const touch = e.touches[0];
             touchStartX = touch.clientX;
             touchStartY = touch.clientY;
         };
         const handleTouchMove = (e: TouchEvent) => {
-            if (touchStartX === null || touchStartY === null) {
-                return;
-            }
             const touch = e.touches[0];
-            const touchEndX = touch.clientX;
-            const touchEndY = touch.clientY;
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
+            const deltaX = touch.clientX - touchStartX;
+            const deltaY = touch.clientY - touchStartY;
             if (
                 Math.abs(deltaX) >= minSwipeDistance ||
                 Math.abs(deltaY) >= minSwipeDistance
@@ -40,26 +34,25 @@ const useSwipeDirection = (
                 } else {
                     setSwipeDirection(deltaY > 0 ? 3 : 1);
                 }
-
-                touchStartX = null;
-                touchStartY = null;
+                touchStartX = 0;
+                touchStartY = 0;
             }
         };
         const handleTouchEnd = () => {
-            touchStartX = null;
-            touchStartY = null;
+            touchStartX = 0;
+            touchStartY = 0;
             setSwipeDirection(-1);
         };
 
         const currentRef = ref.current;
-        currentRef &&
-            currentRef.addEventListener("touchstart", handleTouchStart);
+        if (!currentRef) return;
+
+        currentRef.addEventListener("touchstart", handleTouchStart);
         document.addEventListener("touchmove", handleTouchMove);
         document.addEventListener("touchend", handleTouchEnd);
 
         return () => {
-            currentRef &&
-                currentRef.removeEventListener("touchstart", handleTouchStart);
+            currentRef.removeEventListener("touchstart", handleTouchStart);
             document.removeEventListener("touchmove", handleTouchMove);
             document.removeEventListener("touchend", handleTouchEnd);
         };

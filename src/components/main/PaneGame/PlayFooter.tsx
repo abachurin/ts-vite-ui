@@ -28,6 +28,7 @@ const emotion = css`
         gap: calc(${GLOBAL.padding} * 2);
     }
     & > footer {
+        margin-top: ${GLOBAL.padding};
         display: flex;
         align-items: center;
         gap: ${GLOBAL.padding};
@@ -135,6 +136,7 @@ const PlayFooter = () => {
                         background={colorFooter}
                         fontSize='1rem'
                         width='100%'
+                        height='3rem'
                         onClick={() => newGame()}
                     >
                         NEW GAME
