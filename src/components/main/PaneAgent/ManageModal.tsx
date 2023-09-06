@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { connectAPI, getItems } from "../../../api/requests";
 import {
     useUser,
