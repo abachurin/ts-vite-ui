@@ -78,7 +78,7 @@ const Header = () => {
                     <AdminModal />
                     <SettingsModal />
                 </ToggleNav>
-                <Login align='right' />
+                <Login />
             </main>
         </header>
     ) : (
@@ -92,7 +92,7 @@ const Header = () => {
                 <SoundSwitch />
                 <AnimationSwitch />
             </nav>
-            <Login align='right' />
+            <Login />
         </header>
     );
 };

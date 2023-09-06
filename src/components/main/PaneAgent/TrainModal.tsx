@@ -15,6 +15,7 @@ import {
     simulateCloseModalClick,
     validateTrainingParams,
     alphaSymbol,
+    namingRule,
 } from "../../../utils";
 import Button from "../../base/Button/Button";
 import Dropdown from "../../base/Dropdown";
@@ -101,10 +102,7 @@ const TrainModal = () => {
         setValues((prevValues) => ({ ...prevValues, ...validated }));
 
         if (change) {
-            createMessage(
-                "Some parameters are invalid or undefined. Please follow the instructions.",
-                "error"
-            );
+            createMessage("Some parameters are invalid or undefined", "error");
         } else {
             setLoading(true);
             createMessage("Processing Job ...");
@@ -191,7 +189,7 @@ const TrainModal = () => {
                             label='New Agent Name'
                             persistAs='train-new-name'
                             initialValue={values.name ?? ""}
-                            placeholder={`Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`}
+                            placeholder={namingRule}
                             onChange={(value) =>
                                 updateValues({ name: String(value) })
                             }

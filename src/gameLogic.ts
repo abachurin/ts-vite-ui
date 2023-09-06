@@ -25,12 +25,15 @@ export abstract class GameLogic {
     }
 
     public static fromBackend(game: GameBackend): Game {
-        const fullGame: Game = {
+        return {
             ...game,
-            isOver: false,
+            row: deepCopy(game.initial),
+            score: 0,
+            lastTile: undefined,
+            nextMove: game.moves?.[0],
             pointer: { move: 0, tile: 0 },
+            isOver: false,
         };
-        return this.restartGame(fullGame);
     }
 
     private static emptyBoard(): number[][] {

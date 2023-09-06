@@ -45,6 +45,7 @@ export type User = {
     paletteName: string;
     agents: string[];
     logs: string[];
+    lastLog: number;
 };
 
 // Agent and Agent Job types
@@ -90,28 +91,28 @@ export type GamePointer = {
     move: number;
     tile: number;
 };
-
 export type GameCore = {
     user?: string;
-    name: string;
-    row: number[][];
+    name?: string;
     score: number;
 };
 export type GameDescription = GameCore & {
     numMoves: number;
     maxTile: number;
 };
-export type GameBackend = GameCore & {
+export type GameBackend = {
     initial: number[][];
     moves: number[];
     tiles: GameTile[];
 };
-export type Game = GameBackend & {
-    isOver: boolean;
-    pointer: GamePointer;
-    lastTile?: GameTile;
-    nextMove?: number;
-};
+export type Game = GameCore &
+    GameBackend & {
+        row: number[][];
+        isOver: boolean;
+        pointer: GamePointer;
+        lastTile?: GameTile;
+        nextMove?: number;
+    };
 export type GameDict = Record<string, GameDescription>;
 
 // Watch Agent game retrieval types

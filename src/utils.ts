@@ -32,7 +32,7 @@ export const GLOBAL = {
     contactButtonWidth: "12rem",
     messageDuration: 5000,
     watchInterval: 2000,
-    maxNameLength: 500,
+    maxNameLength: 10,
     filler: "f!JJHKLb22",
     maxLogs: 500,
     userLevel: {
@@ -42,6 +42,7 @@ export const GLOBAL = {
     },
     minSwipeDistance: 50,
 };
+export const namingRule = `Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`;
 export const alphaSymbol = String.fromCharCode(945);
 export const specialAgents = ["Random Moves", "Best Score"];
 

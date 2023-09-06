@@ -43,7 +43,7 @@ const LogWindow = () => {
     const palette = usePalette();
     const { clearLogs, downloadLogs } = useLogsStore();
 
-    const [logs, alert] = useLogs(user.name);
+    const { logs, alertBackend } = useLogs(user.name);
 
     const [warning, openWarning, closeWarning] = useAlert({
         type: "error",
@@ -52,7 +52,7 @@ const LogWindow = () => {
     });
 
     useEffect(() => {
-        if (alert) openWarning();
+        if (alertBackend) openWarning();
         else closeWarning();
     }, [alert]);
 

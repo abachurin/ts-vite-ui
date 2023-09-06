@@ -11,12 +11,13 @@ import {
 } from "../../contexts/UserProvider/UserContext";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { connectAPI } from "../../api/requests";
-import { Alignment, User } from "../../types";
+import { User } from "../../types";
 import {
     GLOBAL,
     SvgPaths,
     checkRe,
     simulateCloseModalClick,
+    namingRule,
 } from "../../utils";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
@@ -62,17 +63,10 @@ const successMessage = (action: UserLoginAction, userName: string): string =>
         ? `Welcome ${userName}!`
         : `${userName} deleted`;
 
-const initialMessage = "Enter Name and Password";
-
 /**
  * Login section with a button that displays the user's name.
- * @param align - alignment of the Login button
  */
-type LoginProps = {
-    align?: Alignment;
-};
-
-const Login = ({ align = "left" }: LoginProps) => {
+const Login = () => {
     const userName = useUserName();
     const palette = usePalette();
     const updateUser = useUserUpdate();
@@ -82,34 +76,40 @@ const Login = ({ align = "left" }: LoginProps) => {
 
     const [confirmDelete, setConfirmDelete] = useState(false);
 
-    const [name, setName] = useState<string | undefined>();
-    const [pwd, setPwd] = useState<string | undefined>();
+    const [name, setName] = useState("");
+    const [pwd, setPwd] = useState("");
 
-    const [message, createMessage] = useAlertMessage(initialMessage);
+    const [message, createMessage] = useAlertMessage("Enter Name and Password");
     const [loading, setLoading] = useState(false);
 
-    const finalizeLogin = (newUser: User): void => {
+    const finalizeLogin = (newUser: User, closeAfter = true): void => {
         setLogs([]);
         defaultMode();
         setWatchingNow(false);
         setPaused(true);
         newGame();
         updateUser(newUser);
-        setTimeout(() => {
-            simulateCloseModalClick();
-        }, 2000);
+        if (closeAfter)
+            setTimeout(() => {
+                simulateCloseModalClick();
+            }, 2000);
     };
 
     const handleSubmit = async (action: UserLoginAction) => {
         if (action === "logout") {
-            finalizeLogin(defaultUser);
-        } else if (name === undefined || pwd === undefined) {
+            finalizeLogin(defaultUser, false);
+        } else if (name === "" || pwd === "") {
             createMessage("Both fields should be filled", "error");
         } else if (action == "register" && (!checkRe(name) || !checkRe(pwd))) {
             createMessage(
-                `Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`,
+                `Letters, numerals, dash, underscore, max ${GLOBAL.maxNameLength} chars`,
                 "error"
             );
+        } else if (
+            (action == "register" || action == "login") &&
+            name === userName
+        ) {
+            createMessage("You are already logged in!", "error");
         } else {
             setLoading(true);
             createMessage("Authorization ...", "success");
@@ -177,7 +177,7 @@ const Login = ({ align = "left" }: LoginProps) => {
             button={{
                 type: "whooshRotate",
                 children: buttonText,
-                align: align,
+                align: "right",
                 color: palette.logo,
                 fontSize: `${GLOBAL.logoScale}rem`,
             }}
@@ -191,14 +191,17 @@ const Login = ({ align = "left" }: LoginProps) => {
                 <h1 css={headerStyle}>Login / Register</h1>
             </ModalHeader>
             <ModalBody>
-                <form css={emotion}>
+                <main css={emotion}>
                     <Input
                         {...inputParameters}
                         type='text'
                         label='Name'
                         persistAs='login-name'
                         initialValue={name}
-                        onChange={(value) => setName(value as string)}
+                        placeholder={namingRule}
+                        onChange={(value) => {
+                            setName(value);
+                        }}
                     />
                     <Input
                         {...inputParameters}
@@ -206,7 +209,8 @@ const Login = ({ align = "left" }: LoginProps) => {
                         label='Password'
                         persistAs='login-pwd'
                         initialValue={pwd}
-                        onChange={(value) => setPwd(value as string)}
+                        placeholder={namingRule}
+                        onChange={(value) => setPwd(value)}
                     />
                     <ButtonGroup height='2rem'>
                         <Button
@@ -232,9 +236,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                             background={palette.four}
                             color={palette.background}
                             disabled={loading || userName === "Login"}
-                            onClick={() => {
-                                setConfirmDelete(true);
-                            }}
+                            onClick={() => setConfirmDelete(true)}
                         >
                             Delete me
                         </Button>
@@ -249,7 +251,7 @@ const Login = ({ align = "left" }: LoginProps) => {
                             <Icon svg={SvgPaths.logout} />
                         </Button>
                     </ButtonGroup>
-                </form>
+                </main>
             </ModalBody>
             <ModalFooter>{message}</ModalFooter>
             <ConfirmDialog

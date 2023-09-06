@@ -9,7 +9,7 @@ import { GLOBAL } from "../utils";
  * @return A tuple containing the current alert message and a function to set a new alert message.
  */
 const useAlertMessage = (
-    initialMessage: string
+    initialMessage = ""
 ): [
     React.ReactNode,
     (text?: string, type?: "error" | "success", duration?: number) => void

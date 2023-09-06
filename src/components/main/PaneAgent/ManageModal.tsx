@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { connectAPI, getItems } from "../../../api/requests";
 import {
     useUser,
@@ -182,7 +182,7 @@ const ManageModal = () => {
             }}
         >
             <ModalBody overflow='visible'>
-                <header css={emotion}>
+                <div css={emotion}>
                     <section>
                         <div>
                             <Radio
@@ -233,7 +233,7 @@ const ManageModal = () => {
                             {chart}
                         </main>
                     )}
-                </header>
+                </div>
             </ModalBody>
             <ModalFooter>
                 <footer css={footerWrapper}>
