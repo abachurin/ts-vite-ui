@@ -68,18 +68,18 @@ type AgentWatching = AgentWatchingBase & {
 const WatchModal = () => {
     const palette = usePalette();
 
-    const { setGameMode, setGameName } = useModeStore();
-    const {
-        game,
-        watchUser,
-        setWatchUser,
-        setPaused,
-        setWatchingNow,
-        loadingWeights,
-        setLoadingWeights,
-        cutHistory,
-        newGame,
-    } = useGameStore();
+    const setGameMode = useModeStore((state) => state.setGameMode);
+    const setGameName = useModeStore((state) => state.setGameName);
+
+    const game = useGameStore((state) => state.game);
+    const watchUser = useGameStore((state) => state.watchUser);
+    const setWatchUser = useGameStore((state) => state.setWatchUser);
+    const setPaused = useGameStore((state) => state.setPaused);
+    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
+    const loadingWeights = useGameStore((state) => state.loadingWeights);
+    const setLoadingWeights = useGameStore((state) => state.setLoadingWeights);
+    const cutHistory = useGameStore((state) => state.cutHistory);
+    const newGame = useGameStore((state) => state.newGame);
 
     useEffect(() => {
         if (loadingWeights === false) {

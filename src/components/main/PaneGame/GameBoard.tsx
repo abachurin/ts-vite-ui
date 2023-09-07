@@ -66,17 +66,17 @@ const GameBoard = () => {
     const palette = usePalette();
 
     const gameMode = useModeStore((state) => state.gameMode);
-    const {
-        game,
-        watchUser,
-        watchingNow,
-        setWatchingNow,
-        setLoadingWeights,
-        appendHistory,
-        fullMove,
-        interval,
-        paused,
-    } = useGameStore();
+
+    const game = useGameStore((state) => state.game);
+    const watchUser = useGameStore((state) => state.watchUser);
+    const watchingNow = useGameStore((state) => state.watchingNow);
+    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
+    const setLoadingWeights = useGameStore((state) => state.setLoadingWeights);
+    const appendHistory = useGameStore((state) => state.appendHistory);
+    const fullMove = useGameStore((state) => state.fullMove);
+    const interval = useGameStore((state) => state.interval);
+    const paused = useGameStore((state) => state.paused);
+
     const delay = getDelay(paused, interval);
 
     const { ref, swipeDirection } = useSwipeDirection();

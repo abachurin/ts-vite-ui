@@ -55,7 +55,7 @@ export const palettes: Palettes = {
         text: "rgb(64, 64, 64)",
         header: "rgb(128, 128, 128)",
         headerOpacity: 0.3,
-        logo: "rgb(255, 255, 26)",
+        logo: "rgb(255, 140, 26)",
         pane: "rgb(50, 50, 224)",
         paneOpacity: 0.1,
         one: "rgb(31, 122, 31)",
@@ -66,7 +66,7 @@ export const palettes: Palettes = {
         error: "rgb(153, 0, 51)",
         warning: "rgb(255, 153, 51)",
         info: "rgb(102, 0, 204)",
-        logs: "rgb(235, 235, 235)",
+        logs: "rgb(255, 140, 26)",
     },
     Three: {
         name: "Two",

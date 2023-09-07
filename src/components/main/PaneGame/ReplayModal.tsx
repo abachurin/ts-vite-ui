@@ -8,7 +8,7 @@ import {
 import useGameStore from "../../../store/gameStore";
 import { getItems, getFullGame } from "../../../api/requests";
 import { GameDict, GameBackend } from "../../../types";
-import { GLOBAL } from "../../../utils";
+import { GLOBAL, simulateCloseModalClick } from "../../../utils";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import Modal from "../../modal/Modal";
 import ModalBody from "../../modal/ModalBody";
@@ -16,6 +16,7 @@ import ModalFooter from "../../modal/ModalFooter";
 import Dropdown from "../../base/Dropdown";
 import Button from "../../base/Button/Button";
 import CloseButton from "../../base/Button/CloseButton";
+import Cube from "../../base/Cube";
 
 // Emotion styles
 const emotion = css`
@@ -30,14 +31,19 @@ const ReplayModal = () => {
     const userName = useUserName();
     const palette = usePalette();
 
-    const { assignGame, restartGame, setPaused } = useGameStore();
-    const { setGameMode, setGameName } = useModeStore();
+    const setGameMode = useModeStore((state) => state.setGameMode);
+    const setGameName = useModeStore((state) => state.setGameName);
+
+    const assignGame = useGameStore((state) => state.assignGame);
+    const restartGame = useGameStore((state) => state.restartGame);
+    const setPaused = useGameStore((state) => state.setPaused);
 
     const [item, setItem] = useState("My current game");
     const [options, setOptions] = useState<GameDict>({});
     const choiceOptions = ["Current game", ...Object.keys(options)];
 
     const [msg, createMsg] = useAlertMessage("");
+    const [loading, setLoading] = useState(false);
 
     const getGames = async () => {
         setPaused(true);
@@ -50,6 +56,7 @@ const ReplayModal = () => {
     };
 
     const replay = async () => {
+        setLoading(true);
         if (item !== "Current game") {
             const { game, status } = await getFullGame(item);
             if (status) {
@@ -61,6 +68,8 @@ const ReplayModal = () => {
         setPaused(false);
         setGameName(item);
         setGameMode("replay");
+        simulateCloseModalClick();
+        setLoading(false);
     };
 
     return (
@@ -104,6 +113,7 @@ const ReplayModal = () => {
                 <CloseButton />
             </ModalFooter>
             {msg ? <ModalFooter>{msg}</ModalFooter> : null}
+            {loading ? <Cube /> : null}
         </Modal>
     );
 };

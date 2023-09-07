@@ -41,7 +41,9 @@ const makeEmotion = (color: string) => css`
 const LogWindow = () => {
     const user = useUser();
     const palette = usePalette();
-    const { clearLogs, downloadLogs } = useLogsStore();
+
+    const clearLogs = useLogsStore((state) => state.clearLogs);
+    const downloadLogs = useLogsStore((state) => state.downloadLogs);
 
     const { logs, alertBackend } = useLogs(user.name);
 

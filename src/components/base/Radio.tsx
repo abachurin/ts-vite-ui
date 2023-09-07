@@ -71,11 +71,11 @@ const makeControl = (
     :hover input {
         box-shadow: 0 0 0.5em 0.1em ${controlColor};
     }
-    & label {
+    & > label {
         padding-left: ${fontSize * 0.3}rem;
         color: ${textColor};
     }
-    & input {
+    & > input {
         position: relative;
         margin: 0;
         appearance: none;
@@ -85,7 +85,7 @@ const makeControl = (
         border: 1px solid ${controlColor};
         background-color: ${backGroundColor};
     }
-    & input::before {
+    & > input::after {
         content: "";
         position: absolute;
         top: 50%;
@@ -97,7 +97,7 @@ const makeControl = (
         background-color: ${controlColor};
         opacity: 0;
     }
-    & input:checked::before {
+    & > input:checked::after {
         opacity: 1;
     }
 `;
@@ -194,6 +194,7 @@ const Radio = ({
                         onChange={handleChoice}
                         checked={option === currentValue}
                     />
+                    <aside></aside>
                     <label htmlFor={id}>{option}</label>
                 </div>
             );

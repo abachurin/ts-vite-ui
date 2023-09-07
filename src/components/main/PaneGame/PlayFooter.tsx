@@ -79,7 +79,9 @@ const PlayFooter = () => {
     const arrowKey = useArrowKey();
 
     const setGameMode = useModeStore((state) => state.setGameMode);
-    const { fullMove, newGame } = useGameStore();
+
+    const fullMove = useGameStore((state) => state.fullMove);
+    const newGame = useGameStore((state) => state.newGame);
 
     useEffect(() => {
         if (arrowKey >= 0) {

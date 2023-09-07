@@ -58,7 +58,8 @@ const TestModal = () => {
     const userName = useUserName();
     const anyJob = useAnyRunningJob();
 
-    const { setAgentMode, setAgentName } = useModeStore();
+    const setAgentMode = useModeStore((state) => state.setAgentMode);
+    const setAgentName = useModeStore((state) => state.setAgentName);
 
     const [message, createMessage] = useAlertMessage("");
     const [loading, setLoading] = useState(false);

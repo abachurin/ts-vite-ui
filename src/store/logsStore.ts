@@ -110,7 +110,10 @@ export default useLogsStore;
 export const useLogs = (
     userName: string
 ): { logs: Logs; alertBackend: boolean } => {
-    const { logs, addLogs, lastLog, setLastLog } = useLogsStore();
+    const logs = useLogsStore((state) => state.logs);
+    const addLogs = useLogsStore((state) => state.addLogs);
+    const lastLog = useLogsStore((state) => state.lastLog);
+    const setLastLog = useLogsStore((state) => state.setLastLog);
 
     const [alertBackend, setAlertBackend] = useState(false);
 

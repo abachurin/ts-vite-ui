@@ -70,8 +70,13 @@ const Login = () => {
     const userName = useUserName();
     const palette = usePalette();
     const updateUser = useUserUpdate();
+
     const defaultMode = useModeStore((state) => state.defaultMode);
-    const { newGame, setPaused, setWatchingNow } = useGameStore();
+
+    const newGame = useGameStore((state) => state.newGame);
+    const setPaused = useGameStore((state) => state.setPaused);
+    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
+
     const setLogs = useLogsStore((state) => state.setLogs);
 
     const [confirmDelete, setConfirmDelete] = useState(false);
@@ -200,7 +205,7 @@ const Login = () => {
                         initialValue={name}
                         placeholder={namingRule}
                         onChange={(value) => {
-                            setName(value);
+                            setName(value as string);
                         }}
                     />
                     <Input
@@ -210,7 +215,7 @@ const Login = () => {
                         persistAs='login-pwd'
                         initialValue={pwd}
                         placeholder={namingRule}
-                        onChange={(value) => setPwd(value)}
+                        onChange={(value) => setPwd(value as string)}
                     />
                     <ButtonGroup height='2rem'>
                         <Button

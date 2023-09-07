@@ -48,15 +48,16 @@ const PaneGame = () => {
         children: user.legends ? <Instruction /> : null,
     });
 
-    const { gameMode, setGameMode, gameName } = useModeStore();
-    const {
-        watchUser,
-        setWatchingNow,
-        setLoadingWeights,
-        newGame,
-        cutHistory,
-        setPaused,
-    } = useGameStore();
+    const gameMode = useModeStore((state) => state.gameMode);
+    const setGameMode = useModeStore((state) => state.setGameMode);
+    const gameName = useModeStore((state) => state.gameName);
+
+    const watchUser = useGameStore((state) => state.watchUser);
+    const setWatchingNow = useGameStore((state) => state.setWatchingNow);
+    const setLoadingWeights = useGameStore((state) => state.setLoadingWeights);
+    const newGame = useGameStore((state) => state.newGame);
+    const cutHistory = useGameStore((state) => state.cutHistory);
+    const setPaused = useGameStore((state) => state.setPaused);
 
     useEffect(() => {
         setWatchingNow(gameMode === "watch");

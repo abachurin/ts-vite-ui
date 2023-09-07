@@ -198,11 +198,11 @@ export function hasUndefinedValues(obj: Record<string, unknown>): boolean {
  */
 export const defaultTrainingParams = {
     N: 4,
-    alpha: undefined,
-    decay: undefined,
-    step: undefined,
-    minAlpha: undefined,
-    episodes: undefined,
+    alpha: 0,
+    decay: 0,
+    step: 0,
+    minAlpha: 0,
+    episodes: 0,
     name: undefined,
     isNew: true,
 };
@@ -215,6 +215,26 @@ export const defaultWatchParams: AgentWatchingBase = {
 export const defaultTestingParams: AgentTesting = {
     ...defaultWatchParams,
     episodes: 100,
+};
+
+export const trainingParamsConstraints = {
+    alpha: {
+        min: 0.1,
+        max: 0.25,
+        step: 0.01,
+    },
+    decay: {
+        min: 0,
+        max: 1,
+    },
+    step: {
+        min: 0,
+        max: 1,
+    },
+    minAlpha: {
+        min: 0,
+        max: 1,
+    },
 };
 
 /**

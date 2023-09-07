@@ -25,8 +25,11 @@ const emotion = css`
 const WatchFooter = () => {
     const palette = usePalette();
 
-    const { interval, setIntervalValue, paused, setPaused, restartGame } =
-        useGameStore();
+    const interval = useGameStore((state) => state.interval);
+    const setIntervalValue = useGameStore((state) => state.setIntervalValue);
+    const paused = useGameStore((state) => state.paused);
+    const setPaused = useGameStore((state) => state.setPaused);
+    const restartGame = useGameStore((state) => state.restartGame);
 
     return (
         <div css={emotion}>
@@ -40,6 +43,9 @@ const WatchFooter = () => {
                     controlSizeRatio={2.5}
                     controlColor={palette.three}
                     color={palette.text}
+                    label={"Interval between moves"}
+                    labelColor={palette.background}
+                    labelAbove={false}
                     onChange={setIntervalValue}
                 />
             </main>

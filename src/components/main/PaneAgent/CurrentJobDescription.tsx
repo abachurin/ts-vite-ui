@@ -67,7 +67,8 @@ const CurrentJobDescription = () => {
     const user = useUser();
     const job = useJobDescription(user.name);
 
-    const { setAgentMode, setAgentName } = useModeStore();
+    const setAgentMode = useModeStore((state) => state.setAgentMode);
+    const setAgentName = useModeStore((state) => state.setAgentName);
 
     const [waitCancel, setWaitCancel] = useState(false);
     const [message, createMessage] = useAlertMessage("");

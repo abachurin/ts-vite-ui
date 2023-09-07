@@ -90,7 +90,7 @@ type InputProps = {
     disabled?: boolean;
     persistAs?: string | undefined;
     zIndex?: number | "auto";
-    onChange: (value: string) => void;
+    onChange: (value: string | number) => void;
 };
 /**
  * Input component with customizable properties.
@@ -152,9 +152,10 @@ const Input = ({
     }, [persistAs, persistedValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
+        const stringValue = e.target.value;
+        const value = type === "number" ? Number(stringValue) : stringValue;
         if (persistAs) {
-            setPersistedValue(value);
+            setPersistedValue(stringValue);
         } else {
             onChange(value);
         }

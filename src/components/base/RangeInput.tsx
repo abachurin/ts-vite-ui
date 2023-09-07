@@ -7,7 +7,8 @@ const makeEmotion = (
     width: string,
     labelFontSize: number,
     backgroundColor: string,
-    color: string
+    color: string,
+    textColor: string
 ) => css`
     display: flex;
     flex-direction: column;
@@ -20,6 +21,7 @@ const makeEmotion = (
     font-size: ${labelFontSize}rem;
     & header {
         text-align: center;
+        color: ${textColor};
         margin-bottom: ${GLOBAL.padding};
     }
     &:hover {
@@ -111,6 +113,7 @@ interface RangeInputProps {
     labelFontSize?: number;
     controlSizeRatio?: number;
     label?: string;
+    labelColor?: string;
     labelAbove?: boolean;
     backgroundColor?: string;
     color?: string;
@@ -127,6 +130,7 @@ const RangeInput = ({
     labelFontSize = 1,
     controlSizeRatio = 3,
     label = "",
+    labelColor,
     labelAbove = true,
     backgroundColor = "inherit",
     color = "inherit",
@@ -134,6 +138,7 @@ const RangeInput = ({
     onChange,
     debounceMs = GLOBAL.windowResizeDelay,
 }: RangeInputProps) => {
+    const textColor = labelColor ?? color;
     const startValue = initialValue ?? start;
     const [value, setValue] = useState(startValue);
     useEffect(() => {
@@ -156,8 +161,15 @@ const RangeInput = ({
     const innerWidth = `calc(100% - 2 * ${GLOBAL.padding} - ${controlSize}rem)`;
 
     const emotion = useMemo(
-        () => makeEmotion(width, labelFontSize, backgroundColor, color),
-        [width, labelFontSize, backgroundColor, color]
+        () =>
+            makeEmotion(
+                width,
+                labelFontSize,
+                backgroundColor,
+                color,
+                textColor
+            ),
+        [width, labelFontSize, backgroundColor, color, labelColor]
     );
     const controlWrapper = useMemo(
         () => makeControlWrapper(innerWidth, controlSize),
@@ -205,7 +217,12 @@ const RangeInput = ({
                     onChange={handleOnChange}
                 />
             </main>
-            {!labelAbove && <header>{label}</header>}
+            {!labelAbove && (
+                <header>
+                    <br />
+                    {label}
+                </header>
+            )}
         </div>
     );
 };
