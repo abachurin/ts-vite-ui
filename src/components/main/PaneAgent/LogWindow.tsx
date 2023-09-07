@@ -54,7 +54,7 @@ const LogWindow = () => {
     useEffect(() => {
         if (alertBackend) openWarning();
         else closeWarning();
-    }, [alert]);
+    }, [alertBackend]);
 
     const emotion = useMemo(() => makeEmotion(palette.logs), [palette.logs]);
 
@@ -62,26 +62,26 @@ const LogWindow = () => {
         <div css={emotion}>
             <main>{logs.join("\n")}</main>
             <aside>
-                <ButtonGroup>
-                    <Button
-                        type='clickPress'
-                        color={palette.background}
-                        background={palette.error}
-                        disabled={logs.length === 0}
-                        onClick={() => clearLogs(user.name)}
-                    >
-                        CLEAR
-                    </Button>
-                    <Button
-                        type='clickPress'
-                        color={palette.background}
-                        background={palette.three}
-                        disabled={logs.length === 0}
-                        onClick={downloadLogs}
-                    >
-                        DOWNLOAD
-                    </Button>
-                </ButtonGroup>
+                {logs.length ? (
+                    <ButtonGroup>
+                        <Button
+                            type='clickPress'
+                            color={palette.background}
+                            background={palette.three}
+                            onClick={downloadLogs}
+                        >
+                            DOWNLOAD
+                        </Button>
+                        <Button
+                            type='clickPress'
+                            color={palette.background}
+                            background={palette.error}
+                            onClick={() => clearLogs(user.name)}
+                        >
+                            CLEAR
+                        </Button>
+                    </ButtonGroup>
+                ) : null}
             </aside>
             {warning}
         </div>

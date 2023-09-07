@@ -98,7 +98,6 @@ const ReplayModal = () => {
                     color={palette.background}
                     type='clickPress'
                     onClick={replay}
-                    toggleModal={false}
                 >
                     Replay
                 </Button>

@@ -36,7 +36,7 @@ const Instruction = () => {
             <header>Controls</header>
             <main>
                 Press arrow buttons or keyboard arrows to move. Swipe on mobile
-                devices. Native swipe actions are blocked in "Play" mode.
+                devices.
             </main>
             <footer>
                 / This instruction can be permanently switched off by turning

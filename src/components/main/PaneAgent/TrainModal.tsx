@@ -142,14 +142,14 @@ const TrainModal = () => {
         alphaSymbol;
 
     const optionsForN =
-        userName === "Loki" ? ["2", "3", "4", "5", "6"] : ["2", "3", "4"];
+        userName === "Loki" ? ["2", "3", "4", "5", "6"] : ["2", "3", "4", "5"];
 
     return (
         <Modal
             button={{
                 background: palette.two,
                 children: "Train",
-                legend: "Only for registered users, and when no Job is running",
+                legend: "Register to unlock Train/Test mode",
                 level: GLOBAL.userLevel.user,
                 disabled: anyJob,
                 onClick: () => setTimeout(() => setExistingValues(), 100),

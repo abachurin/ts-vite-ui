@@ -137,7 +137,7 @@ const TestModal = () => {
             button={{
                 background: palette.two,
                 children: "Test",
-                legend: "Only for registered users, and when no Job is running",
+                legend: "Register to unlock Train/Test mode",
                 level: GLOBAL.userLevel.user,
                 disabled: anyJob,
                 onClick: getAllAgentNames,

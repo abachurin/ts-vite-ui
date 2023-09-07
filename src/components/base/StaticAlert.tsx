@@ -35,7 +35,7 @@ const makeEmotion = (
         padding-left: calc(${GLOBAL.padding} * 2);
         border-radius: ${GLOBAL.borderRadius};
         box-shadow: ${GLOBAL.insetShadow(borderColor, 0.1)};
-        background: linear-gradient(135deg, ${borderColor}, ${backgroundColor});
+        background: linear-gradient(135deg, ${backgroundColor}, ${borderColor});
         color: ${color};
     `;
 
