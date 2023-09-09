@@ -17,7 +17,7 @@ const makeEmotion = (backgroundColor: string, color: string) => css`
 `;
 
 /**
- * Renders the footer component.
+ * Renders the Footer component.
  * Scrolls to Game Pane when clicked (on small screen)
  */
 const Footer = () => {
