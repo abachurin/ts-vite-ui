@@ -1,10 +1,7 @@
 import { css } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
-import {
-    useUserName,
-    useSoundVolume,
-} from "../../contexts/UserProvider/UserContext";
+import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { useClickAwayListener } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
 import { GLOBAL, SvgPaths, makeSound, createPersistence } from "../../utils";

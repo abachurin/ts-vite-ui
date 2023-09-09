@@ -1,6 +1,5 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
-import { useUserName } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, createPersistence } from "../../utils";
 
 // Emotion styles
