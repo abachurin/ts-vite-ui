@@ -64,7 +64,7 @@ const SettingsModal = ({ align }: AlignProps) => {
     const palette = usePalette();
     const updateUser = useUserUpdate();
 
-    const [message, createMessage] = useAlertMessage("");
+    const [message, createMessage] = useAlertMessage();
     const [loading, setLoading] = useState(false);
 
     const [currentValues, setCurrentValues] = useState<ValuesType>(

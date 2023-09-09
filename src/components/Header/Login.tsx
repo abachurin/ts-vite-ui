@@ -64,7 +64,7 @@ const successMessage = (action: UserLoginAction, userName: string): string =>
         : `${userName} deleted`;
 
 /**
- * Login section with a button that displays the user's name.
+ * Login section with a button that displays the user"s name.
  */
 const Login = () => {
     const userName = useUserName();

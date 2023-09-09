@@ -42,7 +42,7 @@ const ReplayModal = () => {
     const [options, setOptions] = useState<GameDict>({});
     const choiceOptions = ["Current game", ...Object.keys(options)];
 
-    const [msg, createMsg] = useAlertMessage("");
+    const [msg, createMsg] = useAlertMessage();
     const [loading, setLoading] = useState(false);
 
     const getGames = async () => {

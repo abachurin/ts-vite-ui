@@ -65,7 +65,7 @@ const TrainModal = () => {
     const setAgentMode = useModeStore((state) => state.setAgentMode);
     const setAgentName = useModeStore((state) => state.setAgentName);
 
-    const [message, createMessage] = useAlertMessage("");
+    const [message, createMessage] = useAlertMessage();
     const [loading, setLoading] = useState(false);
 
     const [agents, setAgents] = useState<AgentDict>({});

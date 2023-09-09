@@ -50,7 +50,7 @@ const LogWindow = () => {
     const [warning, openWarning, closeWarning] = useAlert({
         type: "error",
         duration: 10000000,
-        children: "Network error. Backend doesn't respond!",
+        children: "Network error. Backend does not respond!",
     });
 
     useEffect(() => {

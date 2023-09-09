@@ -63,7 +63,7 @@ const TestModal = () => {
     const setAgentMode = useModeStore((state) => state.setAgentMode);
     const setAgentName = useModeStore((state) => state.setAgentName);
 
-    const [message, createMessage] = useAlertMessage("");
+    const [message, createMessage] = useAlertMessage();
     const [loading, setLoading] = useState(false);
 
     const [values, setValues] = useState<AgentTesting>(undefinedTestingParams);

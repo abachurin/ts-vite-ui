@@ -93,7 +93,7 @@ const WatchModal = () => {
         }
     }, [loadingWeights]);
 
-    const [message, createMessage] = useAlertMessage("");
+    const [message, createMessage] = useAlertMessage();
 
     const [agents, setAgents] = useState<string[]>([]);
     const getAllAgentNames = async () => {

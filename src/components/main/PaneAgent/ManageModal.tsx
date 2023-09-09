@@ -61,10 +61,7 @@ const emotion = css`
 `;
 
 // Helper functions
-const MyObjectDescriptionLabels: Record<
-    ItemType | "",
-    Record<string, string>
-> = {
+const descriptionLabels: Record<ItemType | "", Record<string, string>> = {
     Agents: {
         user: "Owner:",
         name: "Agent name:",
@@ -100,7 +97,7 @@ const ManageModal = () => {
     const [item, setItem] = useState("");
     const [keys, setKeys] = useState<string[]>([]);
 
-    const [message, createMessage] = useAlertMessage("");
+    const [message, createMessage] = useAlertMessage();
 
     const chartComp =
         options[item] && (options[item] as Agent).history !== undefined ? (
@@ -180,7 +177,7 @@ const ManageModal = () => {
     );
     const brightOne = changeBrightness(palette.one, 1.5);
 
-    const description = MyObjectDescriptionLabels[kind];
+    const description = descriptionLabels[kind];
 
     return (
         <Modal
@@ -260,12 +257,13 @@ const ManageModal = () => {
                         background={palette.error}
                         color={palette.background}
                         type='clickPress'
-                        onClick={() => setConfirmDelete(true)}
+                        legend='You can only delete your own items'
                         disabled={
                             item === "" ||
                             item === GLOBAL.filler ||
                             owner !== user.name
                         }
+                        onClick={() => setConfirmDelete(true)}
                     >
                         Delete
                     </Button>

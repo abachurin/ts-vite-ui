@@ -27,7 +27,6 @@ const fetchLogs = async (
     userName: string,
     lastLog: number
 ): Promise<LogsResponse> => {
-    if (userName === "Login") return { status: "ok", logs: [], lastLog: -1 };
     const { result, error } = await connectAPI<LogsRequest, LogsResponse>({
         method: "POST",
         endpoint: "/logs/update",
