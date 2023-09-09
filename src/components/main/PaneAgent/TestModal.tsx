@@ -12,9 +12,11 @@ import { AgentTesting } from "../../../types";
 import {
     GLOBAL,
     defaultTestingParams,
+    undefinedTestingParams,
     simulateCloseModalClick,
     validateTestingParams,
     specialAgents,
+    inputToNumber,
 } from "../../../utils";
 import Button from "../../base/Button/Button";
 import Dropdown from "../../base/Dropdown";
@@ -64,7 +66,7 @@ const TestModal = () => {
     const [message, createMessage] = useAlertMessage("");
     const [loading, setLoading] = useState(false);
 
-    const [values, setValues] = useState<AgentTesting>(defaultTestingParams);
+    const [values, setValues] = useState<AgentTesting>(undefinedTestingParams);
     const updateValues = useCallback((update: Partial<AgentTesting>) => {
         setValues((prevValues) => ({ ...prevValues, ...update }));
     }, []);
@@ -77,6 +79,7 @@ const TestModal = () => {
     };
 
     useEffect(() => {
+        setValues(undefinedTestingParams);
         getAllAgentNames();
     }, [userName]);
 
@@ -158,7 +161,7 @@ const TestModal = () => {
                         {...inputParameters}
                         label='Existing Agent Name'
                         optionValues={allAgents}
-                        persistAs='train-existing-name'
+                        persistAs={`${userName}_test-name`}
                         initialValue={values.name}
                         onChange={(value) =>
                             updateValues({ name: String(value) })
@@ -172,18 +175,13 @@ const TestModal = () => {
                             type='number'
                             label='Depth'
                             initialValue={values.depth}
-                            persistAs='test-depth'
+                            persistAs={`${userName}_test-depth`}
                             min={0}
                             max={2}
                             step={1}
                             placeholder='0 <= x <= 2'
                             onChange={(value) =>
-                                updateValues({
-                                    depth:
-                                        value === ""
-                                            ? undefined
-                                            : Number(value),
-                                })
+                                updateValues({ depth: inputToNumber(value) })
                             }
                         />
                         <Input
@@ -191,18 +189,13 @@ const TestModal = () => {
                             type='number'
                             label='Width'
                             initialValue={values.width}
-                            persistAs='test-width'
+                            persistAs={`${userName}_test-width`}
                             min={1}
                             max={3}
                             step={1}
                             placeholder='1 <= x <= 3'
                             onChange={(value) =>
-                                updateValues({
-                                    width:
-                                        value === ""
-                                            ? undefined
-                                            : Number(value),
-                                })
+                                updateValues({ width: inputToNumber(value) })
                             }
                         />
                     </section>
@@ -212,32 +205,27 @@ const TestModal = () => {
                             type='number'
                             label='Trigger'
                             initialValue={values.trigger}
-                            persistAs='test-trigger'
+                            persistAs={`${userName}_test-trigger`}
                             min={0}
                             max={6}
                             step={1}
                             placeholder='0 <= x <= 6'
                             onChange={(value) =>
-                                updateValues({
-                                    trigger:
-                                        value === ""
-                                            ? undefined
-                                            : Number(value),
-                                })
+                                updateValues({ trigger: inputToNumber(value) })
                             }
                         />
                         <Input
                             {...inputParameters}
                             type='number'
                             label='Test episodes'
-                            initialValue={values.episodes || undefined}
-                            persistAs='test-episodes'
+                            initialValue={values.episodes}
+                            persistAs={`${userName}_test-episodes`}
                             min={100}
                             max={1000}
                             step={100}
                             placeholder='100 <= x <= 1000'
                             onChange={(value) =>
-                                updateValues({ episodes: Number(value) })
+                                updateValues({ episodes: inputToNumber(value) })
                             }
                         />
                     </section>

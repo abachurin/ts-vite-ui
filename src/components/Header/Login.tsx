@@ -103,7 +103,7 @@ const Login = () => {
     const handleSubmit = async (action: UserLoginAction) => {
         if (action === "logout") {
             finalizeLogin(defaultUser, false);
-        } else if (name === "" || pwd === "") {
+        } else if (!(name && pwd)) {
             createMessage("Both fields should be filled", "error");
         } else if (action == "register" && (!checkRe(name) || !checkRe(pwd))) {
             createMessage(
@@ -201,21 +201,19 @@ const Login = () => {
                         {...inputParameters}
                         type='text'
                         label='Name'
-                        persistAs='login-name'
-                        initialValue={name}
+                        persistAs={`${userName}_login-name`}
                         placeholder={namingRule}
                         onChange={(value) => {
-                            setName(value as string);
+                            setName(value);
                         }}
                     />
                     <Input
                         {...inputParameters}
                         type='text'
                         label='Password'
-                        persistAs='login-pwd'
-                        initialValue={pwd}
+                        persistAs={`${userName}_login-pwd`}
                         placeholder={namingRule}
-                        onChange={(value) => setPwd(value as string)}
+                        onChange={(value) => setPwd(value)}
                     />
                     <ButtonGroup height='2rem'>
                         <Button

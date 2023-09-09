@@ -96,7 +96,6 @@ const ReplayModal = () => {
                         controlColor={palette.three}
                         optionValues={choiceOptions}
                         initialValue={item}
-                        persistAs='replay-game'
                         onChange={setItem}
                     />
                 </div>

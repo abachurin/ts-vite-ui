@@ -1,7 +1,10 @@
 import { css } from "@emotion/react";
 import { useCallback, useEffect, useState } from "react";
 import { connectAPI, getJustNames } from "../../../api/requests";
-import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import {
+    usePalette,
+    useUserName,
+} from "../../../contexts/UserProvider/UserContext";
 import useModeStore from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
 import useAlertMessage from "../../../hooks/useAlertMessage";
@@ -9,6 +12,7 @@ import { AgentWatchingBase } from "../../../types";
 import {
     GLOBAL,
     defaultWatchParams,
+    undefinedWatchParams,
     simulateCloseModalClick,
     validateTestingParams,
     specialAgents,
@@ -66,6 +70,7 @@ type AgentWatching = AgentWatchingBase & {
  * Watch Agent modal
  */
 const WatchModal = () => {
+    const userName = useUserName();
     const palette = usePalette();
 
     const setGameMode = useModeStore((state) => state.setGameMode);
@@ -98,11 +103,17 @@ const WatchModal = () => {
         setAgents(list);
     };
 
-    const [values, setValues] = useState<AgentWatchingBase>(defaultWatchParams);
     const [isNew, setIsNew] = useState(true);
+
+    const [values, setValues] =
+        useState<AgentWatchingBase>(undefinedWatchParams);
     const updateValues = useCallback((update: Partial<AgentWatching>) => {
         setValues((prevValues) => ({ ...prevValues, ...update }));
     }, []);
+
+    useEffect(() => {
+        setValues(undefinedWatchParams);
+    }, [userName]);
 
     const inputParameters = {
         backgroundColor: "white",
@@ -206,7 +217,6 @@ const WatchModal = () => {
                         {...inputParameters}
                         label='Choose Agent to Watch'
                         optionValues={allAgents}
-                        persistAs='train-existing-name'
                         initialValue={values.name}
                         onChange={(value) =>
                             updateValues({ name: String(value) })
@@ -219,7 +229,7 @@ const WatchModal = () => {
                             type='number'
                             label='Depth'
                             initialValue={values.depth}
-                            persistAs='test-depth'
+                            persistAs={`${userName}_watch-depth`}
                             min={0}
                             max={2}
                             step={1}
@@ -238,7 +248,7 @@ const WatchModal = () => {
                             type='number'
                             label='Width'
                             initialValue={values.width}
-                            persistAs='test-width'
+                            persistAs={`${userName}_watch-width`}
                             min={1}
                             max={3}
                             step={1}
@@ -257,7 +267,7 @@ const WatchModal = () => {
                             type='number'
                             label='Trigger'
                             initialValue={values.trigger}
-                            persistAs='test-trigger'
+                            persistAs={`${userName}_watch-trigger`}
                             min={0}
                             max={6}
                             step={1}

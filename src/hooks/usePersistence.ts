@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { UserName } from "../types";
 import { GLOBAL } from "../utils";
 
 /**
@@ -8,11 +9,17 @@ import { GLOBAL } from "../utils";
  * @param containedIn - an optional array of strings tht should contain the persisted value
  * @return A tuple containing the current value and a function it.
  */
-const usePersistence = (
+type PersistenceType = UserName & {
+    persistAs: string;
+    containedIn?: string[];
+    isNumber?: boolean;
+};
+const usePersistence = ({
     userName = "dummy-user",
     persistAs = "dummy-storage",
-    containedIn?: string[]
-): [string, (update: string) => void] => {
+    containedIn,
+    isNumber = false,
+}: PersistenceType): [string, (update: string) => void] => {
     const fullName = userName + persistAs + "__2048";
     const [value, setValue] = useState(GLOBAL.filler);
 

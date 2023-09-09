@@ -181,6 +181,15 @@ export function deepEqual<T>(a: T, b: T): boolean {
 }
 
 /**
+ * Converts a string input to a number or undefined (empty string "" is considered undefined).
+ * @param value - The string input value to be converted.
+ */
+export const inputToNumber = (value: string): number | undefined => {
+    const valueNum = value === "" ? undefined : +value;
+    return valueNum === undefined || isNaN(valueNum) ? undefined : valueNum;
+};
+
+/**
  * Checks if an object has at least one property with a value of undefined.
  * @param obj - object
  */
@@ -196,14 +205,22 @@ export function hasUndefinedValues(obj: Record<string, unknown>): boolean {
 /**
  *  default Job params and the functions to validate them
  */
+const makeUndefinedVersion = (obj: Record<string, unknown>): unknown => {
+    const result = { ...obj };
+    for (const key in obj) {
+        result[key] = undefined;
+    }
+    return result;
+};
+
 export const defaultTrainingParams = {
-    N: 4,
-    alpha: 0,
-    decay: 0,
-    step: 0,
-    minAlpha: 0,
-    episodes: 0,
-    name: undefined,
+    N: 2,
+    alpha: 0.25,
+    decay: 0.9,
+    step: 1000,
+    minAlpha: 0.01,
+    episodes: 5000,
+    name: "",
     isNew: true,
 };
 export const defaultWatchParams: AgentWatchingBase = {
@@ -216,6 +233,17 @@ export const defaultTestingParams: AgentTesting = {
     ...defaultWatchParams,
     episodes: 100,
 };
+
+export const undefinedTrainingParams = {
+    ...(makeUndefinedVersion(defaultTrainingParams) as AgentTraining),
+    isNew: true,
+};
+export const undefinedWatchParams = makeUndefinedVersion(
+    defaultWatchParams
+) as AgentWatchingBase;
+export const undefinedTestingParams = makeUndefinedVersion(
+    defaultTestingParams
+) as AgentTesting;
 
 export const trainingParamsConstraints = {
     alpha: {
@@ -397,4 +425,39 @@ export const randomName = (suffix: string): string => {
             () => characters[Math.floor(Math.random() * characters.length)]
         ).join("")
     );
+};
+
+// Persistence
+type PersistenceFunctions = {
+    setPersistedValue: (update: string) => void;
+    getPersistedValue: () => string;
+};
+const emptyPersistence: PersistenceFunctions = {
+    setPersistedValue: (update: string | number) => {
+        console.log(update);
+    },
+    getPersistedValue: () => "",
+};
+
+/**
+ * Creates a setter and getter function for persistence in localStorage.
+ * @param persistAs - part of the key, _2048_ is added on top of it
+ */
+export const createPersistence = (persistAs: string): PersistenceFunctions => {
+    if (persistAs === undefined) return emptyPersistence;
+    const fullName = "_2048_" + persistAs;
+    if (localStorage.getItem(fullName) === null)
+        localStorage.setItem(fullName, "");
+
+    const setPersistedValue = (update: string) => {
+        localStorage.setItem(fullName, update);
+    };
+    const getPersistedValue = () => {
+        return localStorage.getItem(fullName) ?? "";
+    };
+
+    return {
+        setPersistedValue,
+        getPersistedValue,
+    };
 };

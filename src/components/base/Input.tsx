@@ -1,8 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo, useEffect } from "react";
-import { useUser } from "../../contexts/UserProvider/UserContext";
-import usePersistence from "../../hooks/usePersistence";
-import { GLOBAL } from "../../utils";
+import { useMemo, useState, useEffect } from "react";
+import { useUserName } from "../../contexts/UserProvider/UserContext";
+import { GLOBAL, createPersistence } from "../../utils";
 
 // Emotion styles
 const makeEmotion = (
@@ -71,27 +70,6 @@ type InputType =
     | "tel"
     | "url";
 
-type InputProps = {
-    width?: string;
-    fontSize?: number;
-    labelRatio?: number;
-    backgroundColor?: string;
-    labelColor1?: string;
-    labelColor2?: string;
-    controlColor?: string;
-    color?: string;
-    label?: string;
-    type?: InputType;
-    min?: number;
-    max?: number;
-    step?: number;
-    placeholder?: string;
-    initialValue?: string | number;
-    disabled?: boolean;
-    persistAs?: string | undefined;
-    zIndex?: number | "auto";
-    onChange: (value: string | number) => void;
-};
 /**
  * Input component with customizable properties.
  * @param width - width
@@ -114,6 +92,27 @@ type InputProps = {
  * @param zIndex - z-index
  * @param onChange - callback function for handling input changes
  */
+type InputProps = {
+    width?: string;
+    fontSize?: number;
+    labelRatio?: number;
+    backgroundColor?: string;
+    labelColor1?: string;
+    labelColor2?: string;
+    controlColor?: string;
+    color?: string;
+    label?: string;
+    type?: InputType;
+    min?: number;
+    max?: number;
+    step?: number;
+    placeholder?: string;
+    initialValue?: string | number;
+    disabled?: boolean;
+    persistAs?: string;
+    zIndex?: number | "auto";
+    onChange: (value: string) => void;
+};
 const Input = ({
     width = "auto",
     fontSize = 1,
@@ -128,36 +127,39 @@ const Input = ({
     min,
     max,
     step,
-    placeholder = "",
-    initialValue = "",
+    placeholder,
+    initialValue,
     disabled = false,
-    persistAs,
+    persistAs = "",
     zIndex = "auto",
     onChange,
 }: InputProps) => {
-    const user = useUser();
+    const [value, setValue] = useState(initialValue ?? "");
 
-    const [persistedValue, setPersistedValue] = usePersistence(
-        user.name,
-        persistAs
-    );
+    const { setPersistedValue, getPersistedValue } =
+        createPersistence(persistAs);
+
     useEffect(() => {
-        initialValue !== "" && setPersistedValue(String(initialValue));
+        if (persistAs) {
+            if (initialValue === undefined) {
+                const storedValue = getPersistedValue();
+                setValue(storedValue);
+                onChange(storedValue);
+            } else {
+                setValue(initialValue);
+                setPersistedValue(initialValue.toString());
+            }
+        } else {
+            setValue(initialValue ?? "");
+        }
     }, [initialValue]);
 
-    useEffect(() => {
-        persistAs &&
-            persistedValue !== GLOBAL.filler &&
-            onChange(persistedValue);
-    }, [persistAs, persistedValue]);
-
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const stringValue = e.target.value;
-        const value = type === "number" ? Number(stringValue) : stringValue;
+        const newValue = e.target.value;
+        setValue(newValue);
+        onChange(newValue);
         if (persistAs) {
-            setPersistedValue(stringValue);
-        } else {
-            onChange(value);
+            setPersistedValue(newValue);
         }
     };
 
@@ -201,7 +203,7 @@ const Input = ({
                     max={max}
                     step={step}
                     placeholder={placeholder}
-                    value={initialValue}
+                    value={value}
                     disabled={disabled}
                     onChange={handleChange}
                 />

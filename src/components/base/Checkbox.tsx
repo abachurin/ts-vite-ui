@@ -8,6 +8,7 @@ import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 // Emotion styles
 const makeEmotion = (
     width: string,
+    fontSize: number,
     color1: string,
     color2: string,
     color3: string,
@@ -24,6 +25,7 @@ const makeEmotion = (
     padding: ${GLOBAL.padding};
     border-radius: ${GLOBAL.borderRadius};
     box-shadow: ${GLOBAL.littleShadow};
+    font-size: ${fontSize}rem;
     &:hover {
         font-weight: 500;
         box-shadow: ${GLOBAL.middleShadow};
@@ -71,6 +73,7 @@ const makeControl = (controlSize: number, controlColor: string) => css`
  * @param color2 - or just don't provide any, and the background will be inherited
  * @param color3
  * @param textColor - color of the label
+ * @param fontSize - font size of label, in rem
  * @param checked - initial state of "checked"
  * @param label - label
  * @param onChange - function that gets called when the checkbox is toggled
@@ -83,6 +86,7 @@ type CheckboxProps = {
     color2?: string;
     color3?: string;
     textColor?: string;
+    fontSize?: number;
     checked?: boolean;
     label?: string;
     onChange: (checked: boolean) => void;
@@ -95,6 +99,7 @@ const Checkbox = ({
     color2 = "inherit",
     color3 = "inherit",
     textColor = "inherit",
+    fontSize = 1,
     checked = false,
     label = "",
     onChange,
@@ -113,7 +118,14 @@ const Checkbox = ({
         onChange(checked);
     };
 
-    const emotion = makeEmotion(width, color1, color2, color3, textColor);
+    const emotion = makeEmotion(
+        width,
+        fontSize,
+        color1,
+        color2,
+        color3,
+        textColor
+    );
     const control = makeControl(controlSize, controlColor);
 
     const id = uniqueId("checkbox");

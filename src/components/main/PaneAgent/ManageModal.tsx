@@ -55,6 +55,9 @@ const emotion = css`
         flex-direction: column;
         gap: ${GLOBAL.padding};
     }
+    & > aside {
+        font-size: 0.85rem;
+    }
 `;
 
 // Helper functions
@@ -92,9 +95,11 @@ const ManageModal = () => {
     const user = useUser();
 
     const [kind, setKind] = useState<ItemType>("Agents");
-    const [item, setItem] = useState("");
     const [scope, setScope] = useState<ItemListRequestType>("all");
     const [options, setOptions] = useState<AgentDict | GameDict>({});
+    const [item, setItem] = useState("");
+    const [keys, setKeys] = useState<string[]>([]);
+
     const [message, createMessage] = useAlertMessage("");
 
     const chartComp =
@@ -132,10 +137,20 @@ const ManageModal = () => {
             createMessage(message, "error");
             return;
         }
+        const newKeys = Object.keys(list).sort((a, b) => {
+            const A = list[a];
+            const B = list[b];
+            if ("bestScore" in A && "bestScore" in B)
+                return B.bestScore - A.bestScore;
+            if ("score" in A && "score" in B) return B.score - A.score;
+            return 0;
+        });
+
         newKindLabel && setKind(newKind);
         checked && setScope(newScope);
         setOptions(list);
-        setItem(Object.keys(list)[0] ?? "");
+        setKeys(newKeys);
+        setItem(newKeys[0]);
     };
 
     const deleteItem = async () => {
@@ -147,8 +162,10 @@ const ManageModal = () => {
         if (error) createMessage(error, "error");
         else {
             const { [item]: _, ...newOptions } = options;
+            const newKeys = keys.filter((a) => a !== item);
             setOptions(newOptions);
-            setItem("");
+            setKeys(newKeys);
+            setItem(newKeys[0]);
             createMessage(`${item} deleted from ${kind}`, "success");
         }
     };
@@ -216,12 +233,11 @@ const ManageModal = () => {
                         labelColor1={palette.two}
                         labelColor2={palette.one}
                         controlColor={palette.three}
-                        optionValues={Object.keys(options)}
+                        optionValues={keys}
                         initialValue={item}
-                        persistAs='manage-value'
                         onChange={setItem}
                     />
-                    {kind && Object.keys(options).length > 0 && (
+                    {kind && keys.length > 0 && (
                         <main>
                             <DescriptionTable
                                 background={backgroundColor}
@@ -233,6 +249,9 @@ const ManageModal = () => {
                             {chart}
                         </main>
                     )}
+                    <aside>
+                        * Items are sorted by Score in descending order
+                    </aside>
                 </div>
             </ModalBody>
             <ModalFooter>
@@ -241,10 +260,7 @@ const ManageModal = () => {
                         background={palette.error}
                         color={palette.background}
                         type='clickPress'
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setConfirmDelete(true);
-                        }}
+                        onClick={() => setConfirmDelete(true)}
                         disabled={
                             item === "" ||
                             item === GLOBAL.filler ||

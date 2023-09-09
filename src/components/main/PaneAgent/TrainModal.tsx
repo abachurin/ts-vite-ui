@@ -12,10 +12,12 @@ import { AgentDict, AgentTraining } from "../../../types";
 import {
     GLOBAL,
     defaultTrainingParams,
+    undefinedTrainingParams,
     simulateCloseModalClick,
     validateTrainingParams,
     alphaSymbol,
     namingRule,
+    inputToNumber,
 } from "../../../utils";
 import Button from "../../base/Button/Button";
 import Dropdown from "../../base/Dropdown";
@@ -72,15 +74,19 @@ const TrainModal = () => {
         createMessage(message, "error");
         setAgents(list as AgentDict);
     };
-    useEffect(() => {
-        getUserAgents();
-    }, [userName]);
     const agentList = Object.keys(agents);
 
-    const [values, setValues] = useState<AgentTraining>(defaultTrainingParams);
+    const [values, setValues] = useState<AgentTraining>(
+        undefinedTrainingParams
+    );
     const updateValues = useCallback((update: Partial<AgentTraining>) => {
         setValues((prevValues) => ({ ...prevValues, ...update }));
     }, []);
+
+    useEffect(() => {
+        getUserAgents();
+        setValues(undefinedTrainingParams);
+    }, [userName]);
 
     const setExistingValues = () => {
         if (!values.isNew && values.name) {
@@ -96,6 +102,13 @@ const TrainModal = () => {
         labelColor1: palette.two,
         labelColor2: palette.one,
         controlColor: palette.three,
+    };
+
+    const flipNewExisting = (value: string) => {
+        if (value == "Existing") getUserAgents();
+        updateValues({
+            isNew: value == "New" ? true : false,
+        });
     };
 
     const handleTrain = async () => {
@@ -174,37 +187,25 @@ const TrainModal = () => {
                         label={"Train new / keep training existing Agent"}
                         options={["New", "Existing"]}
                         initialValue={values.isNew ? "New" : "Existing"}
-                        onChange={(value: string) => {
-                            if (value == "Existing") {
-                                getUserAgents();
-                            }
-                            updateValues({
-                                isNew: value == "New" ? true : false,
-                            });
-                        }}
+                        onChange={flipNewExisting}
                     />
                     {values.isNew ? (
                         <Input
                             {...inputParameters}
                             type='text'
                             label='New Agent Name'
-                            persistAs='train-new-name'
-                            initialValue={values.name ?? ""}
+                            persistAs={`${userName}_train-new`}
+                            initialValue={values.name}
                             placeholder={namingRule}
-                            onChange={(value) =>
-                                updateValues({ name: String(value) })
-                            }
+                            onChange={(value) => updateValues({ name: value })}
                         />
                     ) : (
                         <Dropdown
                             {...inputParameters}
                             label='Existing Agent Name'
                             optionValues={agentList}
-                            persistAs='train-existing-name'
-                            initialValue={values.name}
-                            onChange={(value) =>
-                                updateValues({ name: String(value) })
-                            }
+                            persistAs={`${userName}_train-existing`}
+                            onChange={(value) => updateValues({ name: value })}
                             zIndex={30}
                         />
                     )}
@@ -213,13 +214,13 @@ const TrainModal = () => {
                             {...inputParameters}
                             label='Signature N'
                             optionValues={optionsForN}
-                            initialValue={values.N}
-                            persistAs='train-N'
+                            persistAs={`${userName}_train-N`}
                             disabled={!values.isNew}
+                            initialValue={values.N}
                             alignOptions='right'
                             onChange={(value) =>
                                 updateValues({
-                                    N: Number(value),
+                                    N: inputToNumber(value),
                                 })
                             }
                             zIndex={20}
@@ -228,16 +229,16 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label={alphaLabel}
-                            initialValue={values.alpha || undefined}
-                            persistAs='train-alpha'
+                            persistAs={`${userName}_train-alpha`}
                             min={values.isNew ? 0.1 : 0}
                             max={0.25}
                             step={0.01}
+                            initialValue={values.alpha}
                             placeholder={"0.10 <= " + alphaSymbol + " <= 0.25"}
                             disabled={!values.isNew}
                             onChange={(value) =>
                                 updateValues({
-                                    alpha: Number(value),
+                                    alpha: inputToNumber(value),
                                 })
                             }
                         />
@@ -247,30 +248,30 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label={alphaSymbol + " decay rate"}
-                            initialValue={values.decay || undefined}
-                            persistAs='train-decay'
+                            persistAs={`${userName}_train-decay`}
                             min={0.5}
                             max={1.0}
                             step={0.01}
+                            initialValue={values.decay}
                             placeholder='1 = no decay'
                             disabled={!values.isNew}
-                            onChange={(value) =>
-                                updateValues({ decay: Number(value) })
-                            }
+                            onChange={(value) => {
+                                updateValues({ decay: inputToNumber(value) });
+                            }}
                         />
                         <Input
                             {...inputParameters}
                             type='number'
                             label='Decay step, in episodes'
-                            initialValue={values.step || undefined}
-                            persistAs='train-step'
+                            persistAs={`${userName}_train-step`}
                             min={1000}
                             max={10000}
                             step={1000}
+                            initialValue={values.step}
                             placeholder='1000 <= x <= 10000'
                             disabled={!values.isNew}
                             onChange={(value) =>
-                                updateValues({ step: Number(value) })
+                                updateValues({ step: inputToNumber(value) })
                             }
                         />
                     </section>
@@ -279,29 +280,29 @@ const TrainModal = () => {
                             {...inputParameters}
                             type='number'
                             label={"Minimal " + alphaSymbol}
-                            initialValue={values.minAlpha || undefined}
-                            persistAs='train-minAlpha'
+                            persistAs={`${userName}_train-minAlpha`}
                             min={0}
                             max={0.05}
                             step={0.001}
+                            initialValue={values.minAlpha}
                             placeholder={"min " + alphaSymbol + " <= 0.05"}
                             disabled={!values.isNew}
                             onChange={(value) =>
-                                updateValues({ minAlpha: Number(value) })
+                                updateValues({ minAlpha: inputToNumber(value) })
                             }
                         />
                         <Input
                             {...inputParameters}
                             type='number'
                             label='Train episodes'
-                            initialValue={values.episodes || undefined}
-                            persistAs='train-episodes'
+                            persistAs={`${userName}_train-episodes`}
                             min={values.isNew ? 0 : 5000}
                             max={100000}
                             step={5000}
-                            placeholder='Just create Agent'
+                            initialValue={values.episodes}
+                            placeholder='Only create Agent'
                             onChange={(value) =>
-                                updateValues({ episodes: Number(value) })
+                                updateValues({ episodes: inputToNumber(value) })
                             }
                         />
                     </section>

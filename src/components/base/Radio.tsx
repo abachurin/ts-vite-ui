@@ -203,12 +203,12 @@ const Radio = ({
     );
 
     return (
-        <form css={emotion}>
+        <div css={emotion}>
             <header>
                 <div>{label}</div>
             </header>
             <main>{options.map(renderOption)}</main>
-        </form>
+        </div>
     );
 };
 

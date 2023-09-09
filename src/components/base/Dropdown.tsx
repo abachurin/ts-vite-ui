@@ -2,13 +2,12 @@ import { css } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { uniqueId } from "lodash-es";
 import {
-    useUser,
+    useUserName,
     useSoundVolume,
 } from "../../contexts/UserProvider/UserContext";
-import usePersistence from "../../hooks/usePersistence";
 import { useClickAwayListener } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
-import { GLOBAL, SvgPaths, makeSound } from "../../utils";
+import { GLOBAL, SvgPaths, makeSound, createPersistence } from "../../utils";
 import Icon from "./Icon/Icon";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
@@ -135,7 +134,7 @@ type DropdownProps = {
     alignOptions?: Alignment;
     alwaysOpen?: boolean;
     disabled?: boolean;
-    persistAs?: string | undefined;
+    persistAs?: string;
     zIndex?: number | "auto";
     onChange: (value: string) => void;
 };
@@ -151,40 +150,58 @@ const Dropdown = ({
     color = "inherit",
     label = "Select:",
     optionValues = [],
-    initialValue = undefined,
+    initialValue,
     alignOptions = "left",
     alwaysOpen = false,
     disabled = false,
-    persistAs,
+    persistAs = "",
     zIndex = "auto",
     onChange,
 }: DropdownProps) => {
-    const user = useUser();
-    const userName = user.name;
     const volume = useSoundVolume();
 
     const disabledTrue = disabled || optionValues.length === 0;
     const [optionsOpen, setOptionsOpen] = useState(alwaysOpen);
     const ref = useClickAwayListener(() => setOptionsOpen(false));
 
-    const [persistedValue, setPersistedValue] = usePersistence(
-        userName,
-        persistAs,
-        optionValues
-    );
+    const { setPersistedValue, getPersistedValue } =
+        createPersistence(persistAs);
+
+    const startValue =
+        initialValue === undefined
+            ? optionValues[0]
+            : optionValues.includes(initialValue.toString())
+            ? initialValue.toString()
+            : optionValues[0];
+
+    const [value, setValue] = useState(startValue);
+
     useEffect(() => {
-        persistAs &&
-            persistedValue !== GLOBAL.filler &&
-            onChange(persistedValue ?? "");
-    }, [persistedValue]);
+        if (persistAs) {
+            const storedValue = getPersistedValue();
+            if (
+                initialValue === undefined &&
+                optionValues.includes(storedValue)
+            ) {
+                setValue(storedValue);
+                onChange(storedValue);
+            } else {
+                setValue(startValue);
+                onChange(startValue);
+                setPersistedValue(startValue);
+            }
+        } else {
+            setValue(startValue);
+        }
+    }, [initialValue]);
 
     const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
-        const currentValue = e.currentTarget.innerText;
+        const newValue = e.currentTarget.innerText;
         makeSound(clickSound, volume);
+        setValue(newValue);
+        onChange(newValue);
         if (persistAs) {
-            setPersistedValue(currentValue);
-        } else {
-            onChange(currentValue);
+            setPersistedValue(newValue);
         }
         if (!alwaysOpen) setOptionsOpen(false);
     };
@@ -253,7 +270,7 @@ const Dropdown = ({
                         if (!alwaysOpen) setOptionsOpen((prev) => !prev);
                     }}
                 >
-                    <div>{initialValue}</div>
+                    <div>{value}</div>
                     <aside>
                         <Icon
                             svg={
@@ -271,9 +288,7 @@ const Dropdown = ({
                 {optionValues.map((v) => (
                     <section
                         key={uniqueId()}
-                        css={
-                            v == initialValue ? chosenOptionStyle : optionStyle
-                        }
+                        css={v == value ? chosenOptionStyle : optionStyle}
                         onClick={handleOption}
                     >
                         {v}
