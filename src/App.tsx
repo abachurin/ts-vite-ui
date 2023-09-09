@@ -2,9 +2,9 @@ import { css } from "@emotion/react";
 import UserProvider from "./contexts/UserProvider/UserProvider";
 import { GLOBAL } from "./utils";
 import StarField from "./components/background/StarField";
-import Header from "./components/Header/Header";
+import Header from "./components/header/Header";
 import Main from "./components/main/Main";
-import Footer from "./components/Footer/Footer";
+import Footer from "./components/footer/Footer";
 
 // import StarFieldCanvas from "./components/background/starFieldCanvas";
 
