@@ -144,7 +144,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                 children: "Settings",
             }}
             modal={{
-                width: "24em",
+                width: "28rem",
                 backgroundColor: palette.background,
                 color: palette.text,
             }}

@@ -38,7 +38,7 @@ const ReplayModal = () => {
     const restartGame = useGameStore((state) => state.restartGame);
     const setPaused = useGameStore((state) => state.setPaused);
 
-    const [item, setItem] = useState("My current game");
+    const [item, setItem] = useState("Current game");
     const [options, setOptions] = useState<GameDict>({});
     const choiceOptions = ["Current game", ...Object.keys(options)];
 
@@ -61,6 +61,7 @@ const ReplayModal = () => {
             const { game, status } = await getFullGame(item);
             if (status) {
                 createMsg(status, "error");
+                setLoading(false);
                 return;
             }
             assignGame(game as GameBackend);
@@ -105,6 +106,7 @@ const ReplayModal = () => {
                     background={palette.three}
                     color={palette.background}
                     type='clickPress'
+                    disabled={loading}
                     onClick={replay}
                 >
                     Replay

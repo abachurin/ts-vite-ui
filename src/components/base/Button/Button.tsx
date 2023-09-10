@@ -118,6 +118,7 @@ const makeLegend = (align: Alignment, legend: string) => css`
  * @param disabled - whether the button is disabled
  * @param level - minimum user level required to enable the button
  * @param toggleModal - whether the button should open or close a parent context modal
+ * @param mute - whether the sound should be muted, e.g. when you need to play different sound separately
  * @param onClick - function to call when the button is clicked
  * @param children - child components to render as button innerHTML
  */
@@ -134,6 +135,7 @@ export type ButtonProps = ChildrenProps & {
     disabled?: boolean;
     level?: number;
     toggleModal?: ModalState;
+    mute?: boolean;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 const Button = ({
@@ -149,6 +151,7 @@ const Button = ({
     disabled = false,
     level = 0,
     toggleModal = "none",
+    mute = false,
     onClick,
     children,
 }: ButtonProps) => {
@@ -190,7 +193,7 @@ const Button = ({
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
         if (toggleModal !== "none") changeIsOpen(toggleModal);
-        flash(e.currentTarget, volume, animate);
+        flash(e.currentTarget, mute ? 0 : volume, animate);
         onClick && onClick(e);
     };
 

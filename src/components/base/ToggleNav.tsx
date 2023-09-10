@@ -1,12 +1,12 @@
 import { css } from "@emotion/react";
 import React, {
-    useRef,
     cloneElement,
     ReactNode,
     ReactElement,
     useMemo,
     useState,
     useCallback,
+    useEffect,
 } from "react";
 import { RGB, RGBA, ChildrenProps, Alignment } from "../../types";
 import { GLOBAL, SvgPaths, removeTransparency } from "../../utils";
@@ -37,7 +37,7 @@ const makeHidden = (
     box-shadow: 0 0 0.5em 0.2em rgba(255, 255, 255, 0.2);
     transform: scale(${visibility ? 1 : 0});
     opacity: ${visibility ? 1 : 0};
-    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    transition: opacity 0.3s ease-in-out, transform 0.5s ease-in-out;
     ${align === "right"
         ? `right: calc(2 * ${GLOBAL.padding})`
         : `left: calc(2 * ${GLOBAL.padding})`};
@@ -64,8 +64,16 @@ const ToggleNav = ({
     backgroundColor = "rgba(255, 255, 255, 1)",
     children,
 }: ToggleNavProps) => {
-    const ref = useRef<HTMLDivElement>(null);
     const [visibility, setVisibility] = useState(false);
+
+    const closeNav = () => setVisibility(false);
+
+    useEffect(() => {
+        document.addEventListener("mousedown", closeNav);
+        return () => {
+            document.removeEventListener("mousedown", closeNav);
+        };
+    }, []);
 
     const toggleVisibility = () =>
         setVisibility((prevVisibility) => !prevVisibility);
@@ -98,9 +106,9 @@ const ToggleNav = ({
                     rescaleFactor={1.5}
                 />
             </Button>
-            <div ref={ref} css={hiddenNavStyle}>
+            <main css={hiddenNavStyle}>
                 {React.Children.map(children, renderChild)}
-            </div>
+            </main>
         </div>
     );
 };

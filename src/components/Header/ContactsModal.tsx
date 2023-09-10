@@ -68,7 +68,7 @@ const ContactsModal = ({ align }: AlignProps) => {
         <Modal
             button={{ align, children: "Contacts" }}
             modal={{
-                width: "24em",
+                width: "28rem",
                 backgroundColor: palette.background,
                 color: palette.text,
             }}

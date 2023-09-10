@@ -6,7 +6,10 @@ import { gameMoves } from "../../../gameLogic";
 import { fetchNewMovesTiles } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
-import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import {
+    usePalette,
+    useSoundVolume,
+} from "../../../contexts/UserProvider/UserContext";
 import useSwipeDirection from "../../../hooks/useSwipeDirection";
 import { NewMovesRequest, NewMovesResponse } from "../../../types";
 import { GLOBAL } from "../../../utils";
@@ -64,6 +67,7 @@ const getDelay = (pause: boolean, interval: number): number => {
  */
 const GameBoard = () => {
     const palette = usePalette();
+    const volume = useSoundVolume();
 
     const gameMode = useModeStore((state) => state.gameMode);
 
@@ -82,7 +86,7 @@ const GameBoard = () => {
     const { ref, swipeDirection } = useSwipeDirection();
     useEffect(() => {
         if (gameMode === "play" && swipeDirection !== -1) {
-            fullMove(swipeDirection);
+            fullMove(swipeDirection, volume);
         }
     }, [swipeDirection, gameMode]);
 

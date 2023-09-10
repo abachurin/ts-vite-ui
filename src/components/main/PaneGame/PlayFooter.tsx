@@ -2,7 +2,10 @@ import { css } from "@emotion/react";
 import { useEffect, useState } from "react";
 import useModeStore from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
-import { usePalette } from "../../../contexts/UserProvider/UserContext";
+import {
+    usePalette,
+    useSoundVolume,
+} from "../../../contexts/UserProvider/UserContext";
 import { ButtonVariants } from "../../../types";
 import { GLOBAL, changeBrightness } from "../../../utils";
 import Button from "../../base/Button/Button";
@@ -51,11 +54,12 @@ const useArrowKey = (): number => {
     const [arrowKey, setArrowKey] = useState(-1);
 
     useEffect(() => {
-        function handleKeyDown(event: KeyboardEvent) {
+        function handleKeyDown(e: KeyboardEvent) {
+            e.preventDefault();
             const modalIsOpen =
                 document.getElementById("modal")?.innerHTML !== "";
             if (modalIsOpen) return;
-            const { key } = event;
+            const { key } = e;
             const move = keyToMove[key] ?? -1;
             setArrowKey(move);
             setTimeout(() => {
@@ -76,6 +80,8 @@ const useArrowKey = (): number => {
  */
 const PlayFooter = () => {
     const palette = usePalette();
+    const volume = useSoundVolume();
+
     const arrowKey = useArrowKey();
 
     const setGameMode = useModeStore((state) => state.setGameMode);
@@ -85,16 +91,18 @@ const PlayFooter = () => {
 
     useEffect(() => {
         if (arrowKey >= 0) {
-            fullMove(arrowKey);
+            fullMove(arrowKey, volume);
         }
-    }, [arrowKey, fullMove]);
+    }, [arrowKey]);
 
     const arrowProps = {
         type: "clickPress" as ButtonVariants,
         fontSize: "2rem",
         width: "7rem",
         height: "3rem",
+        mute: true,
     };
+
     const colorUp = changeBrightness(palette.header, palette.headerOpacity);
     const colorFooter = `linear-gradient(135deg, ${palette.one}, ${palette.three}, ${palette.two})`;
 
@@ -104,7 +112,7 @@ const PlayFooter = () => {
                 <Button
                     {...arrowProps}
                     background={palette.one}
-                    onClick={() => fullMove(0)}
+                    onClick={() => fullMove(0, volume)}
                 >
                     &larr;
                 </Button>
@@ -112,14 +120,14 @@ const PlayFooter = () => {
                     <Button
                         {...arrowProps}
                         background={colorUp}
-                        onClick={() => fullMove(1)}
+                        onClick={() => fullMove(1, volume)}
                     >
                         &uarr;
                     </Button>
                     <Button
                         {...arrowProps}
                         background={palette.three}
-                        onClick={() => fullMove(3)}
+                        onClick={() => fullMove(3, volume)}
                     >
                         &darr;
                     </Button>
@@ -127,7 +135,7 @@ const PlayFooter = () => {
                 <Button
                     {...arrowProps}
                     background={palette.two}
-                    onClick={() => fullMove(2)}
+                    onClick={() => fullMove(2, volume)}
                 >
                     &rarr;
                 </Button>
@@ -138,7 +146,6 @@ const PlayFooter = () => {
                         type='clickPress'
                         background={colorFooter}
                         fontSize='1rem'
-                        width='100%'
                         onClick={() => newGame()}
                     >
                         NEW GAME

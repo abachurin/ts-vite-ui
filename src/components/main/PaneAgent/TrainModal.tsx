@@ -324,16 +324,17 @@ const TrainModal = () => {
                     >
                         GO!
                     </Button>
-                    <Button
-                        type='clickPress'
-                        width='8rem'
-                        background={palette.two}
-                        color={palette.background}
-                        onClick={() => setValues(defaultTrainingParams)}
-                        disabled={!values.isNew}
-                    >
-                        Reset Defaults
-                    </Button>
+                    {values.isNew ? (
+                        <Button
+                            type='clickPress'
+                            width='8rem'
+                            background={palette.two}
+                            color={palette.background}
+                            onClick={() => setValues(defaultTrainingParams)}
+                        >
+                            Reset Defaults
+                        </Button>
+                    ) : null}
                 </div>
             </ModalFooter>
             {message ? <ModalFooter>{message}</ModalFooter> : null}

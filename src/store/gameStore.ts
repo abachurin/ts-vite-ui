@@ -1,7 +1,8 @@
 import { create } from "zustand";
 import GameLogic from "../gameLogic";
 import { Game, GameTile, GameBackend } from "../types";
-import { deepCopy } from "../utils";
+import { deepCopy, makeSound } from "../utils";
+import clickSound from "../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 const minInterval = 10;
 const maxInterval = 5000;
@@ -27,12 +28,15 @@ const appendHistory = (
     return newGame;
 };
 
-const fullMove = (game: Game, move?: number): Game | null => {
+const fullMove = (game: Game, move?: number, volume?: number): Game | null => {
     const _move = move ?? game.nextMove;
     if (_move === undefined || _move === -1) return null;
     const tile = game.tiles[game.pointer.tile];
     const [afterMove, change] = GameLogic.makeMove(game, _move);
-    if (change) return GameLogic.newTile(afterMove, tile);
+    if (change) {
+        if (volume) makeSound(clickSound, volume);
+        return GameLogic.newTile(afterMove, tile);
+    }
     return null;
 };
 
@@ -48,7 +52,7 @@ interface GameStore {
     setWatchUser: (newWatchUser: string) => void;
     setWatchingNow: (watching: boolean) => void;
     setLoadingWeights: (loading: boolean) => void;
-    fullMove: (move?: number) => void;
+    fullMove: (move?: number, volume?: number) => void;
     cutHistory: () => void;
     appendHistory: (newMoves: number[], newTiles: GameTile[]) => void;
     newGame: () => number[][];
@@ -79,8 +83,8 @@ const useGameStore = create<GameStore>()((set, get) => ({
         set(() => ({ loadingWeights: loading }));
     },
 
-    fullMove: (move?: number) => {
-        const newGame = fullMove(get().game, move);
+    fullMove: (move?: number, volume?: number) => {
+        const newGame = fullMove(get().game, move, volume);
         newGame && set(() => ({ game: newGame }));
     },
 
