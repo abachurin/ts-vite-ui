@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { useState, useMemo, useEffect } from "react";
 import { connectAPI, getItems } from "../../../api/requests";
 import {
-    useUser,
+    useUserName,
     usePalette,
 } from "../../../contexts/UserProvider/UserContext";
 import useAlert from "../../../hooks/useAlert";
@@ -89,7 +89,7 @@ const descriptionLabels: Record<ItemType | "", Record<string, string>> = {
  */
 const ManageModal = () => {
     const palette = usePalette();
-    const user = useUser();
+    const userName = useUserName();
 
     const [kind, setKind] = useState<ItemType>("Agents");
     const [scope, setScope] = useState<ItemListRequestType>("all");
@@ -116,7 +116,7 @@ const ManageModal = () => {
         setKind("Agents");
         setItem("");
         setOptions({});
-    }, [user]);
+    }, [userName]);
 
     const [confirmDelete, setConfirmDelete] = useState(false);
 
@@ -129,7 +129,9 @@ const ManageModal = () => {
                 : "Games";
         const newScope =
             checked === undefined ? scope : checked ? "all" : "user";
-        const { list, message } = await getItems(newKind, user.name, newScope);
+        setKind(newKind);
+        setScope(newScope);
+        const { list, message } = await getItems(newKind, userName, newScope);
         if (message) {
             createMessage(message, "error");
             return;
@@ -142,9 +144,6 @@ const ManageModal = () => {
             if ("score" in A && "score" in B) return B.score - A.score;
             return 0;
         });
-
-        newKindLabel && setKind(newKind);
-        checked && setScope(newScope);
         setOptions(list);
         setKeys(newKeys);
         setItem(newKeys[0]);
@@ -217,8 +216,9 @@ const ManageModal = () => {
                             color2={palette.background}
                             color3={brightOne}
                             controlColor={palette.three}
-                            label='All Users'
+                            label={scope === "all" ? "All Users" : "My Items"}
                             checked={scope === "all"}
+                            disabled={userName === "Login"}
                             onChange={(checked) =>
                                 handleChange(undefined, checked)
                             }
@@ -261,7 +261,7 @@ const ManageModal = () => {
                         disabled={
                             item === "" ||
                             item === GLOBAL.filler ||
-                            owner !== user.name
+                            owner !== userName
                         }
                         onClick={() => setConfirmDelete(true)}
                     >

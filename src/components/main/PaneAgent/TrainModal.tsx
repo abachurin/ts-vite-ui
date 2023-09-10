@@ -300,7 +300,11 @@ const TrainModal = () => {
                             max={100000}
                             step={5000}
                             initialValue={values.episodes}
-                            placeholder='Only create Agent'
+                            placeholder={
+                                values.isNew
+                                    ? "Only create Agent"
+                                    : "5k <= x <= 100k"
+                            }
                             onChange={(value) =>
                                 updateValues({ episodes: inputToNumber(value) })
                             }

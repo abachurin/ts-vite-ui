@@ -26,7 +26,7 @@ const makeEmotion = (
     border-radius: ${GLOBAL.borderRadius};
     box-shadow: ${GLOBAL.littleShadow};
     font-size: ${fontSize}rem;
-    &:hover {
+    :hover {
         font-weight: 500;
         box-shadow: ${GLOBAL.middleShadow};
     }
@@ -62,6 +62,10 @@ const makeControl = (controlSize: number, controlColor: string) => css`
     :checked::after {
         left: ${controlSize * 0.5}rem;
     }
+    :disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 `;
 
 /**
@@ -88,6 +92,7 @@ type CheckboxProps = {
     textColor?: string;
     fontSize?: number;
     checked?: boolean;
+    disabled?: boolean;
     label?: string;
     onChange: (checked: boolean) => void;
 };
@@ -101,6 +106,7 @@ const Checkbox = ({
     textColor = "inherit",
     fontSize = 1,
     checked = false,
+    disabled = false,
     label = "",
     onChange,
 }: CheckboxProps) => {
@@ -138,6 +144,7 @@ const Checkbox = ({
                 css={control}
                 id={id}
                 checked={isChecked}
+                disabled={disabled}
                 onChange={handleOnChange}
             />
         </div>
