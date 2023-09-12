@@ -80,7 +80,7 @@ export const palettes: Palettes = {
         one: "rgb(89, 0, 179)",
         two: "rgb(128, 0, 96)",
         three: "rgb(77, 0, 77)",
-        four: "rgb(150, 150, 0)",
+        four: "rgb(102, 102, 153)",
         success: "rgb(4, 96, 64)",
         error: "rgb(0, 179, 0)",
         warning: "rgb(255, 153, 51)",

@@ -8,7 +8,7 @@ import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
-import { TelegramIcon, WhatsappIcon } from "../base/Icon/SvgIcons";
+import { TelegramIcon, WhatsappIcon, WebIcon } from "../base/Icon/SvgIcons";
 import { GLOBAL, SvgPaths } from "../../utils";
 
 // Emotion styles
@@ -19,7 +19,7 @@ const emotion = css`
     padding-block: calc(${GLOBAL.padding} * 2);
     & > section {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         padding-right: ${GLOBAL.padding};
         gap: ${GLOBAL.padding};
@@ -42,7 +42,7 @@ const ContactsModal = ({ align }: AlignProps) => {
                 onClick: () => window.open("mailto: bachurin.alex@gmail.com"),
                 background: palette.one,
                 initialSize: 24,
-                rescaleFactor: 2,
+                rescaleFactor: 1.8,
             },
             {
                 svg: WhatsappIcon,
@@ -59,6 +59,14 @@ const ContactsModal = ({ align }: AlignProps) => {
                 background: palette.three,
                 initialSize: 48,
                 rescaleFactor: 1,
+            },
+            {
+                svg: WebIcon,
+                label: "www",
+                onClick: () => window.open("https://abachurin.com"),
+                background: palette.four,
+                initialSize: 64,
+                rescaleFactor: 0.65,
             },
         ],
         [palette]
