@@ -1,7 +1,6 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
 import useModeStore from "../../store/modeStore";
-import useLogsStore from "../../store/logsStore";
 import useGameStore from "../../store/gameStore";
 import {
     useUserName,
@@ -77,8 +76,6 @@ const Login = () => {
     const setPaused = useGameStore((state) => state.setPaused);
     const setWatchingNow = useGameStore((state) => state.setWatchingNow);
 
-    const setLogs = useLogsStore((state) => state.setLogs);
-
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const [name, setName] = useState("");
@@ -88,7 +85,6 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
 
     const finalizeLogin = (newUser: User, closeAfter = true): void => {
-        setLogs([]);
         defaultMode();
         setWatchingNow(false);
         setPaused(true);

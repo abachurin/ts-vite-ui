@@ -59,11 +59,13 @@ const clearLogs = async (userName: string): Promise<void> => {
 interface LogsStore {
     logs: Logs;
     setLogs: (newLogs: Logs) => void;
-    addLogs: (newLogs: Logs) => void;
+    currentUser: string;
+    setCurrentUser: (newUserName: string) => void;
     clearLogs: (userName: string) => void;
     downloadLogs: () => void;
     lastLog: number;
     setLastLog: (newLastLog: number) => void;
+    refreshLogs: (newUserName: string) => void;
 }
 const useLogsStore = create<LogsStore>((set, get) => ({
     logs: [],
@@ -71,10 +73,12 @@ const useLogsStore = create<LogsStore>((set, get) => ({
         set(() => ({
             logs: newLogs,
         })),
-    addLogs: (newLogs: Logs) =>
-        set((state) => ({
-            logs: addNewLogs(state.logs, newLogs),
-        })),
+    currentUser: "",
+    setCurrentUser: (newUserName: string) => {
+        set(() => ({
+            currentUser: newUserName,
+        }));
+    },
     clearLogs: (userName: string) => {
         clearLogs(userName);
         set(() => ({
@@ -102,6 +106,13 @@ const useLogsStore = create<LogsStore>((set, get) => ({
             lastLog: newLastLog,
         }));
     },
+    refreshLogs: (newUserName: string) => {
+        set(() => ({
+            logs: [],
+            lastLog: -1,
+            currentUser: newUserName,
+        }));
+    },
 }));
 
 export default useLogsStore;
@@ -110,15 +121,28 @@ export const useLogs = (
     userName: string
 ): { logs: Logs; alertBackend: boolean } => {
     const logs = useLogsStore((state) => state.logs);
-    const addLogs = useLogsStore((state) => state.addLogs);
+    const setLogs = useLogsStore((state) => state.setLogs);
     const lastLog = useLogsStore((state) => state.lastLog);
     const setLastLog = useLogsStore((state) => state.setLastLog);
+    const currentUser = useLogsStore((state) => state.currentUser);
+    const setCurrentUser = useLogsStore((state) => state.setCurrentUser);
 
     const [alertBackend, setAlertBackend] = useState(false);
 
+    const isNewUser = userName != currentUser;
+    const newLastLog = isNewUser ? -1 : lastLog;
+
+    useEffect(() => {
+        if (isNewUser) {
+            setLogs([]);
+            setLastLog(-1);
+            setCurrentUser(userName);
+        }
+    }, [isNewUser]);
+
     const { data } = useQuery<LogsResponse>(
         ["Logs", userName],
-        () => fetchLogs(userName, lastLog),
+        () => fetchLogs(userName, newLastLog),
         {
             refetchInterval: 5000,
         }
@@ -129,7 +153,10 @@ export const useLogs = (
             if (data.status !== "ok") {
                 setAlertBackend(true);
             } else if (data.logs) {
-                addLogs(data.logs);
+                const newLogs = isNewUser
+                    ? data.logs
+                    : addNewLogs(logs, data.logs);
+                setLogs(newLogs);
                 setLastLog(data.lastLog);
                 setAlertBackend(false);
             }

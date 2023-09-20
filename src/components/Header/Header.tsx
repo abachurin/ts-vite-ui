@@ -47,6 +47,8 @@ const nav = css`
  * App Header component.
  */
 const Header = () => {
+    const palette = usePalette();
+
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -56,7 +58,7 @@ const Header = () => {
     const AdminLink = (
         <Button
             legend='Available only to Admin'
-            level={GLOBAL.userLevel.admin}
+            level={location.pathname === "/admin" ? 0 : GLOBAL.userLevel.admin}
             onClick={() =>
                 navigate(location.pathname === "/admin" ? "/" : "/admin")
             }
@@ -65,12 +67,10 @@ const Header = () => {
         </Button>
     );
 
-    const palette = usePalette();
     const backgroundColor = setTransparency(
         palette.header,
         palette.headerOpacity
     );
-
     const emotion = useMemo(
         () => makeEmotion(backgroundColor, palette.background),
         [palette]

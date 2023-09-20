@@ -53,3 +53,8 @@ export const useInverseAnimationSpeed = () => {
     const user = useUser();
     return GLOBAL.inverseAnimationCoefficient / user.animationSpeed;
 };
+
+export const useIsAdmin = () => {
+    const user = useUser();
+    return user.level >= 2;
+};

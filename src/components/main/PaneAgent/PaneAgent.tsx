@@ -1,4 +1,5 @@
 import useModeStore, { modeDescription } from "../../../store/modeStore";
+import { useUserName } from "../../../contexts/UserProvider/UserContext";
 import Pane from "../Pane";
 import PaneHeader from "../PaneHeader";
 import PaneBody from "../PaneBody";
@@ -14,6 +15,7 @@ import LogWindow from "./LogWindow";
 const PaneAgent = () => {
     const agentMode = useModeStore((state) => state.agentMode);
     const agentName = useModeStore((state) => state.agentName);
+    const userName = useUserName();
 
     return (
         <Pane id='agent-pane'>
@@ -27,7 +29,7 @@ const PaneAgent = () => {
             </PaneHeader>
             <PaneBody>
                 <CurrentJobDescription />
-                <LogWindow />
+                <LogWindow userName={userName} />
             </PaneBody>
         </Pane>
     );
