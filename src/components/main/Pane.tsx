@@ -19,7 +19,7 @@ const makeEmotion = (backgroundColor: string, color: string) => css`
 
 /**
  * A React component that renders a flexible pane.
- * @param id - HTML id of the pane
+ * @param id - HTML id of the pane, optional
  */
 interface PaneProps extends ChildrenProps {
     id?: string;
@@ -35,9 +35,9 @@ const Pane = ({ id, children }: PaneProps) => {
     );
 
     return (
-        <main id={id} css={emotion}>
+        <div id={id} css={emotion}>
             {children}
-        </main>
+        </div>
     );
 };
 

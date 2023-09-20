@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { uniqueId } from "lodash-es";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";
@@ -113,9 +113,6 @@ const Checkbox = ({
     const volume = useSoundVolume();
 
     const [isChecked, setIsChecked] = useState(checked);
-    useEffect(() => {
-        setIsChecked(checked);
-    }, [checked]);
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const checked = e.target.checked;

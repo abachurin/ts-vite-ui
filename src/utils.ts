@@ -74,19 +74,19 @@ export const SvgPaths = {
  * @param end - maximum
  * @param start - minimum (defaults to 0).
  */
-export function randomNum(end: number, start = 0): number {
+export const randomNum = (end: number, start = 0): number => {
     return Math.random() * (end - start) + start;
-}
+};
 
 /**
  * Scrolls smoothly to the first element matching the given CSS selector.
  * @param selector - CSS selector of the element to scroll to
  */
-export function smoothScroll(selector: string): void {
+export const smoothScroll = (selector: string) => {
     document
         .querySelector(selector)
         ?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
+};
 
 /**
  * Splits RGB/RGBA color object into an array of numbers.
@@ -104,55 +104,55 @@ const destructureColor = (color: RGB | RGBA): number[] => {
  * Convert an RGBA color to the same hue RGB color, but not transparent.
  * @param color - RGBA color in the format "rgba(r, g, b, a)"
  */
-export function removeTransparency(color: RGB | RGBA): RGB {
+export const removeTransparency = (color: RGB | RGBA): RGB => {
     const numbers = destructureColor(color);
     const opacity = numbers[3] ?? 1;
     return `rgb(${numbers[0] * opacity}, ${numbers[1] * opacity}, ${
         numbers[2] * opacity
     })`;
-}
+};
 
 /**
  * Returns an RGBA color string with the given opacity.
  * @param color - RGB/RGBA color to adjust transparency for
  * @param opacity - transparency value between 0 and 1
  */
-export function setTransparency(color: RGB | RGBA, opacity: number): RGBA {
+export const setTransparency = (color: RGB | RGBA, opacity: number): RGBA => {
     const numbers = destructureColor(color);
     return `rgba(${numbers[0]}, ${numbers[1]}, ${numbers[2]}, ${
         opacity > 1 ? 1 : opacity < 0 ? 0 : opacity
     })`;
-}
+};
 
 /**
  * Returns an RGB color string with the given opacity.
  * @param color - RGB color to adjust opacity
  * @param opacity - opacity value between 0 and 1.
  */
-export function changeBrightness(color: RGB, ratio: number): RGB {
+export const changeBrightness = (color: RGB, ratio: number): RGB => {
     const numbers = destructureColor(color).map((v) =>
         Math.min(v * ratio, 255)
     );
     return `rgb(${numbers[0]}, ${numbers[1]}, ${numbers[2]})`;
-}
+};
 
 /**
  * Creates and plays a new Audio object with the specified sound and volume.
  * @param sound - URL, file path or already imported sound object
  * @param volume - volume level of the sound between 0 and 1.
  */
-export function makeSound(sound: string, volume: number): void {
+export const makeSound = (sound: string, volume: number) => {
     const audio = new Audio(sound);
     audio.volume = volume;
     volume && audio.play();
-}
+};
 
 /**
  * Checks if the given string has only letters, numbers, dashes and underscores,
  * not empty and not longer than GLOBAL.maxNameLength.
  * @param text - text to check
  */
-export function checkRe(text: string | undefined): boolean {
+export const checkRe = (text: string | undefined): boolean => {
     const re = /^[0-9A-Za-z-_]+$/;
     return (
         text !== undefined &&
@@ -160,25 +160,25 @@ export function checkRe(text: string | undefined): boolean {
         text.length <= GLOBAL.maxNameLength &&
         text.length > 0
     );
-}
+};
 
 /**
  * Performs a deep copy of the given object by first serializing it to JSON and then
  * deserializing it back into a new object.
  * @param obj - object to copy
  */
-export function deepCopy<T>(obj: T): T {
+export const deepCopy = <T>(obj: T): T => {
     return JSON.parse(JSON.stringify(obj));
-}
+};
 
 /**
  * Checks if two Objects are deeply equal.
  * @param a - first object
  * @param b - second object
  */
-export function deepEqual<T>(a: T, b: T): boolean {
+export const deepEqual = <T>(a: T, b: T): boolean => {
     return JSON.stringify(a) === JSON.stringify(b);
-}
+};
 
 /**
  * Converts a string input to a number or undefined (empty string "" is considered undefined).
@@ -193,14 +193,14 @@ export const inputToNumber = (value: string): number | undefined => {
  * Checks if an object has at least one property with a value of undefined.
  * @param obj - object
  */
-export function hasUndefinedValues(obj: Record<string, unknown>): boolean {
+export const hasUndefinedValues = (obj: Record<string, unknown>): boolean => {
     return Object.values(obj).some(
         (value) =>
             value === undefined ||
             value === null ||
             Number.isNaN(value || value === GLOBAL.filler)
     );
-}
+};
 
 /**
  *  default Job params and the functions to validate them

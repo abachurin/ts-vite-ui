@@ -257,7 +257,6 @@ const ManageModal = () => {
                         background={palette.error}
                         color={palette.background}
                         type='clickPress'
-                        legend='You can only delete your own items'
                         disabled={
                             item === "" ||
                             item === GLOBAL.filler ||

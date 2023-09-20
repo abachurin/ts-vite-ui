@@ -4,6 +4,7 @@ import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL } from "../../utils";
 import PaneAgent from "./PaneAgent/PaneAgent";
 import PaneGame from "./PaneGame/PaneGame";
+import Footer from "../Footer/Footer";
 
 // Emotion styles
 
@@ -24,10 +25,13 @@ const Main = () => {
     );
 
     return (
-        <main css={emotion}>
-            <PaneAgent />
-            <PaneGame />
-        </main>
+        <>
+            <main css={emotion}>
+                <PaneAgent />
+                <PaneGame />
+            </main>
+            <Footer />
+        </>
     );
 };
 

@@ -1,10 +1,11 @@
 import { css } from "@emotion/react";
+import { Route, Routes } from "react-router-dom";
 import UserProvider from "./contexts/UserProvider/UserProvider";
 import { GLOBAL } from "./utils";
 import StarField from "./components/background/StarField";
 import Header from "./components/Header/Header";
 import Main from "./components/main/Main";
-import Footer from "./components/Footer/Footer";
+import AdminPage from "./adminPage/AdminPage";
 
 // Emotion styles
 const emotion = css`
@@ -28,8 +29,11 @@ function App() {
                 <StarField />
                 <main css={emotion}>
                     <Header />
-                    <Main />
-                    <Footer />
+                    <Routes>
+                        <Route path='/' element={<Main />} />
+                        <Route path='/admin' element={<AdminPage />} />
+                        <Route path='*' element={<Main />} />
+                    </Routes>
                 </main>
             </UserProvider>
         </>

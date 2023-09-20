@@ -62,7 +62,7 @@ const makeContainer = (isOpen: boolean, animate: boolean) => css`
     right: 0;
     bottom: 0;
     transform: scale(0);
-    background: rgba(255, 255, 255, 0.01);
+    background: rgba(255, 255, 255, 0.1);
     z-index: 100;
     transform: ${isOpen
         ? animate

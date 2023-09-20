@@ -24,7 +24,11 @@ const Logo = () => {
     const emotion = useMemo(() => makeEmotion(palette.logo), [palette.logo]);
 
     return (
-        <Button align='left' onClick={() => smoothScroll("#agent-pane")}>
+        <Button
+            align='left'
+            mute={true}
+            onClick={() => smoothScroll("#agent-pane")}
+        >
             <div css={emotion}>
                 <Icon svg={SvgPaths.robot} />
                 RL 2048

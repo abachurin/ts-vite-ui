@@ -64,6 +64,7 @@ const makeLegend = (align: Alignment, legend: string) => css`
     ${!window.matchMedia("(hover: none)").matches && legend
         ? `
             &::before {
+                content: attr(data-legend);
                 position: absolute;
                 width: max-content;
                 max-width: 10em;
@@ -74,13 +75,12 @@ const makeLegend = (align: Alignment, legend: string) => css`
                 padding: ${GLOBAL.padding};
                 border-radius: ${GLOBAL.borderRadius};
                 box-shadow: ${GLOBAL.insetShadow("black", 0.1)};
-                content: attr(data-legend);
                 white-space: wrap;
                 text-align: left;
                 transform: scale(0);
                 transition: transform 0.25s 1s;
             }
-            :disabled:hover::before {
+            &:disabled:hover::before {
                 transform: scale(1);
             }
             ${

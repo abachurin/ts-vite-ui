@@ -42,7 +42,7 @@ const makeEmotion = (
         background-clip: text;
         text-fill-color: transparent;
     }
-    & > main {
+    & > ul {
         display: flex;
         gap: ${GLOBAL.padding};
         justify-content: space-evenly;
@@ -148,9 +148,6 @@ const Radio = ({
     const volume = useSoundVolume();
     const startValue = initialValue ?? options[0];
     const [currentValue, setCurrentValue] = useState(startValue);
-    useEffect(() => {
-        setCurrentValue(startValue);
-    }, [startValue]);
 
     const handleChoice = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -185,7 +182,7 @@ const Radio = ({
             const id = uniqueId("radio");
             const key = uniqueId("option");
             return (
-                <div css={control} key={key}>
+                <li css={control} key={key}>
                     <input
                         type='radio'
                         id={id}
@@ -196,7 +193,7 @@ const Radio = ({
                     />
                     <aside></aside>
                     <label htmlFor={id}>{option}</label>
-                </div>
+                </li>
             );
         },
         [control, currentValue, handleChoice]
@@ -207,7 +204,7 @@ const Radio = ({
             <header>
                 <div>{label}</div>
             </header>
-            <main>{options.map(renderOption)}</main>
+            <ul>{options.map(renderOption)}</ul>
         </div>
     );
 };

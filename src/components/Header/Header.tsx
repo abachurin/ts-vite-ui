@@ -1,5 +1,6 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import useDimensions from "../../hooks/useDimensions";
 import { GLOBAL, setTransparency } from "../../utils";
@@ -9,9 +10,9 @@ import SoundSwitch from "./SoundSwitch";
 import AnimationSwitch from "./AnimationSwitch";
 import ContactsModal from "./ContactsModal";
 import HelpModal from "./HelpModal";
-import AdminModal from "./AdminModal";
 import SettingsModal from "./SettingsModal";
 import Login from "./Login";
+import Button from "../base/Button/Button";
 
 // Emotion styles
 const makeEmotion = (backgroundColor: string, color: string) => css`
@@ -46,8 +47,23 @@ const nav = css`
  * App Header component.
  */
 const Header = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const { width } = useDimensions();
     const hiddenNavigation = width < GLOBAL.navBreakpoint;
+
+    const AdminLink = (
+        <Button
+            legend='Available only to Admin'
+            level={GLOBAL.userLevel.admin}
+            onClick={() =>
+                navigate(location.pathname === "/admin" ? "/" : "/admin")
+            }
+        >
+            {location.pathname === "/admin" ? "Main" : "Admin"}
+        </Button>
+    );
 
     const palette = usePalette();
     const backgroundColor = setTransparency(
@@ -75,7 +91,7 @@ const Header = () => {
                 >
                     <HelpModal />
                     <ContactsModal />
-                    <AdminModal />
+                    {AdminLink}
                     <SettingsModal />
                 </ToggleNav>
                 <Login />
@@ -87,7 +103,7 @@ const Header = () => {
             <nav css={nav}>
                 <HelpModal />
                 <ContactsModal />
-                <AdminModal />
+                {AdminLink}
                 <SettingsModal />
                 <SoundSwitch />
                 <AnimationSwitch />

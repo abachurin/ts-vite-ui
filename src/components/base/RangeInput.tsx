@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { GLOBAL } from "../../utils";
 
 // Emotion styles
@@ -141,9 +141,6 @@ const RangeInput = ({
     const textColor = labelColor ?? color;
     const startValue = initialValue ?? start;
     const [value, setValue] = useState(startValue);
-    useEffect(() => {
-        setValue(startValue);
-    }, [startValue]);
 
     const [timer, setTimer] = useState<NodeJS.Timeout>();
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
