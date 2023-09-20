@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
-import { uniqueId } from "lodash-es";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { AlignProps } from "../../types";
 import Modal from "../modal/Modal";
@@ -86,8 +85,8 @@ const ContactsModal = ({ align }: AlignProps) => {
             </ModalHeader>
             <ModalBody>
                 <div css={emotion}>
-                    {contactMethods.map((method, _) => (
-                        <section key={uniqueId()}>
+                    {contactMethods.map((method, idx) => (
+                        <section key={idx}>
                             <Icon {...method} />
                             <Button
                                 type='clickPress'

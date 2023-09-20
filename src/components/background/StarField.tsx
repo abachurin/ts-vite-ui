@@ -28,8 +28,8 @@ const createStars = (
     width: number,
     height: number
 ): JSX.Element[] => {
-    return Array.from({ length: numStars }, () =>
-        Star({ inverseSpeed, width, height })
+    return Array.from({ length: numStars }, (_, idx) =>
+        Star({ idx, inverseSpeed, width, height })
     );
 };
 

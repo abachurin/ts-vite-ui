@@ -166,7 +166,7 @@ const RangeInput = ({
                 color,
                 textColor
             ),
-        [width, labelFontSize, backgroundColor, color, labelColor]
+        [width, labelFontSize, backgroundColor, color, textColor]
     );
     const controlWrapper = useMemo(
         () => makeControlWrapper(innerWidth, controlSize),

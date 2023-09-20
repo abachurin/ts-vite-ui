@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import { useState } from "react";
-import { uniqueId } from "lodash-es";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
@@ -131,15 +130,12 @@ const Checkbox = ({
     );
     const control = makeControl(controlSize, controlColor);
 
-    const id = uniqueId("checkbox");
-
     return (
         <div css={emotion}>
-            <label htmlFor={id}>{label}</label>
+            <label>{label}</label>
             <input
                 type='checkbox'
                 css={control}
-                id={id}
                 checked={isChecked}
                 disabled={disabled}
                 onChange={handleOnChange}

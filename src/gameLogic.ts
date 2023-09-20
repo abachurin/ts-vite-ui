@@ -1,6 +1,5 @@
-import { uniqueId } from "lodash-es";
 import { Offset, Game, GameTile, GameBackend } from "./types";
-import { deepCopy, deepEqual } from "./utils";
+import { deepCopy, deepEqual, randomName } from "./utils";
 
 export const gameMoves: Record<number, string> = {
     0: "LEFT",
@@ -47,7 +46,7 @@ export abstract class GameLogic {
 
     public static emptyGame(): Game {
         return {
-            name: "game_" + uniqueId(),
+            name: randomName("game"),
             initial: this.emptyBoard(),
             row: this.emptyBoard(),
             score: 0,

@@ -253,7 +253,7 @@ const TrainModal = () => {
                             max={1.0}
                             step={0.01}
                             initialValue={values.decay}
-                            placeholder='1 = no decay'
+                            placeholder='0.5 <= x <= 1.0'
                             disabled={!values.isNew}
                             onChange={(value) => {
                                 updateValues({ decay: inputToNumber(value) });

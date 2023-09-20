@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import { ReactNode, useMemo, useState, useCallback } from "react";
-import { uniqueId } from "lodash-es";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
@@ -178,21 +177,18 @@ const Radio = ({
     );
 
     const renderOption = useCallback(
-        (option: string): ReactNode => {
-            const id = uniqueId("radio");
-            const key = uniqueId("option");
+        (option: string, idx: number): ReactNode => {
             return (
-                <li css={control} key={key}>
+                <li css={control} key={idx}>
                     <input
                         type='radio'
-                        id={id}
                         name='radio'
                         value={option}
                         onChange={handleChoice}
                         checked={option === currentValue}
                     />
                     <aside></aside>
-                    <label htmlFor={id}>{option}</label>
+                    <label>{option}</label>
                 </li>
             );
         },

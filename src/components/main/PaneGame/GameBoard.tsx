@@ -1,7 +1,6 @@
 import { css } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { uniqueId } from "lodash-es";
 import { gameMoves } from "../../../gameLogic";
 import { fetchNewMovesTiles } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
@@ -163,7 +162,7 @@ const GameBoard = () => {
             <main>
                 {values.map((value, idx) => (
                     <GameCell
-                        key={uniqueId()}
+                        key={idx}
                         value={value}
                         blink={idx === lastTilePosition}
                     />

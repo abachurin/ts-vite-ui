@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import { useMemo, useState, useEffect } from "react";
-import { uniqueId } from "lodash-es";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { useClickAwayListener } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
@@ -193,7 +192,7 @@ const Dropdown = ({
         }
     }, [initialValue]);
 
-    const handleOption = (e: React.MouseEvent<HTMLDivElement>): void => {
+    const handleOption = (e: React.MouseEvent<HTMLLIElement>): void => {
         const newValue = e.currentTarget.innerText;
         makeSound(clickSound, volume);
         setValue(newValue);
@@ -282,17 +281,17 @@ const Dropdown = ({
                     </aside>
                 </footer>
             </main>
-            <div css={optionsBox}>
-                {optionValues.map((v) => (
-                    <section
-                        key={uniqueId()}
+            <ul css={optionsBox}>
+                {optionValues.map((v, idx) => (
+                    <li
+                        key={idx}
                         css={v == value ? chosenOptionStyle : optionStyle}
                         onClick={handleOption}
                     >
                         {v}
-                    </section>
+                    </li>
                 ))}
-            </div>
+            </ul>
         </div>
     );
 };

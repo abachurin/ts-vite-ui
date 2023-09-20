@@ -1,6 +1,5 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
-import { uniqueId } from "lodash-es";
 import { GLOBAL } from "../../utils";
 
 const makeEmotion = (
@@ -61,7 +60,7 @@ const DescriptionTable = ({
                     translation[label as keyof typeof translation];
                 return (
                     labelName && (
-                        <section key={uniqueId()}>
+                        <section key={label}>
                             <label>{labelName}</label>
                             <div>{value as string}</div>
                         </section>

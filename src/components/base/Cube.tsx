@@ -25,33 +25,33 @@ const makeEmotion = (size: number) => css`
     height: 100%;
     transform-style: preserve-3d;
     animation: ${rotate} 10s infinite;
-    & section {
+    & > li {
         width: ${size}rem;
         height: ${size}rem;
         display: block;
         position: absolute;
     }
-    & section:nth-of-type(1) {
+    & > li:nth-of-type(1) {
         transform: rotateX(0deg) translateZ(${size / 2}rem);
         background-color: rgba(255, 0, 0, 0.25);
     }
-    & section:nth-of-type(2) {
+    & > li:nth-of-type(2) {
         transform: rotateX(180deg) translateZ(${size / 2}rem);
         background-color: rgba(0, 255, 0, 0.25);
     }
-    & section:nth-of-type(3) {
+    & > li:nth-of-type(3) {
         transform: rotateY(90deg) translateZ(${size / 2}rem);
         background-color: rgba(0, 0, 255, 0.25);
     }
-    & section:nth-of-type(4) {
+    & > li:nth-of-type(4) {
         transform: rotateY(-90deg) translateZ(${size / 2}rem);
         background-color: rgba(255, 255, 0.25);
     }
-    & section:nth-of-type(5) {
+    & > li:nth-of-type(5) {
         transform: rotateX(90deg) translateZ(${size / 2}rem);
         background-color: rgba(255, 0, 255, 0.25);
     }
-    & section:nth-of-type(6) {
+    & > li:nth-of-type(6) {
         transform: rotateX(-90deg) translateZ(${size / 2}rem);
         background-color: rgba(255, 255, 0, 0.25);
     }
@@ -70,14 +70,11 @@ const Cube = ({ size = 6 }: CubeProps) => {
 
     return (
         <div css={container}>
-            <main css={emotion}>
-                <section />
-                <section />
-                <section />
-                <section />
-                <section />
-                <section />
-            </main>
+            <ul css={emotion}>
+                {[1, 2, 3, 4, 5, 6].map((item) => (
+                    <li key={item} />
+                ))}
+            </ul>
         </div>
     );
 };

@@ -1,5 +1,4 @@
 import { css, keyframes, Keyframes } from "@emotion/react";
-import { uniqueId } from "lodash-es";
 import { GLOBAL, randomNum } from "../../utils";
 
 // Emotion styles
@@ -47,11 +46,12 @@ const makeEmotion = (
  * @param height - height of the screen in px
  */
 type StarProps = {
+    idx: number;
     inverseSpeed: number;
     width: number;
     height: number;
 };
-const Star = ({ inverseSpeed, width, height }: StarProps) => {
+const Star = ({ idx, inverseSpeed, width, height }: StarProps) => {
     const x = randomNum(width);
     const y = randomNum(height);
     const color = `hsl(${randomNum(360)}, 100%, 85%)`;
@@ -64,7 +64,7 @@ const Star = ({ inverseSpeed, width, height }: StarProps) => {
 
     const emotion = makeEmotion(x, y, color, flyAnimation, animationParams);
 
-    return <li key={uniqueId()} data-animated='true' css={emotion}></li>;
+    return <li key={idx} data-animated='true' css={emotion}></li>;
 };
 
 export default Star;

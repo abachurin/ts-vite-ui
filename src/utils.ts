@@ -5,7 +5,6 @@ import {
     AgentWatchingBase,
     AgentTesting,
 } from "./types";
-import { forEach } from "lodash-es";
 
 // Global constants
 export const GLOBAL = {
@@ -33,7 +32,6 @@ export const GLOBAL = {
     messageDuration: 5000,
     watchInterval: 2000,
     maxNameLength: 10,
-    filler: "f!JJHKLb22",
     maxLogs: 500,
     userLevel: {
         guest: 0,
@@ -195,10 +193,7 @@ export const inputToNumber = (value: string): number | undefined => {
  */
 export const hasUndefinedValues = (obj: Record<string, unknown>): boolean => {
     return Object.values(obj).some(
-        (value) =>
-            value === undefined ||
-            value === null ||
-            Number.isNaN(value || value === GLOBAL.filler)
+        (value) => value === undefined || value === null || Number.isNaN(value)
     );
 };
 
@@ -275,7 +270,7 @@ export const validateTrainingParams = (
     values: Partial<AgentTraining>
 ): [Partial<AgentTraining>, boolean] => {
     const validated = { ...values };
-    forEach(values, (_, key) => {
+    for (const key in values) {
         switch (key) {
             case "name":
                 if (!checkRe(values.name)) {
@@ -319,7 +314,7 @@ export const validateTrainingParams = (
             default:
                 break;
         }
-    });
+    }
     return [
         validated,
         !deepEqual(validated, values) || hasUndefinedValues(validated),
@@ -357,7 +352,7 @@ export const validateTestingParams = (
     values: Partial<AgentTesting>
 ): [Partial<AgentTesting>, boolean] => {
     const validated = { ...values };
-    forEach(values, (_, key) => {
+    for (const key in values) {
         switch (key) {
             case "name":
                 if (
@@ -392,7 +387,7 @@ export const validateTestingParams = (
             default:
                 break;
         }
-    });
+    }
     return [
         validated,
         !deepEqual(validated, values) || hasUndefinedValues(validated),

@@ -257,11 +257,7 @@ const ManageModal = () => {
                         background={palette.error}
                         color={palette.background}
                         type='clickPress'
-                        disabled={
-                            item === "" ||
-                            item === GLOBAL.filler ||
-                            owner !== userName
-                        }
+                        disabled={item === "" || owner !== userName}
                         onClick={() => setConfirmDelete(true)}
                     >
                         Delete
@@ -271,7 +267,7 @@ const ManageModal = () => {
                             background={palette.two}
                             color={palette.background}
                             type='clickPress'
-                            disabled={item === "" || item === GLOBAL.filler}
+                            disabled={item === ""}
                             onClick={openChart}
                         >
                             Train History Chart
