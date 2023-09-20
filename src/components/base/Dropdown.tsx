@@ -189,6 +189,7 @@ const Dropdown = ({
             }
         } else {
             setValue(startValue);
+            if (startValue !== initialValue) onChange(startValue);
         }
     }, [initialValue]);
 

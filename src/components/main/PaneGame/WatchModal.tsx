@@ -218,9 +218,7 @@ const WatchModal = () => {
                         label='Choose Agent to Watch'
                         optionValues={allAgents}
                         initialValue={values.name}
-                        onChange={(value) =>
-                            updateValues({ name: String(value) })
-                        }
+                        onChange={(value) => updateValues({ name: value })}
                         zIndex={30}
                     />
                     <section>
