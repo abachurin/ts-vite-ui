@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { ReactNode, useMemo, useState, useEffect, useCallback } from "react";
+import { ReactNode, useMemo, useState, useCallback } from "react";
 import { uniqueId } from "lodash-es";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
 import { GLOBAL, makeSound } from "../../utils";

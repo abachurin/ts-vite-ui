@@ -1,13 +1,8 @@
 import { css } from "@emotion/react";
 import { useUser, usePalette } from "../contexts/UserProvider/UserContext";
-import { useLogs } from "../store/logsStore";
 import { GLOBAL, setTransparency } from "../utils";
-import { ButtonProps } from "../components/base/Button/Button";
 import AdminLogs from "./AdminLogs";
 import AdminManage from "./AdminManage";
-import Pane from "../components/main/Pane";
-import ButtonGroup from "../components/base/Button/ButtonGroup";
-import Button from "../components/base/Button/Button";
 
 // Emotion styles
 const makeEmotion = (
