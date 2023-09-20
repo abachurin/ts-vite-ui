@@ -64,7 +64,7 @@ const Star = ({ inverseSpeed, width, height }: StarProps) => {
 
     const emotion = makeEmotion(x, y, color, flyAnimation, animationParams);
 
-    return <div key={uniqueId()} data-animated='true' css={emotion}></div>;
+    return <li key={uniqueId()} data-animated='true' css={emotion}></li>;
 };
 
 export default Star;

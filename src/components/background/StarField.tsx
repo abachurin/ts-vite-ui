@@ -52,7 +52,7 @@ const StarField = () => {
         }
     }, [numStars, inverseSpeed, width, height]);
 
-    return <div css={emotion}>{starArray}</div>;
+    return <ul css={emotion}>{starArray}</ul>;
 };
 
 export default StarField;
