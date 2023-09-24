@@ -9,6 +9,7 @@ import { ButtonVariants } from "../../../types";
 import { GLOBAL, changeBrightness } from "../../../utils/utils";
 import Button from "../../base/Button/Button";
 import CloseButton from "../../base/Button/CloseButton";
+import { useCallback } from "react";
 
 // Emotion styles
 const emotion = css`
@@ -53,6 +54,16 @@ const PlayFooter = () => {
     const fullMove = useGameStore((state) => state.fullMove);
     const newGame = useGameStore((state) => state.newGame);
 
+    const moveLeft = useCallback(() => fullMove(0, volume), [fullMove, volume]);
+    const moveUp = useCallback(() => fullMove(1, volume), [fullMove, volume]);
+    const moveRight = useCallback(
+        () => fullMove(2, volume),
+        [fullMove, volume]
+    );
+    const moveDown = useCallback(() => fullMove(3, volume), [fullMove, volume]);
+    const runNewGame = useCallback(() => newGame(), [newGame]);
+    const outPlayMode = useCallback(() => setGameMode("none"), [setGameMode]);
+
     const arrowProps = {
         type: "clickPress" as ButtonVariants,
         fontSize: "2rem",
@@ -70,7 +81,7 @@ const PlayFooter = () => {
                 <Button
                     {...arrowProps}
                     background={palette.one}
-                    onClick={() => fullMove(0, volume)}
+                    onClick={moveLeft}
                 >
                     &larr;
                 </Button>
@@ -78,14 +89,14 @@ const PlayFooter = () => {
                     <Button
                         {...arrowProps}
                         background={colorUp}
-                        onClick={() => fullMove(1, volume)}
+                        onClick={moveUp}
                     >
                         &uarr;
                     </Button>
                     <Button
                         {...arrowProps}
                         background={palette.three}
-                        onClick={() => fullMove(3, volume)}
+                        onClick={moveDown}
                     >
                         &darr;
                     </Button>
@@ -93,7 +104,7 @@ const PlayFooter = () => {
                 <Button
                     {...arrowProps}
                     background={palette.two}
-                    onClick={() => fullMove(2, volume)}
+                    onClick={moveRight}
                 >
                     &rarr;
                 </Button>
@@ -104,15 +115,12 @@ const PlayFooter = () => {
                         type='clickPress'
                         background={colorFooter}
                         fontSize='1rem'
-                        onClick={() => newGame()}
+                        onClick={runNewGame}
                     >
                         NEW GAME
                     </Button>
                 </div>
-                <CloseButton
-                    toggleModal='none'
-                    onClick={() => setGameMode("none")}
-                />
+                <CloseButton toggleModal='none' onClick={outPlayMode} />
             </footer>
         </div>
     );

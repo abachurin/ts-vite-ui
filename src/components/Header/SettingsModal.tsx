@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
     useUser,
     useUserUpdate,
@@ -70,32 +70,74 @@ const SettingsModal = ({ align }: AlignProps) => {
     const [currentValues, setCurrentValues] = useState<ValuesType>(
         getUserValues(user)
     );
+    const updateValues = useCallback(
+        (values: Partial<ValuesType>) =>
+            setCurrentValues((prevValues) => ({ ...prevValues, ...values })),
+        []
+    );
+    const updateAnimate = useCallback(
+        (animate: boolean) => updateValues({ animate }),
+        [updateValues]
+    );
+    const updateAnimationSpeed = useCallback(
+        (animationSpeed: number) => updateValues({ animationSpeed }),
+        [updateValues]
+    );
+    const updateLegends = useCallback(
+        (legends: boolean) => updateValues({ legends }),
+        [updateValues]
+    );
+    const updateSound = useCallback(
+        (sound: boolean) => updateValues({ sound }),
+        [updateValues]
+    );
+    const updateSoundLevel = useCallback(
+        (soundLevel: number) => updateValues({ soundLevel }),
+        [updateValues]
+    );
+    const updatePaletteName = useCallback(
+        (paletteName: string) => updateValues({ paletteName }),
+        [updateValues]
+    );
+    const resetValues = useCallback(
+        () => updateValues(getUserValues(user)),
+        [updateValues, user]
+    );
+    const updateUserValues = useCallback(
+        () => updateUser(currentValues),
+        [currentValues, updateUser]
+    );
+
+    // Fill settings fields with current User values
     useEffect(() => {
         setCurrentValues(getUserValues(user));
     }, [user]);
 
-    const headerText =
-        user.name === "Login"
-            ? "Guest settings"
-            : `${user.name} personal settings`;
-
-    const updateValues = (values: Partial<ValuesType>) =>
-        setCurrentValues((prevValues) => ({ ...prevValues, ...values }));
-
-    const saveUserValues = async (values: UpdateUserValues) => {
-        setLoading(true);
-        const { error } = await connectAPI<UpdateUserValues, void>({
-            method: "put",
-            endpoint: "/users/settings",
-            data: values,
+    // Save new User settings
+    const saveUserValues = useCallback(
+        async (values: UpdateUserValues) => {
+            setLoading(true);
+            const { error } = await connectAPI<UpdateUserValues, void>({
+                method: "put",
+                endpoint: "/users/settings",
+                data: values,
+            });
+            if (error) {
+                createMessage(error, "error", 3000);
+            } else {
+                createMessage("Settings updated!", "success", 3000);
+            }
+            setLoading(false);
+        },
+        [createMessage]
+    );
+    const updateAndSave = useCallback(() => {
+        updateUser(currentValues);
+        saveUserValues({
+            name: user.name,
+            ...currentValues,
         });
-        if (error) {
-            createMessage(error, "error", 3000);
-        } else {
-            createMessage("Settings updated!", "success", 3000);
-        }
-        setLoading(false);
-    };
+    }, [saveUserValues, currentValues, updateUser, user]);
 
     const checkboxParameters = {
         color1: changeBrightness(palette.two, 1.5),
@@ -116,6 +158,10 @@ const SettingsModal = ({ align }: AlignProps) => {
         color: palette.text,
         controlColor: palette.three,
     };
+    const headerText =
+        user.name === "Login"
+            ? "Guest settings"
+            : `${user.name} personal settings`;
 
     return (
         <Modal
@@ -145,25 +191,19 @@ const SettingsModal = ({ align }: AlignProps) => {
                             {...checkboxParameters}
                             label='Animation'
                             checked={currentValues.animate}
-                            onChange={(checked) =>
-                                updateValues({ animate: checked })
-                            }
+                            onChange={updateAnimate}
                         />
                         <Checkbox
                             {...checkboxParameters}
                             label='Sound'
                             checked={currentValues.sound}
-                            onChange={(checked) =>
-                                updateValues({ sound: checked })
-                            }
+                            onChange={updateSound}
                         />
                         <Checkbox
                             {...checkboxParameters}
                             label='Verbose'
                             checked={currentValues.legends}
-                            onChange={(checked) =>
-                                updateValues({ legends: checked })
-                            }
+                            onChange={updateLegends}
                         />
                     </section>
                     <section>
@@ -173,9 +213,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                             label='Palette'
                             optionValues={Object.keys(palettes)}
                             initialValue={currentValues.paletteName}
-                            onChange={(value) =>
-                                updateValues({ paletteName: value as string })
-                            }
+                            onChange={updatePaletteName}
                         />
                     </section>
                     <section>
@@ -186,9 +224,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                             step={0.5}
                             initialValue={currentValues.animationSpeed}
                             label='Falcon speed'
-                            onChange={(value) =>
-                                updateValues({ animationSpeed: value })
-                            }
+                            onChange={updateAnimationSpeed}
                         />
                     </section>
                     <section>
@@ -199,9 +235,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                             step={0.1}
                             initialValue={currentValues.soundLevel}
                             label='Sound level'
-                            onChange={(value) =>
-                                updateValues({ soundLevel: value })
-                            }
+                            onChange={updateSoundLevel}
                         />
                     </section>
                 </form>
@@ -212,7 +246,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                     align='center'
                     background={palette.one}
                     color='white'
-                    onClick={() => setCurrentValues(getUserValues(user))}
+                    onClick={resetValues}
                 >
                     Reset User Settings
                 </Button>
@@ -221,7 +255,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                     align='center'
                     background={palette.three}
                     color='white'
-                    onClick={() => updateUser(currentValues)}
+                    onClick={updateUserValues}
                 >
                     Apply
                 </Button>
@@ -232,13 +266,7 @@ const SettingsModal = ({ align }: AlignProps) => {
                         background={palette.two}
                         color='white'
                         disabled={loading}
-                        onClick={() => {
-                            updateUser(currentValues);
-                            saveUserValues({
-                                name: user.name,
-                                ...currentValues,
-                            });
-                        }}
+                        onClick={updateAndSave}
                     >
                         Apply and Save
                     </Button>

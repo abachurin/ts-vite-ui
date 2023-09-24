@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import useModeStore from "../../store/modeStore";
 import useGameStore from "../../store/gameStore";
 import {
@@ -80,75 +80,86 @@ const Login = () => {
 
     const [name, setName] = useState("");
     const [pwd, setPwd] = useState("");
+    const handleName = useCallback((value: string) => setName(value), []);
+    const handlePwd = useCallback((value: string) => setPwd(value), []);
 
     const { message, createMessage } = useAlertMessage(
         "Enter Name and Password"
     );
     const [loading, setLoading] = useState(false);
 
-    const finalizeLogin = (newUser: User, closeAfter = true): void => {
-        defaultMode();
-        setWatchingNow(false);
-        setPaused(true);
-        newGame();
-        updateUser(newUser);
-        if (closeAfter)
-            setTimeout(() => {
-                simulateCloseModalClick();
-            }, 2000);
-    };
+    // After successful login action
+    const finalizeLogin = useCallback(
+        (newUser: User, closeAfter = true): void => {
+            defaultMode();
+            setWatchingNow(false);
+            setPaused(true);
+            newGame();
+            updateUser(newUser);
+            if (closeAfter)
+                setTimeout(() => {
+                    simulateCloseModalClick();
+                }, 1500);
+        },
+        [defaultMode, newGame, setPaused, setWatchingNow, updateUser]
+    );
 
-    const handleSubmit = async (action: UserLoginAction) => {
-        if (action === "logout") {
-            finalizeLogin(defaultUser, false);
-        } else if (!(name && pwd)) {
-            createMessage("Both fields should be filled", "error");
-        } else if (action == "register" && (!checkRe(name) || !checkRe(pwd))) {
-            createMessage(
-                `Letters, numerals, dash, underscore, max ${GLOBAL.maxNameLength} chars`,
-                "error"
-            );
-        } else if (
-            (action == "register" || action == "login") &&
-            name === userName
-        ) {
-            createMessage("You are already logged in!", "error");
-        } else {
-            setLoading(true);
-            createMessage("Authorization ...", "success");
-            const { result, error } = await connectAPI<
-                UserLogin,
-                LoginResponse
-            >({
-                method: action === "delete" ? "delete" : "post",
-                endpoint: `/users/${action}`,
-                data: { name, pwd },
-            });
-            if (result !== undefined) {
-                if (result.status !== "ok") {
-                    createMessage(result.status, "error");
-                } else {
-                    const newUser =
-                        action === "delete"
-                            ? defaultUser
-                            : (result.content as User);
-                    createMessage(
-                        successMessage(
-                            action,
-                            action === "delete"
-                                ? (name as string)
-                                : newUser.name
-                        ),
-                        "success"
-                    );
-                    finalizeLogin(newUser);
-                }
+    // Go login
+    const handleSubmit = useCallback(
+        async (action: UserLoginAction, newName: string, newPwd: string) => {
+            if (action === "logout") {
+                finalizeLogin(defaultUser, false);
+            } else if (!(newName && newPwd)) {
+                createMessage("Both fields should be filled", "error");
+            } else if (
+                action == "register" &&
+                (!checkRe(newName) || !checkRe(newPwd))
+            ) {
+                createMessage(
+                    `Letters, numerals, dash, underscore, max ${GLOBAL.maxNameLength} chars`,
+                    "error"
+                );
+            } else if (
+                (action == "register" || action == "login") &&
+                newName === userName
+            ) {
+                createMessage("You are already logged in!", "error");
             } else {
-                createMessage(error ?? "Unknown error", "error");
+                setLoading(true);
+                createMessage("Authorization ...", "success");
+                const { result, error } = await connectAPI<
+                    UserLogin,
+                    LoginResponse
+                >({
+                    method: action === "delete" ? "delete" : "post",
+                    endpoint: `/users/${action}`,
+                    data: { name: newName, pwd: newPwd },
+                });
+                if (result !== undefined) {
+                    if (result.status !== "ok") {
+                        createMessage(result.status, "error");
+                    } else {
+                        const newUser =
+                            action === "delete"
+                                ? defaultUser
+                                : (result.content as User);
+                        createMessage(
+                            successMessage(
+                                action,
+                                action === "delete" ? newName : newUser.name
+                            ),
+                            "success"
+                        );
+                        finalizeLogin(newUser);
+                    }
+                } else {
+                    createMessage(error ?? "Unknown error", "error");
+                }
+                setLoading(false);
             }
-            setLoading(false);
-        }
-    };
+        },
+        [createMessage, finalizeLogin, userName]
+    );
 
     const headerStyle = css`
         color: ${palette.text};
@@ -201,9 +212,7 @@ const Login = () => {
                         label='Name'
                         persistAs={`${userName}_login-name`}
                         placeholder={namingRule}
-                        onChange={(value) => {
-                            setName(value);
-                        }}
+                        onChange={handleName}
                     />
                     <Input
                         {...inputParameters}
@@ -211,7 +220,7 @@ const Login = () => {
                         label='Password'
                         persistAs={`${userName}_login-pwd`}
                         placeholder={namingRule}
-                        onChange={(value) => setPwd(value)}
+                        onChange={handlePwd}
                     />
                     <ButtonGroup height='2rem'>
                         <Button
@@ -219,7 +228,7 @@ const Login = () => {
                             background={palette.one}
                             color={palette.background}
                             disabled={loading}
-                            onClick={() => handleSubmit("login")}
+                            onClick={() => handleSubmit("login", name, pwd)}
                         >
                             Login
                         </Button>
@@ -228,7 +237,7 @@ const Login = () => {
                             background={palette.two}
                             color={palette.background}
                             disabled={loading}
-                            onClick={() => handleSubmit("register")}
+                            onClick={() => handleSubmit("register", name, pwd)}
                         >
                             Register
                         </Button>
@@ -247,7 +256,7 @@ const Login = () => {
                             background={palette.three}
                             color={palette.background}
                             disabled={loading || userName === "Login"}
-                            onClick={() => handleSubmit("logout")}
+                            onClick={() => handleSubmit("logout", name, pwd)}
                         >
                             <Icon svg={SvgPaths.logout} />
                         </Button>
@@ -260,7 +269,7 @@ const Login = () => {
                 message={`Are you sure you want to delete ${name}?`}
                 onConfirm={() => {
                     setConfirmDelete(false);
-                    handleSubmit("delete");
+                    handleSubmit("delete", name, pwd);
                 }}
                 onCancel={() => setConfirmDelete(false)}
             />

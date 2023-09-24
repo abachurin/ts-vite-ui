@@ -73,7 +73,7 @@ const Header = () => {
     );
     const emotion = useMemo(
         () => makeEmotion(backgroundColor, palette.background),
-        [palette]
+        [backgroundColor, palette.background]
     );
 
     return hiddenNavigation ? (

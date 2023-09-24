@@ -1,10 +1,11 @@
 import { css } from "@emotion/react";
-import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import { connectAPI, getItems } from "../../../api/requests";
 import {
     useUserName,
     usePalette,
 } from "../../../contexts/UserProvider/UserContext";
+import useDimensions from "../../../hooks/useDimensions";
 import useAlert from "../../../hooks/useAlert";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import {
@@ -105,20 +106,13 @@ const ManageModal = () => {
         ) : null;
 
     // Draggable Chart initial position is calculated when "Chart" button clicked
-    const [x, setX] = useState(0);
-    const [y, setY] = useState(0);
-    const chartRef = useRef<HTMLDivElement>(null);
+    const { width, height, ref } = useDimensions({ elem: true });
     const { appAlert, openAlert, closeAlert } = useAlert({
         type: "info",
         duration: 1000000,
-        initialPosition: { x, y },
+        initialPosition: { x: width / 2, y: height / 2 },
         children: chartComp,
     });
-    const openChart = useCallback(() => {
-        setX((chartRef.current?.offsetWidth ?? 0) / 2);
-        setY((chartRef.current?.offsetHeight ?? 0) / 2);
-        openAlert();
-    }, [openAlert]);
 
     const owner = (options?.[item] ?? [])["user"];
 
@@ -173,7 +167,13 @@ const ManageModal = () => {
         (checked: boolean) => handleChange(undefined, checked),
         [handleChange]
     );
-    const handleChangeAll = useCallback(() => handleChange(), [handleChange]);
+    const handleChangeAll = useCallback(() => {
+        handleChange();
+        setTimeout(() => {
+            const resizeEvent = new Event("resize");
+            window.dispatchEvent(resizeEvent);
+        }, 0);
+    }, [handleChange]);
 
     const deleteItem = useCallback(async () => {
         const { error } = await connectAPI<ItemDeleteRequest, void>({
@@ -229,7 +229,7 @@ const ManageModal = () => {
             }}
         >
             <ModalBody overflow='visible'>
-                <div ref={chartRef} css={emotion}>
+                <div ref={ref} css={emotion}>
                     <section>
                         <div>
                             <Radio
@@ -299,7 +299,7 @@ const ManageModal = () => {
                             color={palette.background}
                             type='clickPress'
                             disabled={item === ""}
-                            onClick={openChart}
+                            onClick={openAlert}
                         >
                             Train History Chart
                         </Button>
