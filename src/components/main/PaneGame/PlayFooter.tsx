@@ -1,5 +1,4 @@
 import { css } from "@emotion/react";
-import { useEffect, useState } from "react";
 import useModeStore from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
 import {

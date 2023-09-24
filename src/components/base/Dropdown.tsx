@@ -1,7 +1,6 @@
 import { css } from "@emotion/react";
 import { useMemo, useState, useEffect, useCallback } from "react";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
-import useSyncInitialValue from "../../hooks/useSyncInitialValue";
 import { useClickAwayListener } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
 import { GLOBAL, SvgPaths, makeSound } from "../../utils/utils";
