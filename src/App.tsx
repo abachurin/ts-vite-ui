@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { Route, Routes } from "react-router-dom";
 import UserProvider from "./contexts/UserProvider/UserProvider";
-import { GLOBAL } from "./utils";
+import { GLOBAL } from "./utils/utils";
 import StarField from "./components/background/StarField";
 import Header from "./components/Header/Header";
 import Main from "./components/main/Main";

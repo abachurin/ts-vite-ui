@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { GLOBAL } from "../utils";
+import { GLOBAL } from "../utils/utils";
 
 /**
  * Calculates the scaling factor for the SVG Icons, depending on the current root font size.

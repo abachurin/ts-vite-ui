@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { connectAPI, getItems } from "../../../api/requests";
 import {
     useUserName,
@@ -15,7 +15,7 @@ import {
     GameDict,
     Agent,
 } from "../../../types";
-import { GLOBAL, changeBrightness, alphaSymbol } from "../../../utils";
+import { GLOBAL, changeBrightness, alphaSymbol } from "../../../utils/utils";
 import Modal from "../../modal/Modal";
 import ModalBody from "../../modal/ModalBody";
 import ModalFooter from "../../modal/ModalFooter";
@@ -97,59 +97,85 @@ const ManageModal = () => {
     const [item, setItem] = useState("");
     const [keys, setKeys] = useState<string[]>([]);
 
-    const [message, createMessage] = useAlertMessage();
+    const { message, createMessage } = useAlertMessage();
 
     const chartComp =
         options[item] && (options[item] as Agent).history !== undefined ? (
             <Chart agent={options[item] as Agent} />
         ) : null;
 
-    const [chart, openChart, closeChart] = useAlert({
+    // Draggable Chart initial position is calculated when "Chart" button clicked
+    const [x, setX] = useState(0);
+    const [y, setY] = useState(0);
+    const chartRef = useRef<HTMLDivElement>(null);
+    const { appAlert, openAlert, closeAlert } = useAlert({
         type: "info",
         duration: 1000000,
+        initialPosition: { x, y },
         children: chartComp,
     });
+    const openChart = useCallback(() => {
+        setX((chartRef.current?.offsetWidth ?? 0) / 2);
+        setY((chartRef.current?.offsetHeight ?? 0) / 2);
+        openAlert();
+    }, [openAlert]);
 
     const owner = (options?.[item] ?? [])["user"];
 
+    // Refresh data on User change
     useEffect(() => {
         setKind("Agents");
         setItem("");
         setOptions({});
     }, [userName]);
 
-    const [confirmDelete, setConfirmDelete] = useState(false);
+    // Refresh data on change of kind (Agents or Games) or scope (all or user)
+    const handleChange = useCallback(
+        async (newKindLabel?: string, checked?: boolean) => {
+            const newKind =
+                newKindLabel === undefined
+                    ? kind
+                    : newKindLabel === "Agents"
+                    ? "Agents"
+                    : "Games";
+            const newScope =
+                checked === undefined ? scope : checked ? "all" : "user";
+            setKind(newKind);
+            setScope(newScope);
+            const { list, message } = await getItems(
+                newKind,
+                userName,
+                newScope
+            );
+            if (message) {
+                createMessage(message, "error");
+                return;
+            }
+            const newKeys = Object.keys(list).sort((a, b) => {
+                const A = list[a];
+                const B = list[b];
+                if ("bestScore" in A && "bestScore" in B)
+                    return B.bestScore - A.bestScore;
+                if ("score" in A && "score" in B) return B.score - A.score;
+                return 0;
+            });
+            setOptions(list);
+            setKeys(newKeys);
+            setItem("");
+        },
+        [kind, userName, scope, createMessage]
+    );
+    const handleChangeKind = useCallback(
+        (value: string) => handleChange(value, undefined),
+        [handleChange]
+    );
+    const handleChangeScope = useCallback(
+        (checked: boolean) => handleChange(undefined, checked),
+        [handleChange]
+    );
+    const handleChangeAll = useCallback(() => handleChange(), [handleChange]);
 
-    const handleChange = async (newKindLabel?: string, checked?: boolean) => {
-        const newKind =
-            newKindLabel === undefined
-                ? kind
-                : newKindLabel === "Agents"
-                ? "Agents"
-                : "Games";
-        const newScope =
-            checked === undefined ? scope : checked ? "all" : "user";
-        setKind(newKind);
-        setScope(newScope);
-        const { list, message } = await getItems(newKind, userName, newScope);
-        if (message) {
-            createMessage(message, "error");
-            return;
-        }
-        const newKeys = Object.keys(list).sort((a, b) => {
-            const A = list[a];
-            const B = list[b];
-            if ("bestScore" in A && "bestScore" in B)
-                return B.bestScore - A.bestScore;
-            if ("score" in A && "score" in B) return B.score - A.score;
-            return 0;
-        });
-        setOptions(list);
-        setKeys(newKeys);
-        setItem(newKeys[0]);
-    };
-
-    const deleteItem = async () => {
+    const deleteItem = useCallback(async () => {
         const { error } = await connectAPI<ItemDeleteRequest, void>({
             method: "DELETE",
             endpoint: "/item/delete",
@@ -164,7 +190,15 @@ const ManageModal = () => {
             setItem(newKeys[0]);
             createMessage(`${item} deleted from ${kind}`, "success");
         }
-    };
+    }, [options, keys, item, kind, createMessage]);
+
+    const [confirmDelete, setConfirmDelete] = useState(false);
+    const openConfirmDelete = useCallback(() => setConfirmDelete(true), []);
+    const closeConfirmDelete = useCallback(() => setConfirmDelete(false), []);
+    const closeAndDelete = useCallback(() => {
+        setConfirmDelete(false);
+        deleteItem();
+    }, [deleteItem]);
 
     const backgroundColor = useMemo(
         () =>
@@ -185,17 +219,17 @@ const ManageModal = () => {
                 align: "left",
                 children: "Items Information",
                 legend: "Only for registered users",
-                onClick: () => handleChange(),
+                onClick: handleChangeAll,
             }}
             modal={{
                 width: "26rem",
                 backgroundColor: palette.background,
                 color: palette.text,
-                onClose: closeChart,
+                onClose: closeAlert,
             }}
         >
             <ModalBody overflow='visible'>
-                <div css={emotion}>
+                <div ref={chartRef} css={emotion}>
                     <section>
                         <div>
                             <Radio
@@ -206,9 +240,7 @@ const ManageModal = () => {
                                 label='Agents / Games'
                                 options={["Agents", "Games"]}
                                 initialValue={kind}
-                                onChange={(value) =>
-                                    handleChange(value, undefined)
-                                }
+                                onChange={handleChangeKind}
                             />
                         </div>
                         <Checkbox
@@ -219,9 +251,7 @@ const ManageModal = () => {
                             label={scope === "all" ? "All Users" : "My Items"}
                             checked={scope === "all"}
                             disabled={userName === "Login"}
-                            onChange={(checked) =>
-                                handleChange(undefined, checked)
-                            }
+                            onChange={handleChangeScope}
                         />
                     </section>
                     <Dropdown
@@ -231,6 +261,7 @@ const ManageModal = () => {
                         labelColor2={palette.one}
                         controlColor={palette.three}
                         optionValues={keys}
+                        persistAs={`${userName}_manage-item`}
                         initialValue={item}
                         onChange={setItem}
                     />
@@ -243,9 +274,9 @@ const ManageModal = () => {
                                 collection={options?.[item] ?? []}
                                 translation={description}
                             />
-                            {chart}
                         </main>
                     )}
+                    {appAlert}
                     <aside>
                         * Items are sorted by Score in descending order
                     </aside>
@@ -258,7 +289,7 @@ const ManageModal = () => {
                         color={palette.background}
                         type='clickPress'
                         disabled={item === "" || owner !== userName}
-                        onClick={() => setConfirmDelete(true)}
+                        onClick={openConfirmDelete}
                     >
                         Delete
                     </Button>
@@ -280,11 +311,8 @@ const ManageModal = () => {
             <ConfirmDialog
                 isOpen={confirmDelete}
                 message={`Are you sure you want to delete ${item} from ${kind}?`}
-                onConfirm={() => {
-                    setConfirmDelete(false);
-                    deleteItem();
-                }}
-                onCancel={() => setConfirmDelete(false)}
+                onConfirm={closeAndDelete}
+                onCancel={closeConfirmDelete}
             />
         </Modal>
     );

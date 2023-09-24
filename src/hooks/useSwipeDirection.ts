@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { GLOBAL } from "../utils";
+import { GLOBAL } from "../utils/utils";
 
 /**
  * Hook that detects the swipe direction based on touch event above some HTML element

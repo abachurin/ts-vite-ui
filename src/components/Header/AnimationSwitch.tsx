@@ -3,7 +3,7 @@ import {
     useAnimate,
     useUserUpdate,
 } from "../../contexts/UserProvider/UserContext";
-import { SvgPaths } from "../../utils";
+import { SvgPaths } from "../../utils/utils";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 

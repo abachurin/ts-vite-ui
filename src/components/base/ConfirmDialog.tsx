@@ -4,7 +4,7 @@ import {
     usePalette,
     useSoundVolume,
 } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL, makeSound } from "../../utils";
+import { GLOBAL, makeSound } from "../../utils/utils";
 import Button from "./Button/Button";
 import dragMe from "../HOC/Draggable";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
@@ -123,7 +123,7 @@ const StaticConfirmDialog = ({
 
 const DraggableConfirmDialog = dragMe({
     ToDrag: StaticConfirmDialog,
-    initialPosition: { x: "0px", y: "-100px" },
+    initialPosition: { x: 0, y: -100 },
     positionType: "fixed",
 });
 

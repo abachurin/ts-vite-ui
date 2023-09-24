@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { ChildrenProps } from "../../types";
-import { GLOBAL } from "../../utils";
+import { GLOBAL } from "../../utils/utils";
 
 // Emotion styles
 const makeEmotion = (overflow: string) => css`

@@ -3,7 +3,7 @@ import { create } from "zustand";
 import { useQuery } from "@tanstack/react-query";
 import { connectAPI } from "../api/requests";
 import { UserName } from "../types";
-import { GLOBAL } from "../utils";
+import { GLOBAL } from "../utils/utils";
 
 type Logs = string[];
 type LogsRequest = UserName & {
@@ -13,14 +13,6 @@ type LogsResponse = {
     status: string;
     logs: Logs;
     lastLog: number;
-};
-
-const addNewLogs = (currentLogs: Logs, newLogs: Logs): Logs => {
-    let updatedLogs: Logs = [...currentLogs, ...newLogs];
-    if (updatedLogs.length > GLOBAL.maxLogs + 20) {
-        updatedLogs = updatedLogs.slice(updatedLogs.length - GLOBAL.maxLogs);
-    }
-    return updatedLogs;
 };
 
 const fetchLogs = async (
@@ -59,6 +51,7 @@ const clearLogs = async (userName: string): Promise<void> => {
 interface LogsStore {
     logs: Logs;
     setLogs: (newLogs: Logs) => void;
+    addNewLogs: (newLogs: Logs) => Logs;
     currentUser: string;
     setCurrentUser: (newUserName: string) => void;
     clearLogs: (userName: string) => void;
@@ -73,6 +66,16 @@ const useLogsStore = create<LogsStore>((set, get) => ({
         set(() => ({
             logs: newLogs,
         })),
+    addNewLogs: (newLogs: Logs) => {
+        const currentLogs = get().logs;
+        let updatedLogs: Logs = [...currentLogs, ...newLogs];
+        if (updatedLogs.length > GLOBAL.maxLogs + 20) {
+            updatedLogs = updatedLogs.slice(
+                updatedLogs.length - GLOBAL.maxLogs
+            );
+        }
+        return updatedLogs;
+    },
     currentUser: "",
     setCurrentUser: (newUserName: string) => {
         set(() => ({
@@ -122,6 +125,7 @@ export const useLogs = (
 ): { logs: Logs; alertBackend: boolean } => {
     const logs = useLogsStore((state) => state.logs);
     const setLogs = useLogsStore((state) => state.setLogs);
+    const addNewLogs = useLogsStore((state) => state.addNewLogs);
     const lastLog = useLogsStore((state) => state.lastLog);
     const setLastLog = useLogsStore((state) => state.setLastLog);
     const currentUser = useLogsStore((state) => state.currentUser);
@@ -138,7 +142,7 @@ export const useLogs = (
             setLastLog(-1);
             setCurrentUser(userName);
         }
-    }, [isNewUser]);
+    }, [isNewUser, userName, setLogs, setLastLog, setCurrentUser]);
 
     const { data } = useQuery<LogsResponse>(
         ["Logs", userName],
@@ -153,15 +157,12 @@ export const useLogs = (
             if (data.status !== "ok") {
                 setAlertBackend(true);
             } else if (data.logs) {
-                const newLogs = isNewUser
-                    ? data.logs
-                    : addNewLogs(logs, data.logs);
-                setLogs(newLogs);
+                setLogs(isNewUser ? data.logs : addNewLogs(data.logs));
                 setLastLog(data.lastLog);
                 setAlertBackend(false);
             }
         }
-    }, [data]);
+    }, [data, isNewUser, setLogs, setLastLog, addNewLogs, setAlertBackend]);
 
     return { logs, alertBackend };
 };

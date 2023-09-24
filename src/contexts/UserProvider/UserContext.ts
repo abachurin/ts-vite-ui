@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import useReducedMotion from "../../hooks/useReducedMotion";
 import { User } from "../../types";
-import { GLOBAL } from "../../utils";
+import { GLOBAL } from "../../utils/utils";
 import { palettes } from "../../palette";
 
 export const defaultUser: User = {

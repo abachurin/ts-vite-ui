@@ -6,7 +6,7 @@ import {
 } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
 import { paletteAlertType } from "../../palette";
-import { GLOBAL } from "../../utils";
+import { GLOBAL } from "../../utils/utils";
 import CloseButton from "./Button/CloseButton";
 
 // Emotion styles

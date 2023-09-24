@@ -16,9 +16,9 @@ const makeEmotion = (width: number, height: number) => css`
  * @param agent - Agent
  */
 const Chart = ({ agent }: { agent: Agent }) => {
-    const { width, height } = useDimensions();
+    const { width, height } = useDimensions({});
     const w = Math.min(0.8 * width, 1000);
-    const h = Math.min(0.8 * height, 0.8 * w);
+    const h = Math.min(0.8 * height, 0.7 * w);
 
     const scale = useFontScale();
 
@@ -37,7 +37,7 @@ const Chart = ({ agent }: { agent: Agent }) => {
                         x: data.map(({ x }) => x),
                         y: data.map(({ y }) => y),
                         type: "scatter",
-                        mode: "lines+markers",
+                        mode: "lines",
                         marker: { color: "blue" },
                     },
                 ]}
@@ -47,19 +47,19 @@ const Chart = ({ agent }: { agent: Agent }) => {
                     margin: {},
                     title: {
                         text: `Training History Chart of ${agent.name}`,
-                        font: { size: scale * 12 },
+                        font: { size: scale * 10 },
                     },
                     font: { size: scale * 8 },
                     xaxis: {
                         title: {
                             text: "Number of Training Episodes",
-                            font: { size: scale * 10 },
+                            font: { size: scale * 8 },
                         },
                     },
                     yaxis: {
                         title: {
                             text: "Average Score",
-                            font: { size: scale * 10 },
+                            font: { size: scale * 8 },
                         },
                     },
                 }}

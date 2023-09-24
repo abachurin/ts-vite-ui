@@ -1,4 +1,4 @@
-import { useUser } from "../contexts/UserProvider/UserContext";
+import { useUserName } from "../contexts/UserProvider/UserContext";
 import useJobDescription from "./useJobDescription";
 
 /**
@@ -6,9 +6,9 @@ import useJobDescription from "./useJobDescription";
  * @return True if there is a running job, false otherwise.
  */
 const useAnyRunningJob = () => {
-    const user = useUser();
-    const job = useJobDescription(user.name);
-    return job !== null || user.name === "Login";
+    const userName = useUserName();
+    const job = useJobDescription(userName);
+    return job !== null || userName === "Login";
 };
 
 export default useAnyRunningJob;

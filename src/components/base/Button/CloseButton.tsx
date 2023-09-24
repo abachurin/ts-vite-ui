@@ -1,4 +1,4 @@
-import { SvgPaths } from "../../../utils";
+import { SvgPaths } from "../../../utils/utils";
 import Button from "./Button";
 import Icon from "../Icon/Icon";
 

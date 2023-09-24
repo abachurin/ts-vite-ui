@@ -7,7 +7,7 @@ import {
     useSoundVolume,
 } from "../../../contexts/UserProvider/UserContext";
 import { ButtonVariants } from "../../../types";
-import { GLOBAL, changeBrightness } from "../../../utils";
+import { GLOBAL, changeBrightness } from "../../../utils/utils";
 import Button from "../../base/Button/Button";
 import CloseButton from "../../base/Button/CloseButton";
 
@@ -42,39 +42,6 @@ const emotion = css`
     }
 `;
 
-// Helper functions
-const keyToMove: Record<string, number> = {
-    ArrowLeft: 0,
-    ArrowUp: 1,
-    ArrowRight: 2,
-    ArrowDown: 3,
-};
-
-const useArrowKey = (): number => {
-    const [arrowKey, setArrowKey] = useState(-1);
-
-    useEffect(() => {
-        function handleKeyDown(e: KeyboardEvent) {
-            e.preventDefault();
-            const modalIsOpen =
-                document.getElementById("modal")?.innerHTML !== "";
-            if (modalIsOpen) return;
-            const { key } = e;
-            const move = keyToMove[key] ?? -1;
-            setArrowKey(move);
-            setTimeout(() => {
-                setArrowKey(-1);
-            }, 0);
-        }
-        document.addEventListener("keydown", handleKeyDown);
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-        };
-    }, []);
-
-    return arrowKey;
-};
-
 /**
  * Game Pane footer when mode is "Play Yourself"
  */
@@ -82,18 +49,10 @@ const PlayFooter = () => {
     const palette = usePalette();
     const volume = useSoundVolume();
 
-    const arrowKey = useArrowKey();
-
     const setGameMode = useModeStore((state) => state.setGameMode);
 
     const fullMove = useGameStore((state) => state.fullMove);
     const newGame = useGameStore((state) => state.newGame);
-
-    useEffect(() => {
-        if (arrowKey >= 0) {
-            fullMove(arrowKey, volume);
-        }
-    }, [arrowKey]);
 
     const arrowProps = {
         type: "clickPress" as ButtonVariants,

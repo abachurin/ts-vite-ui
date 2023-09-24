@@ -155,6 +155,7 @@ export const getFullGame = async (
  * Cancels Watch Agent job if it exists
  */
 export const killWatchJob = async (userName: string) => {
+    if (userName === "") return;
     await axios({
         method: "DELETE",
         url: BACK_URL + "/watch/cancel",
@@ -166,7 +167,7 @@ export const killWatchJob = async (userName: string) => {
  * Fetches new moves for the Watch Agent functionality in GameBoard component
  */
 export const fetchNewMovesTiles = async (
-    request: NewMovesRequest
+    req: NewMovesRequest
 ): Promise<NewMovesResponse> => {
     const { result, error } = await connectAPI<
         NewMovesRequest,
@@ -174,7 +175,7 @@ export const fetchNewMovesTiles = async (
     >({
         method: "POST",
         endpoint: "/watch/new_moves",
-        data: request,
+        data: req,
     });
     if (error) {
         console.log(error);

@@ -1,12 +1,12 @@
 import { css } from "@emotion/react";
-import { useMemo, useEffect } from "react";
+import { useMemo, useEffect, useCallback } from "react";
 import useAlert from "../../../hooks/useAlert";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useLogsStore, { useLogs } from "../../../store/logsStore";
 import ButtonGroup from "../../base/Button/ButtonGroup";
 import Button from "../../base/Button/Button";
 import { UserName } from "../../../types";
-import { GLOBAL } from "../../../utils";
+import { GLOBAL } from "../../../utils/utils";
 
 // Emotion styles
 const makeEmotion = (color: string) => css`
@@ -44,18 +44,22 @@ const LogWindow = ({ userName }: UserName) => {
     const clearLogs = useLogsStore((state) => state.clearLogs);
     const downloadLogs = useLogsStore((state) => state.downloadLogs);
 
+    const clearUserLogs = useCallback(() => {
+        clearLogs(userName);
+    }, [clearLogs, userName]);
+
     const { logs, alertBackend } = useLogs(userName);
 
-    const [warning, openWarning, closeWarning] = useAlert({
+    const { appAlert, openAlert, closeAlert } = useAlert({
         type: "error",
         duration: 10000000,
         children: "Network error. Backend does not respond!",
     });
 
     useEffect(() => {
-        if (alertBackend) openWarning();
-        else closeWarning();
-    }, [alertBackend]);
+        if (alertBackend) openAlert();
+        else closeAlert();
+    }, [alertBackend, openAlert, closeAlert]);
 
     const emotion = useMemo(() => makeEmotion(palette.logs), [palette.logs]);
 
@@ -77,14 +81,14 @@ const LogWindow = ({ userName }: UserName) => {
                             type='clickPress'
                             color={palette.background}
                             background={palette.error}
-                            onClick={() => clearLogs(userName)}
+                            onClick={clearUserLogs}
                         >
                             CLEAR
                         </Button>
                     </ButtonGroup>
                 ) : null}
             </aside>
-            {warning}
+            {appAlert}
         </div>
     );
 };

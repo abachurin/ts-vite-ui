@@ -1,13 +1,13 @@
 import { css } from "@emotion/react";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useCallback, useEffect, useState } from "react";
 import { connectAPI } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
-import { useUser } from "../../../contexts/UserProvider/UserContext";
+import { useUserName } from "../../../contexts/UserProvider/UserContext";
 import useJobDescription from "../../../hooks/useJobDescription";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import { RGB } from "../../../types";
-import { GLOBAL, setTransparency } from "../../../utils";
+import { GLOBAL, setTransparency } from "../../../utils/utils";
 import ButtonGroup from "../../base/Button/ButtonGroup";
 import Button from "../../base/Button/Button";
 import DescriptionTable from "../../base/DescriptionTable";
@@ -64,39 +64,45 @@ const JobDescriptionLabels = {
  */
 const CurrentJobDescription = () => {
     const palette = usePalette();
-    const user = useUser();
-    const job = useJobDescription(user.name);
+    const userName = useUserName();
+    const job = useJobDescription(userName);
 
     const setAgentMode = useModeStore((state) => state.setAgentMode);
     const setAgentName = useModeStore((state) => state.setAgentName);
 
     const [waitCancel, setWaitCancel] = useState(false);
-    const [message, createMessage] = useAlertMessage();
+    const { message, createMessage } = useAlertMessage();
 
+    // Clear message when "cancel job" operation completes
     useEffect(() => {
-        createMessage("");
+        createMessage();
         setWaitCancel(false);
-    }, [job?.description]);
+    }, [job?.description, createMessage]);
 
     useEffect(() => {
         const type = job?.type;
         const jobType = type === 0 ? "train" : type === 1 ? "test" : "none";
         setAgentMode(jobType);
         setAgentName(job?.name);
-    }, [job?.type, job?.name]);
+    }, [job?.type, job?.name, setAgentMode, setAgentName]);
 
-    const cancelJob = async (type: cancelJob) => {
-        const { result, error } = await connectAPI<cancelType, string>({
-            method: "post",
-            endpoint: "/jobs/cancel",
-            data: { description: job?.description, type },
-        });
-        if (error) createMessage(error, "error");
-        else {
-            createMessage(result, "success", 100000);
-            setWaitCancel(true);
-        }
-    };
+    const cancelJob = useCallback(
+        async (type: cancelJob) => {
+            const { result, error } = await connectAPI<cancelType, string>({
+                method: "post",
+                endpoint: "/jobs/cancel",
+                data: { description: job?.description, type },
+            });
+            if (error) createMessage(error, "error");
+            else {
+                createMessage(result, "success", 100000);
+                setWaitCancel(true);
+            }
+        },
+        [job?.description, createMessage]
+    );
+    const stopJob = useCallback(() => cancelJob("STOP"), [cancelJob]);
+    const killJob = useCallback(() => cancelJob("KILL"), [cancelJob]);
 
     const emotion = useMemo(
         () => makeEmotion(palette.two, palette.background),
@@ -121,14 +127,14 @@ const CurrentJobDescription = () => {
                     <Button
                         type='clickPress'
                         background={palette.three}
-                        onClick={() => cancelJob("STOP")}
+                        onClick={stopJob}
                     >
                         STOP
                     </Button>
                     <Button
                         type='clickPress'
                         background={palette.error}
-                        onClick={() => cancelJob("KILL")}
+                        onClick={killJob}
                     >
                         KILL
                     </Button>

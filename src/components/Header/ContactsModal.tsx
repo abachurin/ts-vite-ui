@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { AlignProps } from "../../types";
 import Modal from "../modal/Modal";
@@ -8,7 +8,7 @@ import ModalBody from "../modal/ModalBody";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 import { TelegramIcon, WhatsappIcon, WebIcon } from "../base/Icon/SvgIcons";
-import { GLOBAL, SvgPaths } from "../../utils";
+import { GLOBAL, SvgPaths } from "../../utils/utils";
 
 // Emotion styles
 const emotion = css`
@@ -33,12 +33,26 @@ const emotion = css`
 const ContactsModal = ({ align }: AlignProps) => {
     const palette = usePalette();
 
+    const goMail = useCallback(
+        () => window.open("mailto: bachurin.alex@gmail.com"),
+        []
+    );
+    const goWhatsapp = useCallback(
+        () => window.open("https://wa.me/351961072567"),
+        []
+    );
+    const goTelegram = useCallback(
+        () => window.open("https://t.me/abachurin1974"),
+        []
+    );
+    const goWeb = useCallback(() => window.open("https://abachurin.com"), []);
+
     const contactMethods = useMemo(
         () => [
             {
                 svg: SvgPaths.email,
                 label: "E-mail",
-                onClick: () => window.open("mailto: bachurin.alex@gmail.com"),
+                onClick: goMail,
                 background: palette.one,
                 initialSize: 24,
                 rescaleFactor: 1.8,
@@ -46,7 +60,7 @@ const ContactsModal = ({ align }: AlignProps) => {
             {
                 svg: WhatsappIcon,
                 label: "Whatsapp",
-                onClick: () => window.open("https://wa.me/351961072567"),
+                onClick: goWhatsapp,
                 background: palette.two,
                 initialSize: 48,
                 rescaleFactor: 1,
@@ -54,7 +68,7 @@ const ContactsModal = ({ align }: AlignProps) => {
             {
                 svg: TelegramIcon,
                 label: "Telegram",
-                onClick: () => window.open("https://t.me/abachurin1974"),
+                onClick: goTelegram,
                 background: palette.three,
                 initialSize: 48,
                 rescaleFactor: 1,
@@ -62,13 +76,22 @@ const ContactsModal = ({ align }: AlignProps) => {
             {
                 svg: WebIcon,
                 label: "www",
-                onClick: () => window.open("https://abachurin.com"),
+                onClick: goWeb,
                 background: palette.four,
                 initialSize: 64,
                 rescaleFactor: 0.65,
             },
         ],
-        [palette]
+        [
+            goMail,
+            goTelegram,
+            goWeb,
+            goWhatsapp,
+            palette.four,
+            palette.one,
+            palette.three,
+            palette.two,
+        ]
     );
 
     return (

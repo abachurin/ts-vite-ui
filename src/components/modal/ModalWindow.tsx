@@ -10,7 +10,7 @@ import {
     useAnimate,
 } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
-import { GLOBAL, makeSound } from "../../utils";
+import { GLOBAL, makeSound } from "../../utils/utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
@@ -164,7 +164,7 @@ const ModalWindow = ({
         onClose && onClose();
         makeSound(clickSound, volume);
         updateIsOpen(false);
-    }, [volume]);
+    }, [volume, updateIsOpen, onClose]);
 
     const escapeHandler = useCallback(
         (e: KeyboardEvent) => {
@@ -173,7 +173,7 @@ const ModalWindow = ({
                 closeModal();
             }
         },
-        [isOpen, volume]
+        [isOpen, volume, closeModal]
     );
 
     useEffect(() => {

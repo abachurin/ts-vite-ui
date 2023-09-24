@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { useIsAdmin } from "../contexts/UserProvider/UserContext";
-import { GLOBAL } from "../utils";
+import { GLOBAL } from "../utils/utils";
 import useAlert from "../hooks/useAlert";
 import Pane from "../components/main/Pane";
 import LogWindow from "../components/main/PaneAgent/LogWindow";
@@ -21,17 +21,16 @@ const emotion = css`
 
 const AdminPage = () => {
     const isAdmin = useIsAdmin();
-    const [alert, openAlert, closeAlert] = useAlert({
+    const { appAlert, openAlert, closeAlert } = useAlert({
         type: "error",
         duration: 10000000,
         children: "You are not authorized to access this page",
     });
 
     useEffect(() => {
-        console.log(isAdmin);
         if (isAdmin) closeAlert();
         else openAlert();
-    }, [isAdmin]);
+    }, [isAdmin, closeAlert, openAlert]);
 
     return (
         <>
@@ -43,7 +42,7 @@ const AdminPage = () => {
                     <AdminManage />
                 </div>
             )}
-            {alert}
+            {appAlert}
         </>
     );
 };

@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-import { GLOBAL } from "../utils";
+import { GLOBAL } from "../utils/utils";
 import Pane from "../components/main/Pane";
 import Dropdown from "../components/base/Dropdown";
 

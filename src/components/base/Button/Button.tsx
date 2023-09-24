@@ -12,7 +12,7 @@ import {
     ButtonVariants,
     ModalState,
 } from "../../../types";
-import { GLOBAL } from "../../../utils";
+import { GLOBAL } from "../../../utils/utils";
 import { whooshRotateEmotion, whooshRotateClick } from "./whooshRotate";
 import { clickPressEmotion, clickPressClick } from "./clickPress";
 

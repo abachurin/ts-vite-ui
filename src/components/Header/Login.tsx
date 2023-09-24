@@ -17,7 +17,7 @@ import {
     checkRe,
     simulateCloseModalClick,
     namingRule,
-} from "../../utils";
+} from "../../utils/utils";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";
@@ -81,7 +81,9 @@ const Login = () => {
     const [name, setName] = useState("");
     const [pwd, setPwd] = useState("");
 
-    const [message, createMessage] = useAlertMessage("Enter Name and Password");
+    const { message, createMessage } = useAlertMessage(
+        "Enter Name and Password"
+    );
     const [loading, setLoading] = useState(false);
 
     const finalizeLogin = (newUser: User, closeAfter = true): void => {

@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { Children, ReactElement, cloneElement } from "react";
 import { ChildrenProps } from "../../../types";
-import { GLOBAL } from "../../../utils";
+import { GLOBAL } from "../../../utils/utils";
 
 // Emotion styles
 const emotion = css`

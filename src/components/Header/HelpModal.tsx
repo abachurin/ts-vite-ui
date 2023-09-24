@@ -1,10 +1,10 @@
 import { css } from "@emotion/react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { AlignProps } from "../../types";
-import { GLOBAL } from "../../utils";
+import { GLOBAL } from "../../utils/utils";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
 import ModalBody from "../modal/ModalBody";
@@ -95,6 +95,15 @@ const HelpModal = ({ align }: AlignProps) => {
     const palette = usePalette();
     const [helpSection, setHelpSection] = useState<HelpSection>("guide");
 
+    const showGuide = useCallback(() => setHelpSection("guide"), []);
+    const showHistory = useCallback(() => setHelpSection("history"), []);
+    const showStructure = useCallback(() => setHelpSection("structure"), []);
+    const showHelpSection = {
+        guide: showGuide,
+        history: showHistory,
+        structure: showStructure,
+    };
+
     const renderButton = (
         helpSection: HelpSection,
         label: string,
@@ -105,7 +114,7 @@ const HelpModal = ({ align }: AlignProps) => {
                 type='clickPress'
                 background={background}
                 color={palette.background}
-                onClick={() => setHelpSection(helpSection)}
+                onClick={showHelpSection[helpSection]}
             >
                 {label}
             </Button>

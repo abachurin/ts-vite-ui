@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { ButtonExtraStyle, ButtonEffects } from "../../../types";
-import { GLOBAL, makeSound } from "../../../utils";
+import { GLOBAL, makeSound } from "../../../utils/utils";
 import clickSound from "../../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 export const clickPressEmotion: ButtonExtraStyle = () => css`

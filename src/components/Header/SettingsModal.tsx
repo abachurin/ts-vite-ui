@@ -8,7 +8,7 @@ import {
 import { connectAPI } from "../../api/requests";
 import useAlertMessage from "../../hooks/useAlertMessage";
 import { palettes } from "../../palette";
-import { GLOBAL, changeBrightness } from "../../utils";
+import { GLOBAL, changeBrightness } from "../../utils/utils";
 import { AlignProps, Alignment, User } from "../../types";
 import Modal from "../modal/Modal";
 import ModalHeader from "../modal/ModalHeader";
@@ -64,7 +64,7 @@ const SettingsModal = ({ align }: AlignProps) => {
     const palette = usePalette();
     const updateUser = useUserUpdate();
 
-    const [message, createMessage] = useAlertMessage();
+    const { message, createMessage } = useAlertMessage();
     const [loading, setLoading] = useState(false);
 
     const [currentValues, setCurrentValues] = useState<ValuesType>(
@@ -96,26 +96,6 @@ const SettingsModal = ({ align }: AlignProps) => {
         }
         setLoading(false);
     };
-
-    const saveButton =
-        user.name !== "Login" ? (
-            <Button
-                type='clickPress'
-                align='center'
-                background={palette.two}
-                color='white'
-                disabled={loading}
-                onClick={() => {
-                    updateUser(currentValues);
-                    saveUserValues({
-                        name: user.name,
-                        ...currentValues,
-                    });
-                }}
-            >
-                Apply and Save
-            </Button>
-        ) : null;
 
     const checkboxParameters = {
         color1: changeBrightness(palette.two, 1.5),
@@ -245,7 +225,24 @@ const SettingsModal = ({ align }: AlignProps) => {
                 >
                     Apply
                 </Button>
-                {saveButton}
+                {user.name !== "Login" ? (
+                    <Button
+                        type='clickPress'
+                        align='center'
+                        background={palette.two}
+                        color='white'
+                        disabled={loading}
+                        onClick={() => {
+                            updateUser(currentValues);
+                            saveUserValues({
+                                name: user.name,
+                                ...currentValues,
+                            });
+                        }}
+                    >
+                        Apply and Save
+                    </Button>
+                ) : null}
             </ModalFooter>
             {message ? <ModalFooter>{message}</ModalFooter> : null}
         </Modal>

@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { connectAPI, getItems } from "../../../api/requests";
 import useModeStore from "../../../store/modeStore";
 import {
@@ -11,14 +11,17 @@ import useAnyRunningJob from "../../../hooks/useAnyRunningJob";
 import { AgentDict, AgentTraining } from "../../../types";
 import {
     GLOBAL,
-    defaultTrainingParams,
-    undefinedTrainingParams,
     simulateCloseModalClick,
-    validateTrainingParams,
     alphaSymbol,
     namingRule,
+} from "../../../utils/utils";
+import {
+    trainParamConstraints,
+    defaultTrainingParams,
+    undefinedTrainingParams,
+    validateTrainParams,
     inputToNumber,
-} from "../../../utils";
+} from "../../../utils/validation";
 import Button from "../../base/Button/Button";
 import Dropdown from "../../base/Dropdown";
 import Input from "../../base/Input";
@@ -54,6 +57,9 @@ const emotion = css`
     }
 `;
 
+// Helper functions
+type NumInput = keyof typeof trainParamConstraints;
+
 /**
  * Train Agent modal.
  */
@@ -65,16 +71,16 @@ const TrainModal = () => {
     const setAgentMode = useModeStore((state) => state.setAgentMode);
     const setAgentName = useModeStore((state) => state.setAgentName);
 
-    const [message, createMessage] = useAlertMessage();
+    const { message, createMessage } = useAlertMessage();
     const [loading, setLoading] = useState(false);
 
     const [agents, setAgents] = useState<AgentDict>({});
-    const getUserAgents = async () => {
+    const agentList = Object.keys(agents);
+    const getUserAgents = useCallback(async () => {
         const { list, message } = await getItems("Agents", userName, "user");
         createMessage(message, "error");
         setAgents(list as AgentDict);
-    };
-    const agentList = Object.keys(agents);
+    }, [userName, createMessage]);
 
     const [values, setValues] = useState<AgentTraining>(
         undefinedTrainingParams
@@ -83,36 +89,25 @@ const TrainModal = () => {
         setValues((prevValues) => ({ ...prevValues, ...update }));
     }, []);
 
+    // Get existing Agents list on User change
     useEffect(() => {
         getUserAgents();
         setValues(undefinedTrainingParams);
-    }, [userName]);
+    }, [userName, getUserAgents]);
 
-    const setExistingValues = () => {
+    // Show existing values when continue training existing Agent
+    const setExistingValues = useCallback(() => {
         if (!values.isNew && values.name) {
             updateValues({ ...agents[values.name] });
         }
-    };
+    }, [values.isNew, values.name, agents, updateValues]);
     useEffect(() => {
         setExistingValues();
-    }, [values.isNew, values.name]);
+    }, [setExistingValues]);
 
-    const inputParameters = {
-        backgroundColor: "white",
-        labelColor1: palette.two,
-        labelColor2: palette.one,
-        controlColor: palette.three,
-    };
-
-    const flipNewExisting = (value: string) => {
-        if (value == "Existing") getUserAgents();
-        updateValues({
-            isNew: value == "New" ? true : false,
-        });
-    };
-
-    const handleTrain = async () => {
-        const [validated, change] = validateTrainingParams(values);
+    // Main "GO" function
+    const handleTrain = useCallback(async () => {
+        const [validated, change] = validateTrainParams(values);
         setValues((prevValues) => ({ ...prevValues, ...validated }));
 
         if (change) {
@@ -148,13 +143,103 @@ const TrainModal = () => {
             }
             setLoading(false);
         }
+    }, [createMessage, setAgentMode, setAgentName, userName, values]);
+
+    const inputParameters = {
+        backgroundColor: "white",
+        labelColor1: palette.two,
+        labelColor2: palette.one,
+        controlColor: palette.three,
     };
 
-    const alphaLabel =
-        (values.isNew ? "Initial" : "Current") +
-        " Learning Rate " +
-        alphaSymbol;
+    // Need to wrap onChange functions for Inputs in Callbacks to avoid infinite re-render loops
+    const flipNewExisting = useCallback(
+        (value: string) => {
+            if (value == "Existing") getUserAgents();
+            updateValues({
+                isNew: value == "New" ? true : false,
+            });
+        },
+        [getUserAgents, updateValues]
+    );
+    const handleChangeName = useCallback(
+        (value: string) => updateValues({ name: value }),
+        [updateValues]
+    );
+    const handleChangeN = useCallback(
+        (value: string) =>
+            updateValues({
+                N: inputToNumber(value),
+            }),
+        [updateValues]
+    );
+    const handleChangeNumValue = useCallback(
+        (key: NumInput, value: string) =>
+            updateValues({ [key]: inputToNumber(value) }),
+        [updateValues]
+    );
+    const handleChangeAlpha = useCallback(
+        (value: string) => handleChangeNumValue("alpha", value),
+        [handleChangeNumValue]
+    );
+    const handleChangeDecay = useCallback(
+        (value: string) => handleChangeNumValue("decay", value),
+        [handleChangeNumValue]
+    );
+    const handleChangeStep = useCallback(
+        (value: string) => handleChangeNumValue("step", value),
+        [handleChangeNumValue]
+    );
+    const handleChangeMinAlpha = useCallback(
+        (value: string) => handleChangeNumValue("minAlpha", value),
+        [handleChangeNumValue]
+    );
+    const handleChangeEpisodes = useCallback(
+        (value: string) => handleChangeNumValue("episodes", value),
+        [handleChangeNumValue]
+    );
+    const handleChangeNumParams = {
+        alpha: handleChangeAlpha,
+        decay: handleChangeDecay,
+        step: handleChangeStep,
+        minAlpha: handleChangeMinAlpha,
+        episodes: handleChangeEpisodes,
+    };
+    const labelsNumParams = useMemo(() => {
+        return {
+            alpha:
+                (values.isNew ? "Initial" : "Current") +
+                " Learning Rate " +
+                alphaSymbol,
+            decay: alphaSymbol + " decay rate",
+            step: "Decay step, in episodes",
+            minAlpha: "Minimal " + alphaSymbol,
+            episodes: "Episodes",
+        };
+    }, [values.isNew]);
 
+    const renderInput = (key: NumInput) => {
+        const min = trainParamConstraints[key].min;
+        const max = trainParamConstraints[key].max;
+        return (
+            <Input
+                {...inputParameters}
+                type='number'
+                label={labelsNumParams[key]}
+                initialValue={values[key]}
+                persistAs={`${userName}_train-${key}`}
+                min={min}
+                max={max}
+                step={trainParamConstraints[key].step}
+                placeholder={`${min} <= * <= ${max}`}
+                disabled={!values.isNew && key !== "episodes"}
+                onChange={handleChangeNumParams[key]}
+            />
+        );
+    };
+
+    // Prop until i make possible to choose workers run independently by any User
+    // Option N = 6 will crash the server at the moment due to massive Memory usage
     const optionsForN =
         userName === "Loki" ? ["2", "3", "4", "5", "6"] : ["2", "3", "4", "5"];
 
@@ -197,7 +282,7 @@ const TrainModal = () => {
                             persistAs={`${userName}_train-new`}
                             initialValue={values.name}
                             placeholder={namingRule}
-                            onChange={(value) => updateValues({ name: value })}
+                            onChange={handleChangeName}
                         />
                     ) : (
                         <Dropdown
@@ -205,7 +290,7 @@ const TrainModal = () => {
                             label='Existing Agent Name'
                             optionValues={agentList}
                             persistAs={`${userName}_train-existing`}
-                            onChange={(value) => updateValues({ name: value })}
+                            onChange={handleChangeName}
                             zIndex={30}
                         />
                     )}
@@ -218,97 +303,18 @@ const TrainModal = () => {
                             disabled={!values.isNew}
                             initialValue={values.N}
                             alignOptions='right'
-                            onChange={(value) =>
-                                updateValues({
-                                    N: inputToNumber(value),
-                                })
-                            }
+                            onChange={handleChangeN}
                             zIndex={20}
                         />
-                        <Input
-                            {...inputParameters}
-                            type='number'
-                            label={alphaLabel}
-                            persistAs={`${userName}_train-alpha`}
-                            min={values.isNew ? 0.1 : 0}
-                            max={0.25}
-                            step={0.01}
-                            initialValue={values.alpha}
-                            placeholder={"0.10 <= " + alphaSymbol + " <= 0.25"}
-                            disabled={!values.isNew}
-                            onChange={(value) =>
-                                updateValues({
-                                    alpha: inputToNumber(value),
-                                })
-                            }
-                        />
+                        {renderInput("alpha")}
                     </section>
                     <section>
-                        <Input
-                            {...inputParameters}
-                            type='number'
-                            label={alphaSymbol + " decay rate"}
-                            persistAs={`${userName}_train-decay`}
-                            min={0.5}
-                            max={1.0}
-                            step={0.01}
-                            initialValue={values.decay}
-                            placeholder='0.5 <= x <= 1.0'
-                            disabled={!values.isNew}
-                            onChange={(value) => {
-                                updateValues({ decay: inputToNumber(value) });
-                            }}
-                        />
-                        <Input
-                            {...inputParameters}
-                            type='number'
-                            label='Decay step, in episodes'
-                            persistAs={`${userName}_train-step`}
-                            min={1000}
-                            max={10000}
-                            step={1000}
-                            initialValue={values.step}
-                            placeholder='1000 <= x <= 10000'
-                            disabled={!values.isNew}
-                            onChange={(value) =>
-                                updateValues({ step: inputToNumber(value) })
-                            }
-                        />
+                        {renderInput("decay")}
+                        {renderInput("step")}
                     </section>
                     <section>
-                        <Input
-                            {...inputParameters}
-                            type='number'
-                            label={"Minimal " + alphaSymbol}
-                            persistAs={`${userName}_train-minAlpha`}
-                            min={0}
-                            max={0.05}
-                            step={0.001}
-                            initialValue={values.minAlpha}
-                            placeholder={"min " + alphaSymbol + " <= 0.05"}
-                            disabled={!values.isNew}
-                            onChange={(value) =>
-                                updateValues({ minAlpha: inputToNumber(value) })
-                            }
-                        />
-                        <Input
-                            {...inputParameters}
-                            type='number'
-                            label='Train episodes'
-                            persistAs={`${userName}_train-episodes`}
-                            min={values.isNew ? 0 : 5000}
-                            max={100000}
-                            step={5000}
-                            initialValue={values.episodes}
-                            placeholder={
-                                values.isNew
-                                    ? "Only create Agent"
-                                    : "5k <= x <= 100k"
-                            }
-                            onChange={(value) =>
-                                updateValues({ episodes: inputToNumber(value) })
-                            }
-                        />
+                        {renderInput("minAlpha")}
+                        {renderInput("episodes")}
                     </section>
                 </main>
             </ModalBody>

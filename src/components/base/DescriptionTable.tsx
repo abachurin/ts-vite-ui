@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
-import { GLOBAL } from "../../utils";
+import { GLOBAL } from "../../utils/utils";
 
 const makeEmotion = (
     background: string,

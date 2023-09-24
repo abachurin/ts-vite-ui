@@ -1,10 +1,4 @@
-import {
-    RGB,
-    RGBA,
-    AgentTraining,
-    AgentWatchingBase,
-    AgentTesting,
-} from "./types";
+import { RGB, RGBA } from "../types";
 
 // Global constants
 export const GLOBAL = {
@@ -40,9 +34,32 @@ export const GLOBAL = {
     },
     minSwipeDistance: 50,
 };
+
+export const boardColors = {
+    0: "white",
+    1: "hsl(255, 100%, 75%)",
+    2: "hsl(300, 100%, 55%)",
+    3: "hsl(120, 100%, 40%)",
+    4: "hsl(30, 100%, 50%)",
+    5: "hsl(192, 100%, 35%)",
+    6: "hsl(336, 100%, 50%)",
+    7: "hsl(80, 100%, 30%)",
+    8: "hsl(30, 30%, 30%)",
+    9: "hsl(220, 100%, 70%)",
+    10: "hsl(12, 100%, 55%)",
+    11: "hsl(165, 100%, 30%)",
+    12: "hsl(270, 100%, 40%)",
+    13: "hsl(255, 100%, 45%)",
+    14: "hsl(0, 100%, 30%)",
+    15: "hsl(0, 0%, 20%)",
+};
+
 export const namingRule = `Letters, numerals, dash, underscore, 1-${GLOBAL.maxNameLength} chars`;
 export const alphaSymbol = String.fromCharCode(945);
-export const specialAgents = ["Random Moves", "Best Score"];
+export const specialAgents: readonly string[] = [
+    "Random Moves",
+    "Best Score",
+] as const;
 
 // SVG paths
 export const SvgPaths = {
@@ -179,222 +196,6 @@ export const deepEqual = <T>(a: T, b: T): boolean => {
 };
 
 /**
- * Converts a string input to a number or undefined (empty string "" is considered undefined).
- * @param value - The string input value to be converted.
- */
-export const inputToNumber = (value: string): number | undefined => {
-    const valueNum = value === "" ? undefined : +value;
-    return valueNum === undefined || isNaN(valueNum) ? undefined : valueNum;
-};
-
-/**
- * Checks if an object has at least one property with a value of undefined.
- * @param obj - object
- */
-export const hasUndefinedValues = (obj: Record<string, unknown>): boolean => {
-    return Object.values(obj).some(
-        (value) => value === undefined || value === null || Number.isNaN(value)
-    );
-};
-
-/**
- *  default Job params and the functions to validate them
- */
-const makeUndefinedVersion = (obj: Record<string, unknown>): unknown => {
-    const result = { ...obj };
-    for (const key in obj) {
-        result[key] = undefined;
-    }
-    return result;
-};
-
-export const defaultTrainingParams = {
-    N: 2,
-    alpha: 0.25,
-    decay: 0.9,
-    step: 1000,
-    minAlpha: 0.01,
-    episodes: 5000,
-    name: "",
-    isNew: true,
-};
-export const defaultWatchParams: AgentWatchingBase = {
-    depth: 0,
-    width: 1,
-    trigger: 0,
-    name: undefined,
-};
-export const defaultTestingParams: AgentTesting = {
-    ...defaultWatchParams,
-    episodes: 100,
-};
-
-export const undefinedTrainingParams = {
-    ...(makeUndefinedVersion(defaultTrainingParams) as AgentTraining),
-    isNew: true,
-};
-export const undefinedWatchParams = makeUndefinedVersion(
-    defaultWatchParams
-) as AgentWatchingBase;
-export const undefinedTestingParams = makeUndefinedVersion(
-    defaultTestingParams
-) as AgentTesting;
-
-export const trainingParamsConstraints = {
-    alpha: {
-        min: 0.1,
-        max: 0.25,
-        step: 0.01,
-    },
-    decay: {
-        min: 0,
-        max: 1,
-    },
-    step: {
-        min: 0,
-        max: 1,
-    },
-    minAlpha: {
-        min: 0,
-        max: 1,
-    },
-};
-
-/**
- * Validates Train Agent Job parameters.
- * @param values - parameters to be validated
- * @return A tuple containing the validated parameters
- * and a boolean indicating if any values were changed during validation.
- */
-export const validateTrainingParams = (
-    values: Partial<AgentTraining>
-): [Partial<AgentTraining>, boolean] => {
-    const validated = { ...values };
-    for (const key in values) {
-        switch (key) {
-            case "name":
-                if (!checkRe(values.name)) {
-                    validated.name = undefined;
-                }
-                break;
-            case "alpha":
-                if (
-                    values.alpha === undefined ||
-                    values.alpha > 0.25 ||
-                    (values.isNew && values.alpha < 0.1)
-                ) {
-                    validated.alpha = undefined;
-                }
-                break;
-            case "decay":
-                if (
-                    values.decay === undefined ||
-                    values.decay > 1 ||
-                    values.decay < 0.5
-                ) {
-                    validated.decay = undefined;
-                }
-                break;
-            case "step":
-                if (
-                    values.step === undefined ||
-                    (values.step > 1 && values.step < 0.5)
-                ) {
-                    validated.step = undefined;
-                }
-                break;
-            case "min_alpha":
-                if (
-                    values.minAlpha === undefined ||
-                    (values.minAlpha > 1 && values.minAlpha < 0.5)
-                ) {
-                    validated.minAlpha = undefined;
-                }
-                break;
-            default:
-                break;
-        }
-    }
-    return [
-        validated,
-        !deepEqual(validated, values) || hasUndefinedValues(validated),
-    ];
-};
-
-/**
- * Validates a number value based on the given minimum and maximum values.
- * @param key - key of the default testing parameters
- * @param val - to be validated
- * @param minVal - minimum allowed value
- * @param maxVal - maximum allowed value
- * @return The validated value, or default if not provided, or undefined if it fails the validation.
- */
-const checkNumberVal = (
-    key: keyof typeof defaultTestingParams,
-    val: number | undefined,
-    minVal: number,
-    maxVal: number
-) => {
-    if (val === undefined) {
-        return defaultTestingParams[key] as number;
-    } else if (val > maxVal || val < minVal || !Number.isInteger(val)) {
-        return undefined;
-    } else return val;
-};
-
-/**
- * Validates Test Agent Job parameters.
- * @param values - parameters to be validated
- * @return A tuple containing the validated parameters
- * and a boolean indicating if any values were changed during validation.
- */
-export const validateTestingParams = (
-    values: Partial<AgentTesting>
-): [Partial<AgentTesting>, boolean] => {
-    const validated = { ...values };
-    for (const key in values) {
-        switch (key) {
-            case "name":
-                if (
-                    !checkRe(values.name) &&
-                    !specialAgents.includes(values.name ?? "x x x")
-                ) {
-                    validated.name = undefined;
-                }
-                break;
-            case "depth":
-                validated.depth = checkNumberVal("depth", values.depth, 0, 2);
-                break;
-            case "width":
-                validated.width = checkNumberVal("width", values.width, 1, 3);
-                break;
-            case "trigger":
-                validated.trigger = checkNumberVal(
-                    "trigger",
-                    values.trigger,
-                    0,
-                    6
-                );
-                break;
-            case "episodes":
-                validated.episodes = checkNumberVal(
-                    "episodes",
-                    values.episodes,
-                    100,
-                    10000
-                );
-                break;
-            default:
-                break;
-        }
-    }
-    return [
-        validated,
-        !deepEqual(validated, values) || hasUndefinedValues(validated),
-    ];
-};
-
-/**
  * Simulates a click event on the element with ID "modal-close" to close a modal.
  * The ID should be assigned to Modal Background element.
  */
@@ -403,14 +204,14 @@ export const simulateCloseModalClick = (): void => {
     toClick && toClick.click();
 };
 
-const characters =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-const lengthRandomName = 6;
 /**
  * Generates a random name by concatenating the given suffix with a randomly generated string.
  * @param suffix - suffix for the random string
  * @return randomly generated name.
  */
+const characters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+const lengthRandomName = 6;
 export const randomName = (suffix: string): string => {
     return (
         "*" +
@@ -422,37 +223,9 @@ export const randomName = (suffix: string): string => {
     );
 };
 
-// Persistence
-type PersistenceFunctions = {
-    setPersistedValue: (update: string) => void;
-    getPersistedValue: () => string;
-};
-const emptyPersistence: PersistenceFunctions = {
-    setPersistedValue: (update: string | number) => {
-        console.log(update);
-    },
-    getPersistedValue: () => "",
-};
-
 /**
- * Creates a setter and getter function for persistence in localStorage.
- * @param persistAs - part of the key, _2048_ is added on top of it
+ * Capitalizes the first letter.
  */
-export const createPersistence = (persistAs: string): PersistenceFunctions => {
-    if (persistAs === undefined) return emptyPersistence;
-    const fullName = "_2048_" + persistAs;
-    if (localStorage.getItem(fullName) === null)
-        localStorage.setItem(fullName, "");
-
-    const setPersistedValue = (update: string) => {
-        localStorage.setItem(fullName, update);
-    };
-    const getPersistedValue = () => {
-        return localStorage.getItem(fullName) ?? "";
-    };
-
-    return {
-        setPersistedValue,
-        getPersistedValue,
-    };
+export const startUpperCase = (str: string): string => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 };

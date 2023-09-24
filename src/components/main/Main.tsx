@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { css } from "@emotion/react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL } from "../../utils";
+import { GLOBAL } from "../../utils/utils";
 import PaneAgent from "./PaneAgent/PaneAgent";
 import PaneGame from "./PaneGame/PaneGame";
 import Footer from "../Footer/Footer";

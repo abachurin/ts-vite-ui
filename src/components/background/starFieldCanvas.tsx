@@ -3,7 +3,7 @@
 import { css } from "@emotion/react";
 import { useEffect, useRef } from "react";
 import { useUser } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL, randomNum } from "../../utils";
+import { GLOBAL, randomNum } from "../../utils/utils";
 import useDimensions from "../../hooks/useDimensions";
 
 // Emotion styles
@@ -32,7 +32,7 @@ type Star = {
 const StarFieldCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const user = useUser();
-    const { width, height } = useDimensions();
+    const { width, height } = useDimensions({});
 
     useEffect(() => {
         const canvas = canvasRef.current;

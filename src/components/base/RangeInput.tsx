@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { useState, useMemo } from "react";
-import { GLOBAL } from "../../utils";
+import useSyncInitialValue from "../../hooks/useSyncInitialValue";
+import { GLOBAL } from "../../utils/utils";
 
 // Emotion styles
 const makeEmotion = (
@@ -104,7 +105,7 @@ const makeInputLine = (width: string, controlSize: number) => css`
  * @param onChange - function to be called when the value changes
  * @param debounceMs - debounce delay in ms
  */
-interface RangeInputProps {
+export type RangeInputProps = {
     start: number;
     end: number;
     step?: number;
@@ -120,7 +121,7 @@ interface RangeInputProps {
     controlColor?: string;
     onChange: (value: number) => void;
     debounceMs?: number;
-}
+};
 const RangeInput = ({
     start,
     end,
@@ -140,7 +141,7 @@ const RangeInput = ({
 }: RangeInputProps) => {
     const textColor = labelColor ?? color;
     const startValue = initialValue ?? start;
-    const [value, setValue] = useState(startValue);
+    const [value, setValue] = useSyncInitialValue(startValue);
 
     const [timer, setTimer] = useState<NodeJS.Timeout>();
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {

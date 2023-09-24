@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
-import { GLOBAL } from "../../../utils";
+import { GLOBAL } from "../../../utils/utils";
 
 // Helper functions
 const makeEmotion = (color: string) => css`

@@ -11,13 +11,18 @@ import useAlertMessage from "../../../hooks/useAlertMessage";
 import { AgentWatchingBase } from "../../../types";
 import {
     GLOBAL,
-    defaultWatchParams,
-    undefinedWatchParams,
     simulateCloseModalClick,
-    validateTestingParams,
     specialAgents,
     randomName,
-} from "../../../utils";
+    startUpperCase,
+} from "../../../utils/utils";
+import {
+    defaultWatchParams,
+    validateTestParams,
+    undefinedWatchParams,
+    watchParamConstraints,
+    inputToNumber,
+} from "../../../utils/validation";
 import Button from "../../base/Button/Button";
 import Dropdown from "../../base/Dropdown";
 import Input from "../../base/Input";
@@ -65,6 +70,7 @@ type AgentWatching = AgentWatchingBase & {
     startGame: GameForWatch;
     previous: string;
 };
+type NumInput = keyof typeof watchParamConstraints;
 
 /**
  * Watch Agent modal
@@ -86,14 +92,26 @@ const WatchModal = () => {
     const cutHistory = useGameStore((state) => state.cutHistory);
     const newGame = useGameStore((state) => state.newGame);
 
+    const { message, createMessage } = useAlertMessage();
+
+    // Close modal and clear message when loadingWeights changes from true to false
     useEffect(() => {
         if (loadingWeights === false) {
-            createMessage("");
+            createMessage();
             simulateCloseModalClick();
         }
-    }, [loadingWeights]);
+    }, [loadingWeights, createMessage]);
 
-    const [message, createMessage] = useAlertMessage();
+    const [values, setValues] = useState(undefinedWatchParams);
+    const [isNew, setIsNew] = useState(true);
+    const updateValues = useCallback((update: Partial<AgentWatching>) => {
+        setValues((prevValues) => ({ ...prevValues, ...update }));
+    }, []);
+
+    // Reset values for new User
+    useEffect(() => {
+        setValues(undefinedWatchParams);
+    }, [userName]);
 
     const [agents, setAgents] = useState<string[]>([]);
     const getAllAgentNames = async () => {
@@ -103,26 +121,8 @@ const WatchModal = () => {
         setAgents(list);
     };
 
-    const [isNew, setIsNew] = useState(true);
-
-    const [values, setValues] =
-        useState<AgentWatchingBase>(undefinedWatchParams);
-    const updateValues = useCallback((update: Partial<AgentWatching>) => {
-        setValues((prevValues) => ({ ...prevValues, ...update }));
-    }, []);
-
-    useEffect(() => {
-        setValues(undefinedWatchParams);
-    }, [userName]);
-
-    const inputParameters = {
-        backgroundColor: "white",
-        labelColor1: palette.two,
-        labelColor2: palette.one,
-        controlColor: palette.three,
-    };
-
-    const handleWatch = async () => {
+    // Main "GO" function
+    const handleWatch = useCallback(async () => {
         if (!isNew && GameLogic.gameOver(game)) {
             createMessage(
                 "The Game is already over, no way to continue.",
@@ -130,7 +130,7 @@ const WatchModal = () => {
             );
             return;
         }
-        const [validated, change] = validateTestingParams(values);
+        const [validated, change] = validateTestParams(values);
         setValues((prevValues) => ({ ...prevValues, ...validated }));
         if (change) {
             createMessage(
@@ -141,7 +141,7 @@ const WatchModal = () => {
         }
 
         const newWatchUser = randomName("agent");
-        setWatchUser(newWatchUser);
+        setWatchUser("");
         setWatchingNow(false);
         setPaused(true);
         setLoadingWeights(true);
@@ -184,16 +184,83 @@ const WatchModal = () => {
                 );
                 setGameName(values.name);
                 setGameMode("watch");
+                setWatchUser(newWatchUser);
                 setWatchingNow(true);
                 setPaused(false);
             }
         }
-    };
+    }, [
+        isNew,
+        game,
+        values,
+        setWatchUser,
+        setWatchingNow,
+        setPaused,
+        setLoadingWeights,
+        newGame,
+        cutHistory,
+        watchUser,
+        createMessage,
+        setGameName,
+        setGameMode,
+    ]);
 
+    // Need to wrap onChange functions for Inputs in Callbacks to avoid infinite re-render loops
+    const handleChangeName = useCallback(
+        (value: string) => updateValues({ name: value }),
+        [updateValues]
+    );
     const handleResetDefaults = () => {
         const resetValues = { ...defaultWatchParams };
         resetValues.name = values.name;
         setValues(resetValues);
+    };
+    const handleChangeNumValue = useCallback(
+        (key: NumInput, value: string) =>
+            updateValues({ [key]: inputToNumber(value) }),
+        [updateValues]
+    );
+    const handleChangeDepth = useCallback(
+        (value: string) => handleChangeNumValue("depth", value),
+        [handleChangeNumValue]
+    );
+    const handleChangeWidth = useCallback(
+        (value: string) => handleChangeNumValue("width", value),
+        [handleChangeNumValue]
+    );
+    const handleChangeTrigger = useCallback(
+        (value: string) => handleChangeNumValue("trigger", value),
+        [handleChangeNumValue]
+    );
+    const handleChangeNumParams = {
+        depth: handleChangeDepth,
+        width: handleChangeWidth,
+        trigger: handleChangeTrigger,
+    };
+    const inputParameters = {
+        backgroundColor: "white",
+        labelColor1: palette.two,
+        labelColor2: palette.one,
+        controlColor: palette.three,
+    };
+
+    const renderInput = (key: NumInput) => {
+        const min = watchParamConstraints[key].min;
+        const max = watchParamConstraints[key].max;
+        return (
+            <Input
+                {...inputParameters}
+                type='number'
+                label={startUpperCase(key)}
+                initialValue={values[key]}
+                persistAs={`${userName}_watch-${key}`}
+                min={min}
+                max={max}
+                step={watchParamConstraints[key].step}
+                placeholder={`${min} <= * <= ${max}`}
+                onChange={handleChangeNumParams[key]}
+            />
+        );
     };
 
     const allAgents = [...specialAgents, ...agents];
@@ -218,67 +285,14 @@ const WatchModal = () => {
                         label='Choose Agent to Watch'
                         optionValues={allAgents}
                         initialValue={values.name}
-                        onChange={(value) => updateValues({ name: value })}
+                        persistAs={`${userName}_watch-name`}
+                        onChange={handleChangeName}
                         zIndex={30}
                     />
                     <section>
-                        <Input
-                            {...inputParameters}
-                            type='number'
-                            label='Depth'
-                            initialValue={values.depth}
-                            persistAs={`${userName}_watch-depth`}
-                            min={0}
-                            max={2}
-                            step={1}
-                            placeholder='0 <= x <= 2'
-                            onChange={(value) =>
-                                updateValues({
-                                    depth:
-                                        value === ""
-                                            ? undefined
-                                            : Number(value),
-                                })
-                            }
-                        />
-                        <Input
-                            {...inputParameters}
-                            type='number'
-                            label='Width'
-                            initialValue={values.width}
-                            persistAs={`${userName}_watch-width`}
-                            min={1}
-                            max={3}
-                            step={1}
-                            placeholder='1 <= x <= 3'
-                            onChange={(value) =>
-                                updateValues({
-                                    width:
-                                        value === ""
-                                            ? undefined
-                                            : Number(value),
-                                })
-                            }
-                        />
-                        <Input
-                            {...inputParameters}
-                            type='number'
-                            label='Trigger'
-                            initialValue={values.trigger}
-                            persistAs={`${userName}_watch-trigger`}
-                            min={0}
-                            max={6}
-                            step={1}
-                            placeholder='0 <= x <= 6'
-                            onChange={(value) =>
-                                updateValues({
-                                    trigger:
-                                        value === ""
-                                            ? undefined
-                                            : Number(value),
-                                })
-                            }
-                        />
+                        {renderInput("depth")}
+                        {renderInput("width")}
+                        {renderInput("trigger")}
                     </section>
                     <Radio
                         backgroundColor={palette.background}

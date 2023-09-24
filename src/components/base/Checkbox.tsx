@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
-import { useState } from "react";
+import useSyncInitialValue from "../../hooks/useSyncInitialValue";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL, makeSound } from "../../utils";
+import { GLOBAL, makeSound } from "../../utils/utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
@@ -81,7 +81,7 @@ const makeControl = (controlSize: number, controlColor: string) => css`
  * @param label - label
  * @param onChange - function that gets called when the checkbox is toggled
  */
-type CheckboxProps = {
+export type CheckboxProps = {
     width?: string;
     controlSize?: number;
     controlColor?: string;
@@ -111,7 +111,7 @@ const Checkbox = ({
 }: CheckboxProps) => {
     const volume = useSoundVolume();
 
-    const [isChecked, setIsChecked] = useState(checked);
+    const [isChecked, setIsChecked] = useSyncInitialValue(checked);
 
     const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const checked = e.target.checked;

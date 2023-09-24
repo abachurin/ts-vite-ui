@@ -1,12 +1,12 @@
 import { css } from "@emotion/react";
-import React, { useState, useEffect, useRef } from "react";
-import { Position, Offset, PositionType } from "../../types";
+import React, { useState, useLayoutEffect, useRef, useCallback } from "react";
+import { Offset, PositionType } from "../../types";
 
 // Emotion styles
 const makeEmotion = (
     positionType: PositionType,
-    left: string,
-    top: string,
+    left: string | null,
+    top: string | null,
     isDragging: boolean
 ) => css`
     position: ${positionType};
@@ -17,7 +17,12 @@ const makeEmotion = (
 `;
 
 // Helper functions
-const defaultPosition: Position = { x: "50%", y: "50%" };
+const defaultPosition = (): Offset => {
+    return {
+        x: window.innerWidth / 2,
+        y: window.innerHeight / 2,
+    };
+};
 const zeroOffset: Offset = { x: 0, y: 0 };
 
 /**
@@ -28,58 +33,79 @@ const zeroOffset: Offset = { x: 0, y: 0 };
  */
 type dragMeProps<P> = {
     ToDrag: React.ComponentType<P>;
-    initialPosition?: Position;
+    initialPosition?: Offset;
     positionType?: PositionType;
 };
 const dragMe = <P extends object>({
     ToDrag,
-    initialPosition = defaultPosition,
+    initialPosition,
     positionType = "fixed" as PositionType,
 }: dragMeProps<P>) => {
     return (props: P) => {
+        const wrapperRef = useRef<HTMLDivElement>(null);
         const [isDragging, setIsDragging] = useState(false);
-        const [offset, setOffset] = useState<Offset>(zeroOffset);
+
+        const position = useRef<Offset>(initialPosition ?? defaultPosition());
         const currentOffset = useRef<Offset>(zeroOffset);
 
-        const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-            setIsDragging(true);
-            const { clientX, clientY } = e;
-            currentOffset.current = {
-                x: clientX,
-                y: clientY,
-            };
-        };
-        const handleMouseUp = () => {
-            setIsDragging(false);
-        };
+        const newPosition = useCallback(
+            (pos: number, axis: "x" | "y"): number =>
+                position.current[axis] + pos - currentOffset.current[axis],
+            []
+        );
 
-        useEffect(() => {
-            const handleMouseMove = (e: MouseEvent) => {
+        const handleMouseDown = useCallback(
+            (e: React.MouseEvent<HTMLDivElement>) => {
+                if (isDragging) return;
+                setIsDragging(true);
+                currentOffset.current = {
+                    x: e.clientX,
+                    y: e.clientY,
+                };
+            },
+            []
+        );
+
+        const handleMouseUp = useCallback(
+            (e: MouseEvent) => {
                 if (!isDragging) return;
-                const { clientX, clientY } = e;
-                setOffset({
-                    x: clientX - currentOffset.current.x + offset.x,
-                    y: clientY - currentOffset.current.y + offset.y,
-                });
-            };
+                setIsDragging(false);
+                position.current = {
+                    x: newPosition(e.clientX, "x"),
+                    y: newPosition(e.clientY, "y"),
+                };
+            },
+            [isDragging, newPosition]
+        );
 
-            if (isDragging) {
-                document.addEventListener("mousemove", handleMouseMove);
-                document.addEventListener("mouseup", handleMouseUp);
-            }
+        const handleMouseMove = useCallback(
+            (e: MouseEvent) => {
+                if (!isDragging) return;
+                if (wrapperRef.current) {
+                    wrapperRef.current.style.left =
+                        newPosition(e.clientX, "x") + "px";
+                    wrapperRef.current.style.top =
+                        newPosition(e.clientY, "y") + "px";
+                }
+            },
+            [isDragging, newPosition]
+        );
 
+        useLayoutEffect(() => {
+            document.addEventListener("mousemove", handleMouseMove);
+            document.addEventListener("mouseup", handleMouseUp);
             return () => {
                 document.removeEventListener("mousemove", handleMouseMove);
                 document.removeEventListener("mouseup", handleMouseUp);
             };
-        }, [isDragging]);
+        }, [handleMouseUp, handleMouseMove]);
 
-        const left = `calc(${initialPosition.x} + ${offset.x}px)`;
-        const top = `calc(${initialPosition.y} + ${offset.y}px)`;
+        const left = position.current.x + "px";
+        const top = position.current.y + "px";
         const emotion = makeEmotion(positionType, left, top, isDragging);
 
         return (
-            <div css={emotion} onMouseDown={handleMouseDown}>
+            <div ref={wrapperRef} css={emotion} onMouseDown={handleMouseDown}>
                 <ToDrag {...props} />
             </div>
         );

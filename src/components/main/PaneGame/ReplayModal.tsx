@@ -8,7 +8,7 @@ import {
 import useGameStore from "../../../store/gameStore";
 import { getItems, getFullGame } from "../../../api/requests";
 import { GameDict, GameBackend } from "../../../types";
-import { GLOBAL, simulateCloseModalClick } from "../../../utils";
+import { GLOBAL, simulateCloseModalClick } from "../../../utils/utils";
 import useAlertMessage from "../../../hooks/useAlertMessage";
 import Modal from "../../modal/Modal";
 import ModalBody from "../../modal/ModalBody";
@@ -42,14 +42,14 @@ const ReplayModal = () => {
     const [options, setOptions] = useState<GameDict>({});
     const choiceOptions = ["Current game", ...Object.keys(options)];
 
-    const [msg, createMsg] = useAlertMessage();
+    const { message, createMessage } = useAlertMessage();
     const [loading, setLoading] = useState(false);
 
     const getGames = async () => {
         setPaused(true);
         const { list, message } = await getItems("Games", userName, "all");
         if (message) {
-            createMsg(message, "error");
+            createMessage(message, "error");
             return;
         }
         setOptions(list as GameDict);
@@ -60,7 +60,7 @@ const ReplayModal = () => {
         if (item !== "Current game") {
             const { game, status } = await getFullGame(item);
             if (status) {
-                createMsg(status, "error");
+                createMessage(status, "error");
                 setLoading(false);
                 return;
             }
@@ -113,7 +113,7 @@ const ReplayModal = () => {
                 </Button>
                 <CloseButton />
             </ModalFooter>
-            {msg ? <ModalFooter>{msg}</ModalFooter> : null}
+            {message ? <ModalFooter>{message}</ModalFooter> : null}
             {loading ? <Cube /> : null}
         </Modal>
     );

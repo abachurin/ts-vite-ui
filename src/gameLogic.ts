@@ -1,5 +1,5 @@
 import { Offset, Game, GameTile, GameBackend } from "./types";
-import { deepCopy, deepEqual, randomName } from "./utils";
+import { deepCopy, deepEqual, randomName } from "./utils/utils";
 
 export const gameMoves: Record<number, string> = {
     0: "LEFT",

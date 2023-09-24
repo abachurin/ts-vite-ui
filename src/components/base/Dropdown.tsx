@@ -1,9 +1,11 @@
 import { css } from "@emotion/react";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useCallback } from "react";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
+import useSyncInitialValue from "../../hooks/useSyncInitialValue";
 import { useClickAwayListener } from "../../hooks/useClickAwayListener";
 import { Alignment } from "../../types";
-import { GLOBAL, SvgPaths, makeSound, createPersistence } from "../../utils";
+import { GLOBAL, SvgPaths, makeSound } from "../../utils/utils";
+import { createPersistence } from "../../utils/persistence";
 import Icon from "./Icon/Icon";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
@@ -114,7 +116,7 @@ const chosenOptionStyle = css`
  * @param zIndex - z-index of component
  * @param onChange - function to be called when dropdown value changes.
  */
-type DropdownProps = {
+export type DropdownProps = {
     width?: string;
     fontSize?: number;
     labelRatio?: number;
@@ -146,7 +148,7 @@ const Dropdown = ({
     color = "inherit",
     label = "Select:",
     optionValues = [],
-    initialValue,
+    initialValue = "",
     alignOptions = "left",
     alwaysOpen = false,
     disabled = false,
@@ -158,39 +160,38 @@ const Dropdown = ({
 
     const disabledTrue = disabled || optionValues.length === 0;
     const [optionsOpen, setOptionsOpen] = useState(alwaysOpen);
-    const ref = useClickAwayListener(() => setOptionsOpen(false));
+    const closeOptionBox = useCallback(() => setOptionsOpen(false), []);
+    const ref = useClickAwayListener(closeOptionBox);
+
+    const startValue = optionValues.includes(initialValue.toString())
+        ? initialValue.toString()
+        : "";
 
     const { setPersistedValue, getPersistedValue } =
         createPersistence(persistAs);
-
-    const startValue =
-        initialValue === undefined
-            ? optionValues[0]
-            : optionValues.includes(initialValue.toString())
-            ? initialValue.toString()
-            : optionValues[0];
+    if (persistAs && startValue !== "") {
+        setPersistedValue(startValue);
+    }
 
     const [value, setValue] = useState(startValue);
+    const updateValue = useCallback(
+        (newValue: string) => {
+            setValue(newValue);
+            onChange(newValue);
+        },
+        [onChange]
+    );
+
+    const change = startValue !== initialValue || startValue !== value;
+    const storedValue = getPersistedValue();
+    const actualStored = optionValues.includes(storedValue) ? storedValue : "";
 
     useEffect(() => {
         if (persistAs) {
-            const storedValue = getPersistedValue();
-            if (
-                initialValue === undefined &&
-                optionValues.includes(storedValue)
-            ) {
-                setValue(storedValue);
-                onChange(storedValue);
-            } else {
-                setValue(startValue);
-                onChange(startValue);
-                setPersistedValue(startValue);
-            }
-        } else {
-            setValue(startValue);
-            if (startValue !== initialValue) onChange(startValue);
-        }
-    }, [initialValue]);
+            if (startValue === "") updateValue(actualStored);
+            else if (change) updateValue(startValue);
+        } else if (change) updateValue(startValue);
+    }, [change, persistAs, updateValue, startValue, actualStored]);
 
     const handleOption = (e: React.MouseEvent<HTMLLIElement>): void => {
         const newValue = e.currentTarget.innerText;

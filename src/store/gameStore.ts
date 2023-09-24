@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import GameLogic from "../gameLogic";
 import { Game, GameTile, GameBackend } from "../types";
-import { deepCopy, makeSound } from "../utils";
+import { deepCopy, makeSound } from "../utils/utils";
 import clickSound from "../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 const minInterval = 10;

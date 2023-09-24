@@ -1,12 +1,12 @@
 import { css } from "@emotion/react";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { killWatchJob } from "../../../api/requests";
 import { useUser } from "../../../contexts/UserProvider/UserContext";
 import useModeStore, { modeDescription } from "../../../store/modeStore";
 import useGameStore from "../../../store/gameStore";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
 import useAlert from "../../../hooks/useAlert";
-import { GLOBAL, smoothScroll } from "../../../utils";
+import { GLOBAL, smoothScroll } from "../../../utils/utils";
 import Pane from "../Pane";
 import PaneHeader from "../PaneHeader";
 import PaneBody from "../PaneBody";
@@ -24,11 +24,18 @@ const emotion = css`
 `;
 
 // Helper functions
+/**
+ * Disables swipe functionality by adding a CSS rule to the "swipeBlocker" style element in index.html,
+ * so that the user can move by swiping on the game pane without extra effects.
+ */
 const disableSwipe = () => {
     const swipeBlocker = document.getElementById("swipeBlocker");
     if (swipeBlocker)
         swipeBlocker.textContent = "html * { touch-action: pinch-zoom; }";
 };
+/**
+ * Enables swipe functionality back.
+ */
 const enableSwipe = () => {
     const swipeBlocker = document.getElementById("swipeBlocker");
     if (swipeBlocker) swipeBlocker.textContent = "";
@@ -41,7 +48,7 @@ const PaneGame = () => {
     const user = useUser();
     const palette = usePalette();
 
-    const [instruction, openInstruction] = useAlert({
+    const { appAlert, openAlert } = useAlert({
         onlyOnce: true,
         type: "info",
         duration: 100000,
@@ -68,19 +75,19 @@ const PaneGame = () => {
         if (gameMode === "play") {
             disableSwipe();
         } else enableSwipe();
-    }, [gameMode]);
+    }, [gameMode, watchUser, setWatchingNow, setLoadingWeights]);
 
-    const playYourself = () => {
+    const playYourself = useCallback(() => {
         if (gameMode === "play") return;
         if (gameMode === "none") newGame();
         setGameMode("play");
         setPaused(true);
         cutHistory();
-        openInstruction();
+        openAlert();
         setTimeout(() => {
             smoothScroll("#game-pane");
         }, 50);
-    };
+    }, [gameMode, newGame, setGameMode, setPaused, cutHistory, openAlert]);
 
     return (
         <Pane id='game-pane'>
@@ -101,7 +108,7 @@ const PaneGame = () => {
                     ) : null}
                 </footer>
             </PaneBody>
-            {instruction}
+            {appAlert}
         </Pane>
     );
 };

@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL, setTransparency, smoothScroll } from "../../utils";
+import { GLOBAL, setTransparency, smoothScroll } from "../../utils/utils";
 
 // Emotion styles
 const makeEmotion = (backgroundColor: string, color: string) => css`
@@ -29,7 +29,7 @@ const Footer = () => {
                 setTransparency(palette.header, palette.headerOpacity),
                 palette.background
             ),
-        [palette]
+        [palette.background, palette.header, palette.headerOpacity]
     );
 
     return (

@@ -1,7 +1,8 @@
 import { css } from "@emotion/react";
-import { ReactNode, useMemo, useState, useCallback } from "react";
+import { ReactNode, useMemo, useCallback } from "react";
+import useSyncInitialValue from "../../hooks/useSyncInitialValue";
 import { useSoundVolume } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL, makeSound } from "../../utils";
+import { GLOBAL, makeSound } from "../../utils/utils";
 import clickSound from "../../assets/sounds/mixkit-gate-latch-click-1924.wav";
 
 // Emotion styles
@@ -116,7 +117,7 @@ const makeControl = (
  * @param options - radio options
  * @param onChange - callback function to be called when the value of the radio button component changes
  */
-type RadioProps = {
+export type RadioProps = {
     width?: string;
     fontSize?: number;
     labelRatio?: number;
@@ -140,13 +141,15 @@ const Radio = ({
     color2 = "inherit",
     textColor = "inherit",
     label = "",
-    initialValue = undefined,
+    initialValue,
     options,
     onChange,
 }: RadioProps) => {
     const volume = useSoundVolume();
-    const startValue = initialValue ?? options[0];
-    const [currentValue, setCurrentValue] = useState(startValue);
+    const [currentValue, setCurrentValue] = useSyncInitialValue(
+        initialValue,
+        (val) => val ?? options[0]
+    );
 
     const handleChoice = useCallback(
         (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,7 +158,7 @@ const Radio = ({
             makeSound(clickSound, volume);
             onChange(newValue);
         },
-        [onChange, volume]
+        [volume, onChange, setCurrentValue]
     );
 
     const emotion = useMemo(

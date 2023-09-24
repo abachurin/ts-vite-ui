@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
 import useGameStore from "../../../store/gameStore";
 import { usePalette } from "../../../contexts/UserProvider/UserContext";
-import { GLOBAL } from "../../../utils";
+import { GLOBAL } from "../../../utils/utils";
 import RangeInput from "../../base/RangeInput";
 import Button from "../../base/Button/Button";
 

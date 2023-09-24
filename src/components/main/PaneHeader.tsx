@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
-import { GLOBAL, setTransparency, smoothScroll } from "../../utils";
+import { GLOBAL, setTransparency, smoothScroll } from "../../utils/utils";
 
 // Emotion styles
 const makeEmotion = (
@@ -51,7 +51,7 @@ const PaneHeader = ({ type, text, children }: PaneHeaderProps) => {
     );
     const emotion = useMemo(
         () => makeEmotion(backgroundColor, palette.text, palette.background),
-        [palette]
+        [backgroundColor, palette.background, palette.text]
     );
 
     return (

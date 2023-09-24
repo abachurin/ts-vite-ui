@@ -1,7 +1,13 @@
-import React, { ReactNode, useState, useEffect, useRef } from "react";
-import { ChildrenProps, Position, PositionType } from "../types";
+import React, {
+    ReactNode,
+    useState,
+    useEffect,
+    useRef,
+    useCallback,
+} from "react";
+import { ChildrenProps, Offset, PositionType } from "../types";
 import { paletteAlertType } from "../palette";
-import { GLOBAL } from "../utils";
+import { GLOBAL } from "../utils/utils";
 import StaticAlert, { AlertProps } from "../components/base/StaticAlert";
 import dragMe from "../components/HOC/Draggable";
 
@@ -20,7 +26,7 @@ type AlertHookProps = ChildrenProps & {
     draggable?: boolean;
     onlyOnce?: boolean;
     type?: paletteAlertType;
-    initialPosition?: Position;
+    initialPosition?: Offset;
     positionType?: PositionType;
     duration?: number;
 };
@@ -32,7 +38,11 @@ const useAlert = ({
     positionType,
     duration = GLOBAL.messageDuration,
     children,
-}: AlertHookProps): [ReactNode, () => void, () => void] => {
+}: AlertHookProps): {
+    appAlert: ReactNode;
+    openAlert: () => void;
+    closeAlert: () => void;
+} => {
     const notYetClicked = useRef(true);
     const [showAlert, setShowAlert] = useState(false);
 
@@ -40,15 +50,15 @@ const useAlert = ({
         ? dragMe({ ToDrag: StaticAlert, initialPosition, positionType })
         : StaticAlert;
 
-    const openAlert = () => {
+    const openAlert = useCallback(() => {
         if ((onlyOnce && notYetClicked.current) || !onlyOnce)
             setShowAlert(true);
         notYetClicked.current = false;
-    };
+    }, [onlyOnce]);
 
-    const closeAlert = () => {
+    const closeAlert = useCallback(() => {
         setShowAlert(false);
-    };
+    }, []);
 
     const timer = useRef<NodeJS.Timeout>();
     useEffect(() => {
@@ -60,7 +70,7 @@ const useAlert = ({
 
             return () => clearTimeout(timer.current);
         }
-    }, [showAlert, duration]);
+    }, [showAlert, closeAlert, duration]);
 
     const props: AlertProps = {
         type,
@@ -70,7 +80,7 @@ const useAlert = ({
 
     const alert = showAlert && children ? <AlertComponent {...props} /> : null;
 
-    return [alert, openAlert, closeAlert];
+    return { appAlert: alert, openAlert, closeAlert };
 };
 
 export default useAlert;

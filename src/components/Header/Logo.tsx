@@ -1,7 +1,7 @@
 import { css } from "@emotion/react";
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
-import { GLOBAL, SvgPaths, smoothScroll } from "../../utils";
+import { GLOBAL, SvgPaths, smoothScroll } from "../../utils/utils";
 import Button from "../base/Button/Button";
 import Icon from "../base/Icon/Icon";
 
@@ -21,14 +21,14 @@ const makeEmotion = (logoColor: string) => css`
 const Logo = () => {
     const palette = usePalette();
 
+    const scroll = useCallback(() => {
+        smoothScroll("#agent-pane");
+    }, []);
+
     const emotion = useMemo(() => makeEmotion(palette.logo), [palette.logo]);
 
     return (
-        <Button
-            align='left'
-            mute={true}
-            onClick={() => smoothScroll("#agent-pane")}
-        >
+        <Button align='left' mute={true} onClick={scroll}>
             <div css={emotion}>
                 <Icon svg={SvgPaths.robot} />
                 RL 2048

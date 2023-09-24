@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { useInverseAnimationSpeed } from "../../contexts/UserProvider/UserContext";
 import useDimensions from "../../hooks/useDimensions";
-import { GLOBAL } from "../../utils";
+import { GLOBAL } from "../../utils/utils";
 import Star from "./Star";
 
 // Emotion styles
@@ -39,7 +39,7 @@ const createStars = (
  * Need to rewrite this with HTML Canvas
  */
 const StarField = () => {
-    const { width, height } = useDimensions();
+    const { width, height } = useDimensions({});
     const inverseSpeed = useInverseAnimationSpeed();
 
     const numStars = Math.floor((width * height) / GLOBAL.oneStarPixels);

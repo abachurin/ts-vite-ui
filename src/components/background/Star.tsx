@@ -1,5 +1,5 @@
 import { css, keyframes, Keyframes } from "@emotion/react";
-import { GLOBAL, randomNum } from "../../utils";
+import { GLOBAL, randomNum } from "../../utils/utils";
 
 // Emotion styles
 const fly = (size: number, x_delta: number, y_delta: number) => keyframes`

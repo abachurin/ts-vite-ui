@@ -52,11 +52,11 @@ export type User = {
 export type AgentMainParams = {
     user?: string;
     name: string | undefined;
-    N: number | undefined;
-    alpha: number | undefined;
-    decay: number | undefined;
-    step: number | undefined;
-    minAlpha: number | undefined;
+    N: number | undefined | "";
+    alpha: number | undefined | "";
+    decay: number | undefined | "";
+    step: number | undefined | "";
+    minAlpha: number | undefined | "";
 };
 export type Agent = AgentMainParams & {
     bestScore: number;
@@ -67,18 +67,18 @@ export type Agent = AgentMainParams & {
 };
 export type AgentDict = Record<string, Agent>;
 export type AgentTraining = AgentMainParams & {
-    episodes: number | undefined;
+    episodes: number | undefined | "";
     isNew: boolean;
 };
 export type AgentWatchingBase = {
     user?: string;
     name: string | undefined;
-    depth: number | undefined;
-    width: number | undefined;
-    trigger: number | undefined;
+    depth: number | undefined | "";
+    width: number | undefined | "";
+    trigger: number | undefined | "";
 };
 export type AgentTesting = AgentWatchingBase & {
-    episodes: number | undefined;
+    episodes: number | undefined | "";
 };
 
 // Game types

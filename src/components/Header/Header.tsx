@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import useDimensions from "../../hooks/useDimensions";
-import { GLOBAL, setTransparency } from "../../utils";
+import { GLOBAL, setTransparency } from "../../utils/utils";
 import ToggleNav from "../base/ToggleNav";
 import Logo from "./Logo";
 import SoundSwitch from "./SoundSwitch";
@@ -52,7 +52,7 @@ const Header = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { width } = useDimensions();
+    const { width } = useDimensions({});
     const hiddenNavigation = width < GLOBAL.navBreakpoint;
 
     const AdminLink = (

@@ -2,7 +2,7 @@ import { css } from "@emotion/react";
 import { useMemo } from "react";
 import { usePalette } from "../../contexts/UserProvider/UserContext";
 import { ChildrenProps } from "../../types";
-import { GLOBAL, setTransparency } from "../../utils";
+import { GLOBAL, setTransparency } from "../../utils/utils";
 
 // Emotion styles
 const makeEmotion = (backgroundColor: string, color: string) => css`
@@ -31,7 +31,7 @@ const Pane = ({ id, children }: PaneProps) => {
 
     const emotion = useMemo(
         () => makeEmotion(backgroundColor, color),
-        [palette]
+        [backgroundColor, color]
     );
 
     return (

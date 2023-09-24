@@ -9,7 +9,7 @@ import React, {
     useEffect,
 } from "react";
 import { RGB, RGBA, ChildrenProps, Alignment } from "../../types";
-import { GLOBAL, SvgPaths, removeTransparency } from "../../utils";
+import { GLOBAL, SvgPaths, removeTransparency } from "../../utils/utils";
 import Button from "./Button/Button";
 import Icon from "./Icon/Icon";
 

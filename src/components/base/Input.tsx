@@ -1,6 +1,8 @@
 import { css, SerializedStyles } from "@emotion/react";
-import { useMemo, useState, useEffect } from "react";
-import { GLOBAL, createPersistence } from "../../utils";
+import { useMemo, useEffect } from "react";
+import useSyncInitialValue from "../../hooks/useSyncInitialValue";
+import { GLOBAL } from "../../utils/utils";
+import { createPersistence } from "../../utils/persistence";
 
 // Emotion styles
 const makeEmotion = (
@@ -91,7 +93,7 @@ type InputType =
  * @param zIndex - z-index
  * @param onChange - callback function for handling input changes
  */
-type InputProps = {
+export type InputProps = {
     width?: string;
     fontSize?: number;
     labelRatio?: number;
@@ -133,25 +135,22 @@ const Input = ({
     zIndex = "auto",
     onChange,
 }: InputProps) => {
-    const [value, setValue] = useState(initialValue ?? "");
+    const startValue = initialValue ?? "";
+    const [value, setValue] = useSyncInitialValue(startValue);
 
     const { setPersistedValue, getPersistedValue } =
         createPersistence(persistAs);
+    if (persistAs && initialValue !== undefined) {
+        setPersistedValue(initialValue.toString());
+    }
+    const storedValue = getPersistedValue();
 
     useEffect(() => {
-        if (persistAs) {
-            if (initialValue === undefined) {
-                const storedValue = getPersistedValue();
-                setValue(storedValue);
-                onChange(storedValue);
-            } else {
-                setValue(initialValue);
-                setPersistedValue(initialValue.toString());
-            }
-        } else {
-            setValue(initialValue ?? "");
+        if (persistAs && initialValue === undefined) {
+            setValue(storedValue);
+            onChange(storedValue);
         }
-    }, [initialValue]);
+    }, [initialValue, persistAs, onChange, storedValue, setValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
