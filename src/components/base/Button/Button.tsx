@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import {
     useUser,
     useAnimate,
@@ -138,7 +138,7 @@ export type ButtonProps = ChildrenProps & {
     mute?: boolean;
     onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
-const Button = ({
+const _Button = ({
     type = "whooshRotate",
     align = "left",
     width = "auto",
@@ -210,5 +210,7 @@ const Button = ({
         </div>
     );
 };
+
+const Button = React.memo(_Button);
 
 export default Button;

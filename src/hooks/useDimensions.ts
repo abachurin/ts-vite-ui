@@ -6,7 +6,8 @@ import { GLOBAL } from "../utils/utils";
  * Don't use if element is in the DOM conditionally.
  * @param elem - True if the dimensions are for an element, False for window object
  * @param delay - debounce in milliseconds
- * @returns {width, height, ref} - attach ref to desired element if elem=true
+ * @returns {width, height, ref, triggerResize} - attach ref to desired element if elem=true
+ * call triggerResize() if you need to enforce measurement
  */
 const useDimensions = ({
     elem = false,
@@ -14,13 +15,22 @@ const useDimensions = ({
 }: {
     elem?: boolean;
     delay?: number;
-}): { width: number; height: number; ref: React.RefObject<HTMLDivElement> } => {
+}): {
+    width: number;
+    height: number;
+    ref: React.RefObject<HTMLDivElement>;
+    triggerResize: () => void;
+} => {
     const ref = useRef<HTMLDivElement>(null);
     const [width, setWidth] = useState(0);
     const [height, setHeight] = useState(0);
 
-    const timer = useRef<NodeJS.Timeout>();
+    const [trigger, setTrigger] = useState(true);
+    const triggerResize = () => {
+        setTrigger((prev) => !prev);
+    };
 
+    const timer = useRef<NodeJS.Timeout>();
     useEffect(() => {
         const handleSize = () => {
             setWidth(elem ? ref.current?.clientWidth || 0 : window.innerWidth);
@@ -39,9 +49,9 @@ const useDimensions = ({
         return () => {
             window.removeEventListener("resize", delayedHandleSize);
         };
-    }, [delay, elem]);
+    }, [delay, elem, trigger]);
 
-    return { width, height, ref };
+    return { width, height, ref, triggerResize };
 };
 
 export default useDimensions;

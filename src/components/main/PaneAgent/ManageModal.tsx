@@ -106,7 +106,7 @@ const ManageModal = () => {
         ) : null;
 
     // Draggable Chart initial position is calculated when "Chart" button clicked
-    const { width, height, ref } = useDimensions({ elem: true });
+    const { width, height, ref, triggerResize } = useDimensions({ elem: true });
     const { appAlert, openAlert, closeAlert } = useAlert({
         type: "info",
         duration: 1000000,
@@ -167,13 +167,7 @@ const ManageModal = () => {
         (checked: boolean) => handleChange(undefined, checked),
         [handleChange]
     );
-    const handleChangeAll = useCallback(() => {
-        handleChange();
-        setTimeout(() => {
-            const resizeEvent = new Event("resize");
-            window.dispatchEvent(resizeEvent);
-        }, 0);
-    }, [handleChange]);
+    const handleChangeAll = useCallback(() => handleChange(), [handleChange]);
 
     const deleteItem = useCallback(async () => {
         const { error } = await connectAPI<ItemDeleteRequest, void>({
@@ -299,7 +293,10 @@ const ManageModal = () => {
                             color={palette.background}
                             type='clickPress'
                             disabled={item === ""}
-                            onClick={openAlert}
+                            onClick={() => {
+                                triggerResize();
+                                openAlert();
+                            }}
                         >
                             Train History Chart
                         </Button>
