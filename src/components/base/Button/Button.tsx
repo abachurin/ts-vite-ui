@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import React, { useEffect, useMemo } from "react";
+import React, { useMemo } from "react";
 import {
     useUser,
     useAnimate,
