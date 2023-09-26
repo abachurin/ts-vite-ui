@@ -11,7 +11,7 @@ export const gameMoves: Record<number, string> = {
 /**
  * A collection of methods for changing state of Game object.
  */
-export abstract class GameLogic {
+export class GameLogic {
     public static restartGame(game: Game): Game {
         const newGame = deepCopy(game);
         newGame.row = deepCopy(game.initial);

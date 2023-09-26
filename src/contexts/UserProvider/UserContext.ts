@@ -29,32 +29,32 @@ export const useUser = () => useContext(UserContext);
 export const useUserUpdate = () => useContext(UserUpdateContext);
 
 export const useUserName = () => {
-    const user = useUser();
-    return user.name;
+    const { name } = useUser();
+    return name;
 };
 
 export const usePalette = () => {
-    const user = useUser();
-    return palettes[user.paletteName];
+    const { paletteName } = useUser();
+    return palettes[paletteName];
 };
 
 export const useAnimate = () => {
-    const user = useUser();
+    const { animate } = useUser();
     const noMotion = useReducedMotion();
-    return user.animate && !noMotion;
+    return animate && !noMotion;
 };
 
 export const useSoundVolume = () => {
-    const user = useUser();
-    return user.sound ? user.soundLevel : 0;
+    const { sound, soundLevel } = useUser();
+    return sound ? soundLevel : 0;
 };
 
 export const useInverseAnimationSpeed = () => {
-    const user = useUser();
-    return GLOBAL.inverseAnimationCoefficient / user.animationSpeed;
+    const { animationSpeed } = useUser();
+    return GLOBAL.inverseAnimationCoefficient / animationSpeed;
 };
 
 export const useIsAdmin = () => {
-    const user = useUser();
-    return user.level >= 2;
+    const { level } = useUser();
+    return level >= 2;
 };
